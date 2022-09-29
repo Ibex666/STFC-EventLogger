@@ -1,0 +1,7 @@
+﻿<TextBlock ID="block_0" HPOS="437" VPOS="289" WIDTH="312" HEIGHT="40">
+  <TextLine ID="line_0" HPOS="437" VPOS="289" WIDTH="312" HEIGHT="40">
+    <String ID="string_0" HPOS="437" VPOS="289" WIDTH="133" HEIGHT="40" WC="0.81" CONTENT="[DGAF]" />
+    <SP WIDTH="24" VPOS="289" HPOS="570" />
+    <String ID="string_1" HPOS="594" VPOS="292" WIDTH="155" HEIGHT="31" WC="0.88" CONTENT="ooDMoo" />
+  </TextLine>
+</TextBlock>

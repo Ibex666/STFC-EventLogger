@@ -1,0 +1,114 @@
+﻿<Window x:Class="STFC_EventLogger.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:STFC_EventLogger"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="960" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Button x:Name="btn_scan" Content="Scan" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Click="Btn_Scan_Click" Height="20" Width="60"/>
+        <Button Content="Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Btn_Test_Click" Height="20" Width="60"/>
+        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,35,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsFocused" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="LightGray"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="BorderBrush" Value="Red"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsFocused" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="LightGray"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150"/>
+                <DataGridTextColumn Header="Rang" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100"/>
+                <DataGridTemplateColumn Width="20">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="Btn_confirm_level"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Level Accuracy" Binding="{Binding AccuracyLevel, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Background" Value="{Binding AccuracyLevelBrush}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Level" Binding="{Binding BestLevel, StringFormat=\{0:n0\}}" Width="30"/>
+                <DataGridTemplateColumn Header="Level Image" IsReadOnly="True" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding BestLevelImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="20">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="Btn_confirm_power"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Power Accuracy" Binding="{Binding AccuracyPower, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Background" Value="{Binding AccuracyPowerBrush}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Power" Binding="{Binding BestPower, StringFormat=\{0:n0\}}" Width="100"/>
+                <DataGridTemplateColumn Header="Power Image" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding BestPowerImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="20">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="Btn_confirm_score"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Score Accuracy" Binding="{Binding AccuracyScore, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Background" Value="{Binding AccuracyScoreBrush}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Score" Binding="{Binding BestScore, StringFormat=\{0:n0\}}" Width="100"/>
+                <DataGridTemplateColumn Header="Score Image" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding BestScoreImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Header="" Width="*"/>-->
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
