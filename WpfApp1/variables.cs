@@ -41,11 +41,11 @@ namespace STFC_EventLogger
         internal static UserSettings us = new();
 
         internal static BackgroundWorker bgw_Scanner = new();
-        internal static List<string> filenamesToScan = new();
         internal static List<string> tmpFiles = new();
         internal static List<SSTypeAnalyzer> filesToScan = new();
         internal static List<AllianceMember> allianceMembers = new();
         internal static List<OcrName> notRecognizedNames = new();
-        internal static ObservableCollection<AllianceMember> obsAllianceMembers = new();
+        //internal static ObservableCollection<AllianceMember> obsAllianceMembers = new();
+        internal static AllianceLeaderBoard allianceLeaderBoard = new();
     }
 }

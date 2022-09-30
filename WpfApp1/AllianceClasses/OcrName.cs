@@ -11,11 +11,12 @@ namespace STFC_EventLogger.AllianceClasses
         public string? Value { get; set; }
 
         public OcrName() : base() { }
-        public OcrName(XmlNodeList? xml, string fileName) : base()
+        public OcrName(XmlNodeList? xml, SSTypeAnalyzer file) : base()
         {
             if (xml == null)
                 return;
-            FileName = fileName;
+            FileName = file.FileName;
+            ImageType = file.ImageType;
 
             X = int.MaxValue;
             Y = int.MaxValue;

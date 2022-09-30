@@ -130,8 +130,8 @@ namespace STFC_EventLogger.AllianceClasses
         public List<OcrScore> Scores { get; set; }
         public List<OcrPower> Powers { get; set; }
 
-        public int PowerRanking { get; set; }
-        public int EventRanking { get; set; }
+        public int? PowerRanking { get; set; }
+        public int? EventRanking { get; set; }
 
         #region #- Events -#
 
@@ -159,15 +159,15 @@ namespace STFC_EventLogger.AllianceClasses
 
             EventListName = new();
         }
-        public AllianceMember(XmlElement xml, string fileName)
+        public AllianceMember(XmlElement xml, SSTypeAnalyzer file)
         {
             Levels = new();
             Scores = new();
             Powers = new();
 
-            Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), fileName);
-            Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), fileName);
-            Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), fileName));
+            Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
+            Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), file);
+            Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), file));
 
             BestLevel = new();
             BestScore = new();
@@ -215,7 +215,12 @@ namespace STFC_EventLogger.AllianceClasses
                 {
                     var _vs = tmp.First(_sc => _sc.Value == tmp.Max(item => item.Value));
                     BestLevel = _vs.Key;
-                    var _bestLevel = Levels.First(_ => _.Value == _vs.Key);
+                    var _bestLevel = Levels.FirstOrDefault(_ => _.Value == _vs.Key & _.ImageType == ImageTypes.Positive);
+                    if (_bestLevel == null)
+                    {
+                        _bestLevel = Levels.First(_ => _.Value == _vs.Key);
+                    }
+
                     AccuracyLevel = (float)Math.Round(_vs.Value / (double)Levels.Count, 3);
 
                     using var img = System.Drawing.Image.FromFile(_bestLevel.FileName);
@@ -286,7 +291,12 @@ namespace STFC_EventLogger.AllianceClasses
                 {
                     var _vs = tmp.First(_sc => _sc.Value == tmp.Max(item => item.Value));
                     BestScore = _vs.Key;
-                    var _bestScore = Scores.First(_ => _.Value == _vs.Key);
+                    var _bestScore = Scores.FirstOrDefault(_ => _.Value == _vs.Key & _.ImageType == ImageTypes.Positive);
+                    if (_bestScore == null)
+                    {
+                        _bestScore = Scores.First(_ => _.Value == _vs.Key);
+                    }
+
                     AccuracyScore = (float)Math.Round(_vs.Value / (double)Scores.Count, 3);
 
                     using var img = System.Drawing.Image.FromFile(_bestScore.FileName);
@@ -343,7 +353,11 @@ namespace STFC_EventLogger.AllianceClasses
                 {
                     var _vs = tmp.First(_sc => _sc.Value == tmp.Max(item => item.Value));
                     BestPower = _vs.Key;
-                    var _bestPower = Powers.First(_ => _.Value == _vs.Key);
+                    var _bestPower = Powers.FirstOrDefault(_ => _.Value == _vs.Key & _.ImageType == ImageTypes.Positive);
+                    if (_bestPower == null)
+                    {
+                        _bestPower = Powers.First(_ => _.Value == _vs.Key);
+                    }
                     AccuracyPower = (float)Math.Round(_vs.Value / (double)Powers.Count, 3);
 
                     using var img = System.Drawing.Image.FromFile(_bestPower.FileName);

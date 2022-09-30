@@ -13,6 +13,7 @@ using System.Windows.Media;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 using STFC_EventLogger.AllianceClasses;
+using System.Collections.ObjectModel;
 
 namespace STFC_EventLogger
 {
@@ -24,7 +25,8 @@ namespace STFC_EventLogger
         public MainWindow()
         {
             InitializeComponent();
-            dataGrid.ItemsSource = V.obsAllianceMembers;
+            //dataGrid.ItemsSource = V.obsAllianceMembers;
+            dataGrid.ItemsSource = V.allianceLeaderBoard.AllianceMembers;
 
             V.bgw_Scanner.DoWork += Bgw_Scanner_DoWork;
             V.bgw_Scanner.RunWorkerCompleted += Bgw_Scanner_RunWorkerCompleted;
@@ -56,12 +58,15 @@ namespace STFC_EventLogger
             if (ofd.ShowDialog() == false)
                 return;
 
-            V.tmpFiles.Clear();
-            V.filenamesToScan.Clear();
-            V.filenamesToScan.AddRange(ofd.FileNames);
+            V.filesToScan.Clear();
+            foreach (var file in ofd.FileNames)
+            {
+                V.filesToScan.Add(new SSTypeAnalyzer(file, ImageTypes.Positive));
+            }
 
+            V.allianceLeaderBoard.Clear();
             V.allianceMembers.Clear();
-            V.obsAllianceMembers.Clear();
+            //V.obsAllianceMembers.Clear();
             V.notRecognizedNames.Clear();
 
             btn_scan.IsEnabled = false;
@@ -100,7 +105,8 @@ namespace STFC_EventLogger
 
             foreach (var item in V.allianceMembers)
             {
-                Dispatcher.Invoke(() => V.obsAllianceMembers.Add(item));
+                //Dispatcher.Invoke(() => V.obsAllianceMembers.Add(item));
+                Dispatcher.Invoke(() => V.allianceLeaderBoard.AllianceMembers.Add(item));
             }
 
             foreach (var item in V.tmpFiles)
@@ -116,7 +122,7 @@ namespace STFC_EventLogger
             btn_scan.IsEnabled = true;
 
             sw.Stop();
-            MessageBox.Show(sw.Elapsed.ToString());
+            //MessageBox.Show(sw.Elapsed.ToString());
         }
 
 
@@ -158,7 +164,8 @@ namespace STFC_EventLogger
         private static void CopyDataToClipboard()
         {
             List<AllianceMember> am = new();
-            am.AddRange(V.obsAllianceMembers);
+            //am.AddRange(V.obsAllianceMembers);
+            am.AddRange(V.allianceLeaderBoard.AllianceMembers);
 
             am.Sort(new AllianceMemberScoreComparer());
             for (int i = 0; i < am.Count; i++)
@@ -185,4 +192,22 @@ namespace STFC_EventLogger
             Clipboard.SetText(sb.ToString());
         }
     }
+
+    public class AllianceLeaderBoard
+    {
+        ObservableCollection<AllianceMember> allianceMembers;
+
+        public AllianceLeaderBoard()
+        {
+            allianceMembers = new ObservableCollection<AllianceMember>();
+        }
+
+        public void Clear()
+        {
+            allianceMembers.Clear();
+        }
+
+        internal ObservableCollection<AllianceMember> AllianceMembers { get => allianceMembers; set => allianceMembers = value; }
+    }
 }
+

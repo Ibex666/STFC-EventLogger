@@ -9,7 +9,7 @@ namespace STFC_EventLogger.AllianceClasses
         public AllianceRanks Value { get; set; }
 
         public OcrRank() : base() { }
-        public OcrRank(XmlNode? xml, string fileName) : base(xml, fileName)
+        public OcrRank(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
         {
             if (Content != null)
             {

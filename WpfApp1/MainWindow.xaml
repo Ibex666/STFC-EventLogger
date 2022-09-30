@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:STFC_EventLogger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="960" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="600" Width="1150" WindowStartupLocation="CenterScreen">
     <Grid>
         <Button x:Name="btn_scan" Content="Scan" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Click="Btn_Scan_Click" Height="20" Width="60"/>
         <Button Content="Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Btn_Test_Click" Height="20" Width="60"/>
@@ -41,6 +41,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150"/>
                 <DataGridTextColumn Header="Rang" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100"/>
+                <DataGridTextColumn Header="Power Ranking" Binding="{Binding PowerRanking}" IsReadOnly="True" Width="30"/>
+                <DataGridTextColumn Header="Event Ranking" Binding="{Binding EventRanking}" IsReadOnly="True" Width="30"/>
                 <DataGridTemplateColumn Width="20">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -9,12 +9,11 @@ namespace STFC_EventLogger.AllianceClasses
         public ulong? Value { get; set; }
 
         public OcrPower() : base() { }
-        public OcrPower(XmlNode? xml, string fileName) : base(xml, fileName)
+        public OcrPower(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
         {
             if (Content != null)
             {
-                ulong tmp;
-                if (ulong.TryParse(CleanContentNumberString(Content), out tmp))
+                if (ulong.TryParse(CleanContentNumberString(Content), out ulong tmp))
                 {
                     Value = tmp;
                 }

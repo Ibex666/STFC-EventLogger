@@ -9,12 +9,11 @@ namespace STFC_EventLogger.AllianceClasses
         public uint? Value { get; set; }
 
         public OcrLevel() : base() { }
-        public OcrLevel(XmlNode? xml, string fileName) : base(xml, fileName)
+        public OcrLevel(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
         {
             if (Content != null)
             {
-                uint tmp;
-                if (uint.TryParse(CleanContentNumberString(Content), out tmp))
+                if (uint.TryParse(CleanContentNumberString(Content), out uint tmp))
                 {
                     Value = tmp;
                 }

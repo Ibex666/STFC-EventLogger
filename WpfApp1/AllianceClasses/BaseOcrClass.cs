@@ -1,4 +1,6 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.Drawing;
+using System.Windows.Media.Imaging;
 using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
@@ -19,18 +21,21 @@ namespace STFC_EventLogger.AllianceClasses
         public float WC { get; protected set; }
         public BitmapImage? Image { get; set; }
         public string FileName { get; set; }
+        public ImageTypes ImageType { get; set; }
 
         #endregion
+
         #region #- Constructor -#
 
         public BaseOcrClass()
         {
             FileName = string.Empty;
         }
-        public BaseOcrClass(XmlNode? xml, string fileName)
+        public BaseOcrClass(XmlNode? xml, SSTypeAnalyzer file)
         {
             if (xml == null)
             {
+                ImageType = ImageTypes.Unknown;
                 FileName = string.Empty;
                 return;
             }
@@ -42,15 +47,15 @@ namespace STFC_EventLogger.AllianceClasses
             Height = int.Parse(_xmlE.GetAttribute("HEIGHT"));
             WC = float.Parse(_xmlE.GetAttribute("WC").Replace(".", ","));
             Content = _xmlE.GetAttribute("CONTENT");
-            FileName = fileName;
+            FileName = file.FileName;
+            ImageType = file.ImageType;
         }
 
         #endregion
 
-
         #region #- Methods -#
 
-        protected string CleanContentNumberString(string _content)
+        protected static string CleanContentNumberString(string _content)
         {
             _content = _content.Replace(".", "");
             _content = _content.Replace(",", "");
