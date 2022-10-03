@@ -6,9 +6,11 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal class OcrName : BaseOcrClass, IEquatable<OcrName?>, IComparable<OcrName>
+    public class OcrName : BaseOcrClass, IEquatable<OcrName?>, IComparable<OcrName>
     {
         public string? Value { get; set; }
+        public List<LevensteinNameDistance>? ClosestNames { get; set; }
+        public bool RecognizedName { get; set; }
 
         public OcrName() : base() { }
         public OcrName(XmlNodeList? xml, SSTypeAnalyzer file) : base()
@@ -17,6 +19,7 @@ namespace STFC_EventLogger.AllianceClasses
                 return;
             FileName = file.FileName;
             ImageType = file.ImageType;
+            RecognizedName = false;
 
             X = int.MaxValue;
             Y = int.MaxValue;
@@ -54,11 +57,42 @@ namespace STFC_EventLogger.AllianceClasses
             Content = _sb.ToString();
             Value = Content;
 
-            var a = V.us.Aliase.FirstOrDefault(item => item.Value.Contains(Content));
+            var a = V.Aliase.FirstOrDefault(item => item.Value.Contains(Content, StringComparer.OrdinalIgnoreCase));
             if (a.Key != null)
             {
                 Value = a.Key;
+                RecognizedName = true;
                 WC = 1;
+            }
+            else
+            {
+                List<int> distances = new();
+                List<LevensteinNameDistance> nameDistances = new();
+                foreach (var item in V.Aliase)
+                {
+                    foreach (var v in item.Value)
+                    {
+                        int d = F.LevensteinDistance(Content, v);
+                        nameDistances.Add(new LevensteinNameDistance(item.Key, Content, d));
+                        distances.Add(d);
+                    }
+                }
+                ClosestNames = nameDistances.Where(_ => _.Distance == distances.Min()).ToList();
+                if (ClosestNames.Count == 1)
+                {
+                    Value = ClosestNames[0].Name;
+                    WC = ClosestNames[0].Accuracy;
+                    RecognizedName = true;
+                }
+                else if (ClosestNames.Count > 1)
+                {
+                    if (ClosestNames.All(_ => _.Name == ClosestNames[0].Name))
+                    {
+                        Value = ClosestNames[0].Name;
+                        WC = ClosestNames[0].Accuracy;
+                        RecognizedName = true;
+                    }
+                }
             }
         }
 

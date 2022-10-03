@@ -10,6 +10,7 @@ using System.Diagnostics.Metrics;
 using System.Diagnostics;
 using System.Drawing;
 using STFC_EventLogger.AllianceClasses;
+using System.Xml.Linq;
 
 namespace STFC_EventLogger
 {
@@ -86,7 +87,7 @@ namespace STFC_EventLogger
             List<Task> tasks = new();
             List<SSTypeAnalyzer> tmpFiles = new();
             using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
-            foreach (var file in V.filesToScan)
+            foreach (var file in V.allianceLeaderBoard.FilesToScan)
             {
                 semaphore.Wait();
 
@@ -98,7 +99,7 @@ namespace STFC_EventLogger
                     string fileNeg = Path.GetTempFileName();
                     imgNeg.Save(fileNeg);
                     tmpFiles.Add(new SSTypeAnalyzer(fileNeg, ImageTypes.Negative));
-                    V.tmpFiles.Add(fileNeg);
+                    V.allianceLeaderBoard.TmpFiles.Add(fileNeg);
 
                     semaphore.Release();
                 });
@@ -106,13 +107,13 @@ namespace STFC_EventLogger
             }
             Task.WaitAll(tasks.ToArray());
 
-            V.filesToScan.AddRange(tmpFiles);
+            V.allianceLeaderBoard.FilesToScan.AddRange(tmpFiles);
         }
         internal static void AnalyzeScreenshots()
         {
             List<Task> tasks = new();
             using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
-            foreach (var file in V.filesToScan)
+            foreach (var file in V.allianceLeaderBoard.FilesToScan)
             {
                 semaphore.Wait();
 
@@ -130,7 +131,7 @@ namespace STFC_EventLogger
         {
             List<Task> tasks = new();
             using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
-            foreach (var file in V.filesToScan.Where(_ => _.PageType == PageTypes.MemberList))
+            foreach (var file in V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.MemberList))
             {
                 semaphore.Wait();
                 var t = Task.Factory.StartNew(() =>
@@ -149,10 +150,26 @@ namespace STFC_EventLogger
                             {
                                 AllianceMember _am = new(node, file);
 
-                                if (_am.Name.WC < 1)
+                                if (_am.Name.RecognizedName == false)
                                 {
-                                    V.notRecognizedNames.Add(_am.Name);
-                                    continue;
+                                    OcrName ocrName_fast = ScanMemberName(image, new Rect(_am.Name.X1 - 10, _am.Name.Y1 - 10, _am.Name.Width + 20, _am.Name.Height + 020), file, ScanMethods.Fast);
+                                    if (ocrName_fast.RecognizedName == false)
+                                    {
+                                        OcrName ocrName_best = ScanMemberName(image, new Rect(_am.Name.X1 - 10, _am.Name.Y1 - 10, _am.Name.Width + 20, _am.Name.Height + 020), file, ScanMethods.Best);
+                                        if (ocrName_best.RecognizedName == false)
+                                        {
+                                            V.allianceLeaderBoard.NotRecognizedNames.Add(_am.Name);
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            _am.Name = ocrName_best;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _am.Name = ocrName_fast;
+                                    }
                                 }
 
                                 _am.Levels.Add(ScanMemberLevel(image, new Rect(_am.Levels[0].X1 - 10, _am.Levels[0].Y1 - 10, _am.Levels[0].Width + 20, _am.Levels[0].Height + 20), file, ScanMethods.Fast));
@@ -161,15 +178,15 @@ namespace STFC_EventLogger
                                 _am.Powers.Add(ScanMemberPower(image, new Rect(V.us.RectAlliancePower.X, _am.Rank.Y, V.us.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Fast));
                                 _am.Powers.Add(ScanMemberPower(image, new Rect(V.us.RectAlliancePower.X, _am.Rank.Y, V.us.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Best));
 
-                                if (V.allianceMembers.Contains(_am))
+                                if (V.allianceLeaderBoard.MembersInternal.Contains(_am))
                                 {
-                                    int idx = V.allianceMembers.IndexOf(_am);
-                                    V.allianceMembers[idx].Levels.AddRange(_am.Levels);
-                                    V.allianceMembers[idx].Powers.AddRange(_am.Powers);
+                                    int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(_am);
+                                    V.allianceLeaderBoard.MembersInternal[idx].Levels.AddRange(_am.Levels);
+                                    V.allianceLeaderBoard.MembersInternal[idx].Powers.AddRange(_am.Powers);
                                 }
                                 else
                                 {
-                                    V.allianceMembers.Add(_am);
+                                    V.allianceLeaderBoard.MembersInternal.Add(_am);
                                 }
 
                             }
@@ -188,15 +205,15 @@ namespace STFC_EventLogger
             List<Task> tasks = new();
 
             using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
-            foreach (var file in V.filesToScan.Where(_ => _.PageType == PageTypes.EventList))
+            foreach (var file in V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.EventList))
             {
                 semaphore.Wait();
 
                 var t = Task.Factory.StartNew(() =>
                 {
                     Pix image = Pix.LoadFromFile(file.FileName);
-
-                    using (var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"tessdata"), "eng", EngineMode.TesseractOnly))
+                    
+                    using (var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"tessdata"), "eng", EngineMode.TesseractOnly))
                     {
                         using var page = engine.Process(image, V.us.RectEventNames);
                         XmlDocument xdoc = new();
@@ -207,12 +224,34 @@ namespace STFC_EventLogger
                             foreach (XmlElement node in nodes)
                             {
                                 OcrName _name = new(node.SelectNodes(".//String[position()>1]"), file);
+                                if (_name.RecognizedName == false)
+                                {
+                                    OcrName ocrName_fast = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Fast);
+                                    if (ocrName_fast.RecognizedName == false)
+                                    {
+                                        OcrName ocrName_best = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Fast);
+                                        if (ocrName_best.RecognizedName == false)
+                                        {
+                                            V.allianceLeaderBoard.NotRecognizedNames.Add(_name);
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            _name = ocrName_best;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _name = ocrName_fast;
+                                    }
+                                }
 
-                                AllianceMember? member = V.allianceMembers.SingleOrDefault(_ => _.Name == _name);
+
+                                AllianceMember? member = V.allianceLeaderBoard.MembersInternal.SingleOrDefault(_ => _.Name == _name);
                                 if (member != null)
                                 {
-                                    int idx = V.allianceMembers.IndexOf(member);
-                                    V.allianceMembers[idx].EventListName = _name;
+                                    int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(member);
+                                    V.allianceLeaderBoard.MembersInternal[idx].EventListName = _name;
 
                                     member.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
                                     member.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
@@ -220,10 +259,7 @@ namespace STFC_EventLogger
                                 }
                                 else
                                 {
-                                    if (_name.WC < 1)
-                                    {
-                                        V.notRecognizedNames.Add(_name);
-                                    }
+                                    
                                 }
                             }
                         }
@@ -317,6 +353,33 @@ namespace STFC_EventLogger
 
             return ret;
         }
+        internal static OcrName ScanMemberName(Pix image, Rect scanArea, SSTypeAnalyzer file, ScanMethods scanMethod)
+        {
+            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
 
+            OcrName ret = new()
+            {
+                FileName = file.FileName
+            };
+            if (scanArea.X < 0 | scanArea.Y < 0 | scanArea.X2 > image.Width | scanArea.Y2 > image.Height)
+                return ret;
+
+            try
+            {
+                using var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
+                using var page = engine.Process(image, scanArea);
+                XmlDocument xdoc = new();
+                xdoc.LoadXml(page.GetAltoText(0));
+                //Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
+                var nodes = xdoc.SelectNodes("//String");
+                if (nodes != null && nodes.Count > 0)
+                {
+                    ret = new OcrName(nodes, file);
+                }
+            }
+            catch (AccessViolationException) { }
+
+            return ret;
+        }
     }
 }

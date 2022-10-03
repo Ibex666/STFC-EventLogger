@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal class OcrLevel : BaseOcrClass, IEquatable<OcrLevel?>
+    public class OcrLevel : BaseOcrClass, IEquatable<OcrLevel?>
     {
         public uint? Value { get; set; }
 

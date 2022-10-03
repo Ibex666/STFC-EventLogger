@@ -1,4 +1,5 @@
-﻿using System;
+﻿using STFC_EventLogger.MVVM;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -15,7 +17,7 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal class AllianceMember : IEquatable<AllianceMember?>, INotifyPropertyChanged
+    public class AllianceMember : IEquatable<AllianceMember?>, INotifyPropertyChanged
     {
         private float? accuracyLevel;
         private float? accuracyScore;
@@ -130,8 +132,28 @@ namespace STFC_EventLogger.AllianceClasses
         public List<OcrScore> Scores { get; set; }
         public List<OcrPower> Powers { get; set; }
 
-        public int? PowerRanking { get; set; }
-        public int? EventRanking { get; set; }
+        public int? PowerRanking
+        {
+            get => powerRanking; set
+            {
+                powerRanking = value;
+                OnPropertyChanged();
+            }
+        }
+        public int? EventRanking
+        {
+            get => eventRanking; set
+            {
+                eventRanking = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ICommand? confirmLevelCommand;
+        private ICommand? confirmPowerCommand;
+        private ICommand? confirmScoreCommand;
+        private int? eventRanking;
+        private int? powerRanking;
 
         #region #- Events -#
 
@@ -141,7 +163,7 @@ namespace STFC_EventLogger.AllianceClasses
 
         #endregion
 
-        internal AllianceMember()
+        public AllianceMember()
         {
             Name = new OcrName();
             Rank = new OcrRank();
@@ -181,7 +203,49 @@ namespace STFC_EventLogger.AllianceClasses
         }
 
 
+        public ICommand ConfirmLevelCommand
+        {
+            get
+            {
+                if (confirmLevelCommand == null)
+                {
+                    confirmLevelCommand = new RelayCommand(
+                        p => BestLevel != null && BestLevel > 0 && AccuracyLevel < 1,
+                        p => ConfirmLevel());
+                }
+                return confirmLevelCommand;
+            }
+        }
 
+
+        public ICommand ConfirmPowerCommand
+        {
+            get
+            {
+                if (confirmPowerCommand == null)
+                {
+                    confirmPowerCommand = new RelayCommand(
+                        p => BestPower != null && BestPower > 0 && AccuracyPower < 1,
+                        p => ConfirmPower());
+                }
+                return confirmPowerCommand;
+            }
+        }
+
+
+        public ICommand ConfirmScoreCommand
+        {
+            get
+            {
+                if (confirmScoreCommand == null)
+                {
+                    confirmScoreCommand = new RelayCommand(
+                        p => BestScore != null && AccuracyScore < 1,
+                        p => ConfirmScore());
+                }
+                return confirmScoreCommand;
+            }
+        }
 
         public void MergeData()
         {
@@ -391,22 +455,17 @@ namespace STFC_EventLogger.AllianceClasses
         }
 
 
-        public void ConfirmLevel()
+        private void ConfirmLevel()
         {
-            if (BestLevel != null)
-                AccuracyLevel = 1;
+            AccuracyLevel = 1;
         }
-        public void ConfirmScore()
+        private void ConfirmPower()
         {
-            if (BestScore != null)
-                AccuracyScore = 1;
-            else
-                BestScore = 0;
+            AccuracyPower = 1;
         }
-        public void ConfirmPower()
+        private void ConfirmScore()
         {
-            if (BestPower != null)
-                AccuracyPower = 1;
+            AccuracyScore = 1;
         }
 
         private static SolidColorBrush CalcAccuracyBrush(float? value, List<AccuracyBrushLimits> limits)

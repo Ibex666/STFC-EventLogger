@@ -7,13 +7,14 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using STFC_EventLogger.AllianceClasses;
+using STFC_EventLogger.MVVM;
 
 namespace STFC_EventLogger
 {
     public class UserSettings
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        public Dictionary<string, string[]> Aliase { get; set; }
+        public Dictionary<string, List<string>> Aliase { get; set; }
 
         public Rect RectEventNames { get; set; }
         public Rect RectEventScores { get; set; }
@@ -39,13 +40,8 @@ namespace STFC_EventLogger
         /// User Settings
         /// </summary>
         internal static UserSettings us = new();
+        internal static Dictionary<string, List<string>> Aliase = new();
 
-        internal static BackgroundWorker bgw_Scanner = new();
-        internal static List<string> tmpFiles = new();
-        internal static List<SSTypeAnalyzer> filesToScan = new();
-        internal static List<AllianceMember> allianceMembers = new();
-        internal static List<OcrName> notRecognizedNames = new();
-        //internal static ObservableCollection<AllianceMember> obsAllianceMembers = new();
         internal static AllianceLeaderBoard allianceLeaderBoard = new();
     }
 }

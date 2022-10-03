@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal class OcrRank : BaseOcrClass, IEquatable<OcrRank?>
+    public class OcrRank : BaseOcrClass, IEquatable<OcrRank?>
     {
         public AllianceRanks Value { get; set; }
 

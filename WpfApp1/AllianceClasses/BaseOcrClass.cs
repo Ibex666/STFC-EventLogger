@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal abstract class BaseOcrClass
+    public abstract class BaseOcrClass
     {
         #region #- Public Properties -#
 

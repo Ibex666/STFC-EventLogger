@@ -7,7 +7,7 @@ using Tesseract;
 
 namespace STFC_EventLogger
 {
-    internal class SSTypeAnalyzer : IEquatable<SSTypeAnalyzer?>
+    public class SSTypeAnalyzer : IEquatable<SSTypeAnalyzer?>
     {
         public SSTypeAnalyzer(string file, ImageTypes imageType)
         {

@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using Rectangle = System.Drawing.Rectangle;
 using System;
 using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices;
 
 namespace STFC_EventLogger
 {
@@ -111,7 +112,21 @@ namespace STFC_EventLogger
         }
 
 
-
+        public static string CropImage(string bmpSrc, int x1, int y1, int x2, int y2)
+        {
+            using Bitmap bmp = new Bitmap(bmpSrc);
+            Rectangle srcRect = Rectangle.FromLTRB(x1, y1, x2, y2);
+            using Bitmap dest = new Bitmap(srcRect.Width, srcRect.Height);
+            Rectangle destRect = new Rectangle(0, 0, srcRect.Width, srcRect.Height);
+            using (Graphics graphics = Graphics.FromImage(dest))
+            {
+                graphics.DrawImage(bmp, destRect, srcRect, GraphicsUnit.Pixel);
+            }
+            string destFile = Path.GetTempFileName();
+            dest.Save(destFile);
+            return destFile;
+        }
+        
 
 
         internal static Image InvertUnsafe(Image imgSource)

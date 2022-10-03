@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    internal class OcrPower : BaseOcrClass, IEquatable<OcrPower?>, IComparable<OcrPower>
+    public class OcrPower : BaseOcrClass, IEquatable<OcrPower?>, IComparable<OcrPower>
     {
         public ulong? Value { get; set; }
 

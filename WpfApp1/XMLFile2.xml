@@ -1,7 +1,11 @@
-﻿<TextBlock ID="block_0" HPOS="437" VPOS="289" WIDTH="312" HEIGHT="40">
-  <TextLine ID="line_0" HPOS="437" VPOS="289" WIDTH="312" HEIGHT="40">
-    <String ID="string_0" HPOS="437" VPOS="289" WIDTH="133" HEIGHT="40" WC="0.81" CONTENT="[DGAF]" />
-    <SP WIDTH="24" VPOS="289" HPOS="570" />
-    <String ID="string_1" HPOS="594" VPOS="292" WIDTH="155" HEIGHT="31" WC="0.88" CONTENT="ooDMoo" />
-  </TextLine>
-</TextBlock>
+﻿<Page WIDTH="140" HEIGHT="42" PHYSICAL_IMG_NR="0" ID="page_0">
+  <PrintSpace HPOS="0" VPOS="0" WIDTH="140" HEIGHT="42">
+    <ComposedBlock ID="cblock_0" HPOS="314" VPOS="258" WIDTH="120" HEIGHT="21">
+      <TextBlock ID="block_0" HPOS="314" VPOS="258" WIDTH="120" HEIGHT="21">
+        <TextLine ID="line_0" HPOS="314" VPOS="258" WIDTH="120" HEIGHT="21">
+          <String ID="string_0" HPOS="314" VPOS="258" WIDTH="120" HEIGHT="21" WC="0.27" CONTENT="-—eVo-—" />
+        </TextLine>
+      </TextBlock>
+    </ComposedBlock>
+  </PrintSpace>
+</Page>

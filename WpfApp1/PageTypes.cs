@@ -1,6 +1,6 @@
 ﻿namespace STFC_EventLogger
 {
-    internal enum PageTypes
+    public enum PageTypes
     {
         MemberList,
         EventList

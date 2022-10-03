@@ -3,13 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:STFC_EventLogger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1150" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BitmapImage x:Key="img_ok" UriSource="Resources\ok.png"/>
+    </Window.Resources>
     <Grid>
-        <Button x:Name="btn_scan" Content="Scan" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Click="Btn_Scan_Click" Height="20" Width="60"/>
+        <Button Content="Scan" Command="{Binding ScanCommand}" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="20" Width="60"/>
+        <Button Content="Finish" Command="{Binding FinishCommand}" HorizontalAlignment="Center" Margin="130,10,0,0" VerticalAlignment="Top" Height="20" Width="60"/>
+        <TextBox HorizontalAlignment="Center" Margin="400,10,0,0" TextWrapping="Wrap" Text="{Binding AllianceScore, StringFormat=\{0:n0\}}" VerticalAlignment="Top" Height="20" Width="200" IsReadOnly="True"/>
         <Button Content="Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Btn_Test_Click" Height="20" Width="60"/>
-        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,35,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20">
+
+        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Members}" Margin="0,35,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Style.Triggers>
@@ -21,7 +27,7 @@
                             <MultiTrigger.Setters>
                                 <Setter Property="Background" Value="LightGray"/>
                                 <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="BorderBrush" Value="Red"/>
+                                <Setter Property="BorderBrush" Value="LawnGreen"/>
                                 <Setter Property="BorderThickness" Value="2"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
@@ -40,13 +46,20 @@
             </DataGrid.CellStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150"/>
+                <DataGridTextColumn Header="Name Scan" Binding="{Binding Name.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Header="Name Accuracy" Binding="{Binding Name.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Header="Event Name" Binding="{Binding EventListName.Value}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Header="Event Name Scan" Binding="{Binding EventListName.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Header="Event Name Accuracy" Binding="{Binding EventListName.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
                 <DataGridTextColumn Header="Rang" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100"/>
                 <DataGridTextColumn Header="Power Ranking" Binding="{Binding PowerRanking}" IsReadOnly="True" Width="30"/>
                 <DataGridTextColumn Header="Event Ranking" Binding="{Binding EventRanking}" IsReadOnly="True" Width="30"/>
-                <DataGridTemplateColumn Width="20">
+                <DataGridTemplateColumn Width="20" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="Btn_confirm_level"/>
+                            <Button Command="{Binding ConfirmLevelCommand}">
+                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -65,10 +78,12 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="20">
+                <DataGridTemplateColumn Width="20" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="Btn_confirm_power"/>
+                            <Button Command="{Binding ConfirmPowerCommand}">
+                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -87,10 +102,12 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="20">
+                <DataGridTemplateColumn Width="20" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="Btn_confirm_score"/>
+                            <Button Command="{Binding ConfirmScoreCommand}">
+                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -109,7 +126,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header="" Width="*"/>-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
