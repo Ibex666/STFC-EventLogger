@@ -1,0 +1,84 @@
+﻿<Window x:Class="STFC_EventLogger.Windows.NotRecognizedNamesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:STFC_EventLogger"
+        xmlns:ctr="clr-namespace:STFC_EventLogger.Controls"
+        xmlns:local="clr-namespace:STFC_EventLogger.Windows"
+        xmlns:mvvm="clr-namespace:STFC_EventLogger.MVVM" d:DataContext="{d:DesignInstance Type=mvvm:AllianceLeaderBoard}"
+        mc:Ignorable="d"
+        Title="NotRecognizedNames" Height="291" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+    <Window.Resources>
+        <converters:ParametrizedBooleanToVisibilityConverter x:Key="bool2visibility"/>
+        <System:String x:Key="csName">Name</System:String>
+        <System:String x:Key="csNameScan">Name Scan</System:String>
+        <System:String x:Key="csNameImage">Name Image</System:String>
+        <System:String x:Key="csNameAccuracy">Name Accuracy</System:String>
+        <System:String x:Key="csEventName">Event Name</System:String>
+        <System:String x:Key="csEventNameScan">Event Name Scan</System:String>
+        <System:String x:Key="csEventNameAccuracy">Event Name Accuracy</System:String>
+        <System:String x:Key="csRank">Rank</System:String>
+        <System:String x:Key="csPowerRanking">Power Ranking</System:String>
+        <System:String x:Key="csEventRanking">Event Ranking</System:String>
+        <System:String x:Key="csConfirmLevel">Confirm Level</System:String>
+        <System:String x:Key="csLevelAccuracy">Level Accuracy</System:String>
+        <System:String x:Key="csLevel">Level</System:String>
+        <System:String x:Key="csLevelImage">Level Image</System:String>
+        <System:String x:Key="csConfirmPower">Confirm Power</System:String>
+        <System:String x:Key="csPowerAccuracy">Power Accuracy</System:String>
+        <System:String x:Key="csPower">Power</System:String>
+        <System:String x:Key="csPowerImage">Power Image</System:String>
+        <System:String x:Key="csConfirmScore">Confirm Score</System:String>
+        <System:String x:Key="csScoreAccuracy">Score Accuracy</System:String>
+        <System:String x:Key="csScore">Score</System:String>
+        <System:String x:Key="csScoreImage">Score Image</System:String>
+        <System:Double x:Key="labelWidth">125</System:Double>
+    </Window.Resources>
+    <Grid>
+        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding NotRecognizedNames}" AutoGenerateColumns="False" RowHeight="25" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False" Margin="0,0,0,40">
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsFocused" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="LightGray"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="BorderBrush" Value="LawnGreen"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsFocused" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="LightGray"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </MultiTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridComboBoxColumn x:Name="dgcb" Header="{StaticResource csName}" SelectedValueBinding="{Binding Name.Value}" Width="150"/>
+                <DataGridTextColumn Header="{StaticResource csNameScan}" Binding="{Binding Name.Content}" IsReadOnly="True" Width="150"/>
+                <DataGridTemplateColumn Header="{StaticResource csNameImage}" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Name.Image}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="ToolTip" Value="{StaticResource csNameImage}"/>
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="OK" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="60" Click="Button_Click"/>
+    </Grid>
+</Window>

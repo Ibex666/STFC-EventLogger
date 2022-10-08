@@ -1,13 +1,17 @@
-﻿using System;
+﻿using STFC_EventLogger.MVVM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace STFC_EventLogger.AllianceClasses
 {
     public class OcrName : BaseOcrClass, IEquatable<OcrName?>, IComparable<OcrName>
     {
+        private const float MinClosestNameAccuracy = 0.65f;
+
         public string? Value { get; set; }
         public List<LevensteinNameDistance>? ClosestNames { get; set; }
         public bool RecognizedName { get; set; }
@@ -15,7 +19,7 @@ namespace STFC_EventLogger.AllianceClasses
         public OcrName() : base() { }
         public OcrName(XmlNodeList? xml, SSTypeAnalyzer file) : base()
         {
-            if (xml == null)
+            if (xml == null || xml.Count == 0)
                 return;
             FileName = file.FileName;
             ImageType = file.ImageType;
@@ -28,28 +32,36 @@ namespace STFC_EventLogger.AllianceClasses
 
             StringBuilder _sb = new();
             float _wc = 0;
-            foreach (XmlElement node in xml)
+
+            for (int i = xml.Count == 1 ? 0 : 1; i < xml.Count; i++)
             {
-                int _HPos = int.Parse(node.GetAttribute("HPOS"));
+#pragma warning disable CS8602 // Dereferenzierung eines möglichen Nullverweises.
+                var attr = xml[i].Attributes;
+                if (attr == null)
+                    continue;
+
+                int _HPos = int.Parse(attr["HPOS"].Value);
+
                 if (_HPos < X)
                     X = _HPos;
                 if (_HPos > _hpos_max)
                 {
                     _hpos_max = _HPos;
-                    Width = int.Parse(node.GetAttribute("WIDTH"));
+                    Width = int.Parse(attr["WIDTH"].Value);
                 }
 
-                int _VPos = int.Parse(node.GetAttribute("VPOS"));
+                int _VPos = int.Parse(attr["VPOS"].Value);
                 if (_VPos < Y)
                     Y = _VPos;
 
 
-                int _Height = int.Parse(node.GetAttribute("HEIGHT"));
+                int _Height = int.Parse(attr["HEIGHT"].Value);
                 if (_Height > Height)
                     Height = _Height;
 
-                _wc += float.Parse(node.GetAttribute("WC").Replace(".", ","));
-                _sb.Append(node.GetAttribute("CONTENT"));
+                _wc += float.Parse(attr["WC"].Value.Replace(".", ","));
+                _sb.Append(attr["CONTENT"].Value);
+#pragma warning restore CS8602 // Dereferenzierung eines möglichen Nullverweises.
             }
 
             Width += _hpos_max - X;
@@ -57,7 +69,7 @@ namespace STFC_EventLogger.AllianceClasses
             Content = _sb.ToString();
             Value = Content;
 
-            var a = V.Aliase.FirstOrDefault(item => item.Value.Contains(Content, StringComparer.OrdinalIgnoreCase));
+            var a = V.NameDicts.FirstOrDefault(item => item.Value.Contains(Content, StringComparer.OrdinalIgnoreCase));
             if (a.Key != null)
             {
                 Value = a.Key;
@@ -68,7 +80,7 @@ namespace STFC_EventLogger.AllianceClasses
             {
                 List<int> distances = new();
                 List<LevensteinNameDistance> nameDistances = new();
-                foreach (var item in V.Aliase)
+                foreach (var item in V.NameDicts)
                 {
                     foreach (var v in item.Value)
                     {
@@ -80,17 +92,23 @@ namespace STFC_EventLogger.AllianceClasses
                 ClosestNames = nameDistances.Where(_ => _.Distance == distances.Min()).ToList();
                 if (ClosestNames.Count == 1)
                 {
-                    Value = ClosestNames[0].Name;
-                    WC = ClosestNames[0].Accuracy;
-                    RecognizedName = true;
+                    if (ClosestNames[0].Accuracy >= MinClosestNameAccuracy)
+                    {
+                        Value = ClosestNames[0].Name;
+                        WC = ClosestNames[0].Accuracy;
+                        RecognizedName = true;
+                    }
                 }
                 else if (ClosestNames.Count > 1)
                 {
                     if (ClosestNames.All(_ => _.Name == ClosestNames[0].Name))
                     {
-                        Value = ClosestNames[0].Name;
-                        WC = ClosestNames[0].Accuracy;
-                        RecognizedName = true;
+                        if (ClosestNames.Any(_ => _.Accuracy >= MinClosestNameAccuracy))
+                        {
+                            Value = ClosestNames[0].Name;
+                            WC = ClosestNames[0].Accuracy;
+                            RecognizedName = true;
+                        }
                     }
                 }
             }

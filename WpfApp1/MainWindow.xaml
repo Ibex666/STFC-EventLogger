@@ -1,132 +1,322 @@
-﻿<Window x:Class="STFC_EventLogger.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:ctr="clr-namespace:STFC_EventLogger.Controls"
+        xmlns:converters="clr-namespace:STFC_EventLogger"
+        x:Class="STFC_EventLogger.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="STFC Event Logger" Height="600" Width="1200" WindowStartupLocation="CenterScreen" Icon="/Resources/logo.ico">
     <Window.Resources>
+        <converters:ParametrizedBooleanToVisibilityConverter x:Key="bool2visibility"/>
+        <System:String x:Key="csName">Name</System:String>
+        <System:String x:Key="csNameScan">Name Scan</System:String>
+        <System:String x:Key="csNameAccuracy">Name Accuracy</System:String>
+        <System:String x:Key="csEventName">Event Name</System:String>
+        <System:String x:Key="csEventNameScan">Event Name Scan</System:String>
+        <System:String x:Key="csEventNameAccuracy">Event Name Accuracy</System:String>
+        <System:String x:Key="csRank">Rank</System:String>
+        <System:String x:Key="csPowerRanking">Power Ranking</System:String>
+        <System:String x:Key="csEventRanking">Event Ranking</System:String>
+        <System:String x:Key="csConfirmLevel">Confirm Level</System:String>
+        <System:String x:Key="csLevelAccuracy">Level Accuracy</System:String>
+        <System:String x:Key="csLevel">Level</System:String>
+        <System:String x:Key="csLevelImage">Level Image</System:String>
+        <System:String x:Key="csConfirmPower">Confirm Power</System:String>
+        <System:String x:Key="csPowerAccuracy">Power Accuracy</System:String>
+        <System:String x:Key="csPower">Power</System:String>
+        <System:String x:Key="csPowerImage">Power Image</System:String>
+        <System:String x:Key="csConfirmScore">Confirm Score</System:String>
+        <System:String x:Key="csScoreAccuracy">Score Accuracy</System:String>
+        <System:String x:Key="csScore">Score</System:String>
+        <System:String x:Key="csScoreImage">Score Image</System:String>
+        <System:Double x:Key="labelWidth">125</System:Double>
         <BitmapImage x:Key="img_ok" UriSource="Resources\ok.png"/>
     </Window.Resources>
     <Grid>
-        <Button Content="Scan" Command="{Binding ScanCommand}" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="20" Width="60"/>
-        <Button Content="Finish" Command="{Binding FinishCommand}" HorizontalAlignment="Center" Margin="130,10,0,0" VerticalAlignment="Top" Height="20" Width="60"/>
-        <TextBox HorizontalAlignment="Center" Margin="400,10,0,0" TextWrapping="Wrap" Text="{Binding AllianceScore, StringFormat=\{0:n0\}}" VerticalAlignment="Top" Height="20" Width="200" IsReadOnly="True"/>
-        <Button Content="Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Btn_Test_Click" Height="20" Width="60"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <FrameworkElement x:Name="dummyElement" Visibility="Hidden" Grid.RowSpan="2"/>
 
-        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
-        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Members}" Margin="0,35,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False">
-            <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">
-                    <Style.Triggers>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True"/>
-                                <Condition Property="IsFocused" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
+        <Grid Grid.Row="1" Grid.ColumnSpan="10">
+            <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding Members}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False">
+                <DataGrid.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
                                 <Setter Property="Background" Value="LightGray"/>
                                 <Setter Property="Foreground" Value="Black"/>
                                 <Setter Property="BorderBrush" Value="LawnGreen"/>
                                 <Setter Property="BorderThickness" Value="2"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True"/>
-                                <Condition Property="IsFocused" Value="false"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsFocused" Value="false"/>
+                                </MultiTrigger.Conditions>
                                 <Setter Property="Background" Value="LightGray"/>
                                 <Setter Property="Foreground" Value="Black"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.CellStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150"/>
-                <DataGridTextColumn Header="Name Scan" Binding="{Binding Name.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Header="Name Accuracy" Binding="{Binding Name.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Header="Event Name" Binding="{Binding EventListName.Value}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Header="Event Name Scan" Binding="{Binding EventListName.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Header="Event Name Accuracy" Binding="{Binding EventListName.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Header="Rang" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100"/>
-                <DataGridTextColumn Header="Power Ranking" Binding="{Binding PowerRanking}" IsReadOnly="True" Width="30"/>
-                <DataGridTextColumn Header="Event Ranking" Binding="{Binding EventRanking}" IsReadOnly="True" Width="30"/>
-                <DataGridTemplateColumn Width="20" CanUserResize="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding ConfirmLevelCommand}">
-                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Level Accuracy" Binding="{Binding AccuracyLevel, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Background" Value="{Binding AccuracyLevelBrush}"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Level" Binding="{Binding BestLevel, StringFormat=\{0:n0\}}" Width="30"/>
-                <DataGridTemplateColumn Header="Level Image" IsReadOnly="True" Width="30">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding BestLevelImage}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="20" CanUserResize="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding ConfirmPowerCommand}">
-                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Power Accuracy" Binding="{Binding AccuracyPower, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Background" Value="{Binding AccuracyPowerBrush}"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Power" Binding="{Binding BestPower, StringFormat=\{0:n0\}}" Width="100"/>
-                <DataGridTemplateColumn Header="Power Image" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding BestPowerImage}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="20" CanUserResize="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding ConfirmScoreCommand}">
-                                <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Score Accuracy" Binding="{Binding AccuracyScore, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Background" Value="{Binding AccuracyScoreBrush}"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Score" Binding="{Binding BestScore, StringFormat=\{0:n0\}}" Width="100"/>
-                <DataGridTemplateColumn Header="Score Image" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding BestScoreImage}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{StaticResource csName}" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Setter Property="ToolTip" Value="{Binding NameColumnTooltip}" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csName}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csNameScan}" Binding="{Binding Name.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csNameScan}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csNameAccuracy}" Binding="{Binding Name.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csNameAccuracy}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csEventName}" Binding="{Binding EventListName.Value}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csEventName}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csEventNameScan}" Binding="{Binding EventListName.Content}" IsReadOnly="True" Width="150" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csEventNameScan}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csEventNameAccuracy}" Binding="{Binding EventListName.WC, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60" Visibility="{Binding DataContext.ColumnVisibility, Source={x:Reference dummyElement}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csEventNameAccuracy}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csRank}" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csRank}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csPowerRanking}" Binding="{Binding PowerRanking}" IsReadOnly="True" Width="30">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csPowerRanking}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csEventRanking}" Binding="{Binding EventRanking}" IsReadOnly="True" Width="30">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csEventRanking}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Width="20" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding ConfirmLevelCommand}">
+                                    <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csConfirmLevel}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{StaticResource csLevelAccuracy}" Binding="{Binding AccuracyLevel, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Background" Value="{Binding AccuracyLevelBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csLevelAccuracy}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csLevel}" Binding="{Binding BestLevel, StringFormat=\{0:n0\}}" Width="30">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csLevel}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="{StaticResource csLevelImage}" IsReadOnly="True" Width="30">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding BestLevelImage}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csLevelImage}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="20" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding ConfirmPowerCommand}">
+                                    <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csConfirmPower}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{StaticResource csPowerAccuracy}" Binding="{Binding AccuracyPower, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Background" Value="{Binding AccuracyPowerBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csPowerAccuracy}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csPower}" Binding="{Binding BestPower, StringFormat=\{0:n0\}}" Width="100">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csPower}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="{StaticResource csPowerImage}" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding BestPowerImage}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csPowerImage}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="20" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding ConfirmScoreCommand}">
+                                    <Image Source="{StaticResource img_ok}" Margin="0,0,0,0" Height="10" Width="10" Opacity="{Binding IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csConfirmScore}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{StaticResource csScoreAccuracy}" Binding="{Binding AccuracyScore, StringFormat=\{0:p1\}}" IsReadOnly="True" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Background" Value="{Binding AccuracyScoreBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csScoreAccuracy}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="{StaticResource csScore}" Binding="{Binding BestScore, StringFormat=\{0:n0\}}" Width="100">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csScore}"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="{StaticResource csScoreImage}" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding BestScoreImage}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="ToolTip" Value="{StaticResource csScoreImage}"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="1" Grid.ColumnSpan="10" d:Visibility="Hidden" Opacity="0.8" Visibility="{Binding IsBusy, Converter={StaticResource bool2visibility}, ConverterParameter=true}">
+            <ctr:LoadingPanel IsLoading="True" Message="{Binding PanelMainMessage}" SubMessage="{Binding PanelSubMessage}"/>
+        </Grid>
+        
+
+
+        <Button Content="Scan" Command="{Binding ScanCommand}" Margin="10,10,10,0" VerticalAlignment="Top" Height="20"/>
+        <Button Content="Copy" Command="{Binding CopyDataCommand}" Margin="10,35,10,0" VerticalAlignment="Top" Height="20"/>
+        <Button d:Content="+" Content="{Binding ColumnVisibilityButtonText}" Command="{Binding ColumnVisibilityCommand}" Margin="10,60,69,0" VerticalAlignment="Top" Height="20" Width="20"/>
+
+        <Grid Grid.Row="0" Grid.Column="2">
+            <DockPanel Height="20" LastChildFill="False" Margin="0,10,0,0" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Power Average:" DockPanel.Dock="Left" Width="{DynamicResource labelWidth}" TextAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" d:Text="39.309.044" Text="{Binding PowerAverage, Mode=OneWay, StringFormat=\{0:n0\}}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+            </DockPanel>
+            <DockPanel Height="20" LastChildFill="False" Margin="0,35,0,0" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Member Quantity:" DockPanel.Dock="Left" Width="{DynamicResource labelWidth}" TextAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" d:Text="89" Text="{Binding Members.Count, Mode=OneWay}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+            </DockPanel>
+            <DockPanel Height="20" LastChildFill="False" Margin="0,60,0,0" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Level Average:" DockPanel.Dock="Left" Width="{DynamicResource labelWidth}" TextAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" d:Text="44" Text="{Binding LevelAverage, Mode=OneWay, StringFormat=\{0:n0\}}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="0" Grid.Column="3">
+            <DockPanel Height="20" LastChildFill="False" Margin="0,10,0,0" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Total Points:" DockPanel.Dock="Left" Width="{DynamicResource labelWidth}" TextAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" d:Text="12.550.471.300" Text="{Binding AllianceScore, Mode=OneWay, StringFormat=\{0:n0\}}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+            </DockPanel>
+            <DockPanel Height="20" LastChildFill="False" Margin="0,35,0,0" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Members with Score:" DockPanel.Dock="Left" Width="{DynamicResource labelWidth}" TextAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" d:Text="80" Text="{Binding MembersWithScore, Mode=OneWay}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Grid>
+        <Button Content="" Click="Btn_Test_Click" Margin="70,60,10,0" VerticalAlignment="Top" Height="20" Width="20"/>
     </Grid>
 </Window>

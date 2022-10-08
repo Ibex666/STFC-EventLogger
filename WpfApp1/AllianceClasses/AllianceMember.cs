@@ -3,22 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
 using System.Runtime.CompilerServices;
-using System.Security;
-using System.Windows.Controls.Primitives;
+using System.Security.Policy;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
     public class AllianceMember : IEquatable<AllianceMember?>, INotifyPropertyChanged
     {
+        #region #- Private Fields -#
+
         private float? accuracyLevel;
         private float? accuracyScore;
         private float? accuracyPower;
@@ -29,6 +26,64 @@ namespace STFC_EventLogger.AllianceClasses
         private SolidColorBrush accuracyScoreBrush;
         private SolidColorBrush accuracyPowerBrush;
 
+        private ICommand? confirmLevelCommand;
+        private ICommand? confirmPowerCommand;
+        private ICommand? confirmScoreCommand;
+        private int? eventRanking;
+        private int? powerRanking;
+
+        #endregion
+
+        #region #- Constructor -#
+
+        public AllianceMember()
+        {
+            Name = new OcrName();
+            Rank = new OcrRank();
+            Levels = new();
+            Scores = new();
+            Powers = new();
+
+            BestLevel = new();
+            BestScore = new();
+            BestPower = new();
+
+            accuracyLevelBrush = new();
+            accuracyScoreBrush = new();
+            accuracyPowerBrush = new();
+
+            EventListName = new();
+
+            PageType = PageTypes.Unknown;
+        }
+        public AllianceMember(XmlElement xml, SSTypeAnalyzer file)
+        {
+            Levels = new();
+            Scores = new();
+            Powers = new();
+
+            //Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
+            Name = new OcrName(xml.SelectNodes("./TextLine[2]/String"), file);
+            Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), file);
+            Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), file));
+
+            BestLevel = new();
+            BestScore = new();
+            BestPower = new();
+
+            accuracyLevelBrush = new();
+            accuracyScoreBrush = new();
+            accuracyPowerBrush = new();
+
+            EventListName = new();
+
+            PageType = file.PageType;
+        }
+
+        #endregion
+
+        #region #- Public Properties -#
+
         public OcrName Name { get; set; }
         public OcrName EventListName { get; set; }
         public OcrRank Rank { get; set; }
@@ -37,9 +92,13 @@ namespace STFC_EventLogger.AllianceClasses
             get => bestLevel;
             set
             {
-                bestLevel = value;
-                AccuracyLevel = 1;
-                OnPropertyChanged();
+                if (value != bestLevel)
+                {
+                    bestLevel = value;
+                    AccuracyLevel = 1;
+                    OnPropertyChanged();
+                    BestLevelChanged?.Invoke(this, new EventArgs());
+                }
             }
         }
         public ulong? BestScore
@@ -47,9 +106,13 @@ namespace STFC_EventLogger.AllianceClasses
             get => bestScore;
             set
             {
-                bestScore = value;
-                AccuracyScore = 1;
-                OnPropertyChanged();
+                if (value != bestScore)
+                {
+                    bestScore = value;
+                    AccuracyScore = 1;
+                    OnPropertyChanged();
+                    BestScoreChanged?.Invoke(this, new EventArgs());
+                }
             }
         }
         public ulong? BestPower
@@ -57,9 +120,13 @@ namespace STFC_EventLogger.AllianceClasses
             get => bestPower;
             set
             {
-                bestPower = value;
-                AccuracyPower = 1;
-                OnPropertyChanged();
+                if (value != bestPower)
+                {
+                    bestPower = value;
+                    AccuracyPower = 1;
+                    OnPropertyChanged();
+                    BestPowerChanged?.Invoke(this, new EventArgs());
+                }
             }
         }
         public BitmapImage? BestLevelImage { get; set; }
@@ -149,11 +216,56 @@ namespace STFC_EventLogger.AllianceClasses
             }
         }
 
-        private ICommand? confirmLevelCommand;
-        private ICommand? confirmPowerCommand;
-        private ICommand? confirmScoreCommand;
-        private int? eventRanking;
-        private int? powerRanking;
+        public string NameColumnTooltip
+        {
+            get
+            {
+                return
+                    "Alliance:" +
+                    Environment.NewLine +
+                    $"{Name.Value} / {Name.Content} / {Name.WC,0:p1}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Event:" +
+                    Environment.NewLine +
+                    $"{EventListName.Value} / {EventListName.Content} / {EventListName.WC,0:p1}";
+            }
+        }
+
+        public ICommand ConfirmLevelCommand
+        {
+            get
+            {
+                confirmLevelCommand ??= new RelayCommand(
+                        p => BestLevel != null && BestLevel > 0 && AccuracyLevel < 1,
+                        p => ConfirmLevel());
+                return confirmLevelCommand;
+            }
+        }
+        public ICommand ConfirmPowerCommand
+        {
+            get
+            {
+                confirmPowerCommand ??= new RelayCommand(
+                        p => BestPower != null && BestPower > 0 && AccuracyPower < 1,
+                        p => ConfirmPower());
+                return confirmPowerCommand;
+            }
+        }
+        public ICommand ConfirmScoreCommand
+        {
+            get
+            {
+                confirmScoreCommand ??= new RelayCommand(
+                        p => BestScore != null && AccuracyScore < 1,
+                        p => ConfirmScore());
+                return confirmScoreCommand;
+            }
+        }
+
+        public PageTypes PageType { get; set; }
+
+        #endregion
 
         #region #- Events -#
 
@@ -161,91 +273,13 @@ namespace STFC_EventLogger.AllianceClasses
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        public event EventHandler? BestLevelChanged;
+        public event EventHandler? BestScoreChanged;
+        public event EventHandler? BestPowerChanged;
+
         #endregion
 
-        public AllianceMember()
-        {
-            Name = new OcrName();
-            Rank = new OcrRank();
-            Levels = new();
-            Scores = new();
-            Powers = new();
-
-            BestLevel = new();
-            BestScore = new();
-            BestPower = new();
-
-            accuracyLevelBrush = new();
-            accuracyScoreBrush = new();
-            accuracyPowerBrush = new();
-
-            EventListName = new();
-        }
-        public AllianceMember(XmlElement xml, SSTypeAnalyzer file)
-        {
-            Levels = new();
-            Scores = new();
-            Powers = new();
-
-            Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
-            Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), file);
-            Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), file));
-
-            BestLevel = new();
-            BestScore = new();
-            BestPower = new();
-
-            accuracyLevelBrush = new();
-            accuracyScoreBrush = new();
-            accuracyPowerBrush = new();
-
-            EventListName = new();
-        }
-
-
-        public ICommand ConfirmLevelCommand
-        {
-            get
-            {
-                if (confirmLevelCommand == null)
-                {
-                    confirmLevelCommand = new RelayCommand(
-                        p => BestLevel != null && BestLevel > 0 && AccuracyLevel < 1,
-                        p => ConfirmLevel());
-                }
-                return confirmLevelCommand;
-            }
-        }
-
-
-        public ICommand ConfirmPowerCommand
-        {
-            get
-            {
-                if (confirmPowerCommand == null)
-                {
-                    confirmPowerCommand = new RelayCommand(
-                        p => BestPower != null && BestPower > 0 && AccuracyPower < 1,
-                        p => ConfirmPower());
-                }
-                return confirmPowerCommand;
-            }
-        }
-
-
-        public ICommand ConfirmScoreCommand
-        {
-            get
-            {
-                if (confirmScoreCommand == null)
-                {
-                    confirmScoreCommand = new RelayCommand(
-                        p => BestScore != null && AccuracyScore < 1,
-                        p => ConfirmScore());
-                }
-                return confirmScoreCommand;
-            }
-        }
+        #region #- Instance Methods -#
 
         public void MergeData()
         {
@@ -454,7 +488,6 @@ namespace STFC_EventLogger.AllianceClasses
             }
         }
 
-
         private void ConfirmLevel()
         {
             AccuracyLevel = 1;
@@ -467,6 +500,10 @@ namespace STFC_EventLogger.AllianceClasses
         {
             AccuracyScore = 1;
         }
+
+        #endregion
+
+        #region #- Static Methods -#
 
         private static SolidColorBrush CalcAccuracyBrush(float? value, List<AccuracyBrushLimits> limits)
         {
@@ -483,36 +520,41 @@ namespace STFC_EventLogger.AllianceClasses
             return Brushes.Transparent;
         }
 
+        #endregion
+
+        #region #- Interface/Overridden Methods -#
 
         public override bool Equals(object? obj)
         {
             return Equals(obj as AllianceMember);
         }
-
         public bool Equals(AllianceMember? other)
         {
             return other is not null &&
                    Name.Value == other.Name.Value;
         }
-
         public override int GetHashCode()
         {
             return HashCode.Combine(Name.Value);
         }
-
         public override string? ToString()
         {
             return $"{Name.Value} / {Name.WC} / {Rank.Value} / {BestLevel} / {BestPower} / {PowerRanking} / {BestScore} / {EventRanking}";
         }
 
+        #endregion
+
+        #region #- Operators -#
+
         public static bool operator ==(AllianceMember? left, AllianceMember? right)
         {
             return EqualityComparer<AllianceMember>.Default.Equals(left, right);
         }
-
         public static bool operator !=(AllianceMember? left, AllianceMember? right)
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

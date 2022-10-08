@@ -2,6 +2,7 @@
 {
     public enum PageTypes
     {
+        Unknown,
         MemberList,
         EventList
     }

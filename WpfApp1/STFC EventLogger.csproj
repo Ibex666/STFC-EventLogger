@@ -9,31 +9,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\logo.ico" />
     <None Remove="Resources\ok.png" />
+    <None Remove="Resources\startrek.ico" />
+    <None Remove="Resources\startrek.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="Tesseract" Version="4.1.1" />
     <PackageReference Include="YamlDotNet" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Screenshots\" />
     <Folder Include="tessdata_fast\" />
     <Folder Include="tessdata_best\" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\logo.ico" />
     <Resource Include="Resources\ok.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="alias.yaml">
+    <None Update="Settings\alias.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="config.yaml">
+    <None Update="Settings\old_dictionary.yaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Settings\ocr_garbage.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Settings\config.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tessdata_best\eng.traineddata">
