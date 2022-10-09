@@ -11,6 +11,7 @@
         Title="STFC Event Logger" Height="600" Width="1200" WindowStartupLocation="CenterScreen" Icon="/Resources/logo.ico">
     <Window.Resources>
         <converters:ParametrizedBooleanToVisibilityConverter x:Key="bool2visibility"/>
+        <converters:NullImageConverter x:Key="nullImageConverter"/>
         <System:String x:Key="csName">Name</System:String>
         <System:String x:Key="csNameScan">Name Scan</System:String>
         <System:String x:Key="csNameAccuracy">Name Accuracy</System:String>
@@ -180,7 +181,7 @@
                     <DataGridTemplateColumn Header="{StaticResource csLevelImage}" IsReadOnly="True" Width="30">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding BestLevelImage}" />
+                                <Image Source="{Binding BestLevelImage, Converter={StaticResource nullImageConverter}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderStyle>
@@ -225,7 +226,7 @@
                     <DataGridTemplateColumn Header="{StaticResource csPowerImage}" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding BestPowerImage}" />
+                                <Image Source="{Binding BestPowerImage, Converter={StaticResource nullImageConverter}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderStyle>
@@ -270,7 +271,7 @@
                     <DataGridTemplateColumn Header="{StaticResource csScoreImage}" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding BestScoreImage}" />
+                                <Image Source="{Binding BestScoreImage, Converter={StaticResource nullImageConverter}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderStyle>

@@ -6,11 +6,14 @@ namespace STFC_EventLogger.AllianceClasses
 {
     public class OcrRank : BaseOcrClass, IEquatable<OcrRank?>
     {
-        public AllianceRanks? Value { get; set; }
+        public AllianceRanks Value { get; set; }
 
-        public OcrRank() : base() { }
+        public OcrRank() : base() { 
+            Value = AllianceRanks.Unknown;
+        }
         public OcrRank(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
         {
+            Value = AllianceRanks.Unknown;
             if (Content != null)
             {
                 int _dist = int.MaxValue;

@@ -6,6 +6,7 @@ using Rectangle = System.Drawing.Rectangle;
 using System;
 using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace STFC_EventLogger
 {
@@ -25,26 +26,24 @@ namespace STFC_EventLogger
         /// <returns>Image of the cropped and resized image.</returns>
         public static Image CropAndResizeImage(Image img, int targetWidth, int targetHeight, int x1, int y1, int x2, int y2, ImageFormat imageFormat)
         {
-            using (var memStream = new MemoryStream())
+            using var memStream = new MemoryStream();
+            using (var bmp = new Bitmap(targetWidth, targetHeight))
             {
-                using (var bmp = new Bitmap(targetWidth, targetHeight))
+                using (Graphics g = Graphics.FromImage(bmp))
                 {
-                    using (Graphics g = Graphics.FromImage(bmp))
-                    {
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        g.CompositingQuality = CompositingQuality.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
 
-                        int width = x2 - x1;
-                        int height = y2 - y1;
+                    int width = x2 - x1;
+                    int height = y2 - y1;
 
-                        g.DrawImage(img, new Rectangle(0, 0, targetWidth, targetHeight), x1, y1, width, height, GraphicsUnit.Pixel);
-                    }
-                    bmp.Save(memStream, imageFormat);
+                    g.DrawImage(img, new Rectangle(0, 0, targetWidth, targetHeight), x1, y1, width, height, GraphicsUnit.Pixel);
                 }
-                return Image.FromStream(memStream);
+                bmp.Save(memStream, imageFormat);
             }
+            return Image.FromStream(memStream);
         }
 
         /// <summary>
@@ -74,14 +73,29 @@ namespace STFC_EventLogger
         {
             return CropAndResizeImage(img, x2 - x1, y2 - y1, x1, y1, x2, y2, imageFormat);
         }
+        public static string CropImage(string imgFile, int x1, int y1, int x2, int y2, ImageFormat imageFormat)
+        {
+            string tmp = Path.GetTempFileName();
+
+            Task.Run(() =>
+            {
+                Image img = Image.FromFile(imgFile);
+                Image cropped = CropAndResizeImage(img, x2 - x1, y2 - y1, x1, y1, x2, y2, imageFormat);
+
+                cropped.Save(tmp);
+
+                img.Dispose();
+                cropped.Dispose();
+            });
+
+            return tmp;
+        }
 
         public static byte[] ToByteArray(this System.Drawing.Image image)
         {
-            using (var ms = new MemoryStream())
-            {
-                image.Save(ms, ImageFormat.Png);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            image.Save(ms, ImageFormat.Png);
+            return ms.ToArray();
         }
 
         public static BitmapImage? ImageFromBuffer(Image? img)
@@ -90,8 +104,8 @@ namespace STFC_EventLogger
                 return null;
 
             byte[] bytes = img.ToByteArray();
-            MemoryStream stream = new MemoryStream(bytes);
-            BitmapImage image = new BitmapImage();
+            MemoryStream stream = new(bytes);
+            BitmapImage image = new();
             image.BeginInit();
             image.StreamSource = stream;
             image.EndInit();
@@ -101,7 +115,7 @@ namespace STFC_EventLogger
         public static BitmapImage BitmapImageFromFile(string uri)
         {
             // Create source
-            BitmapImage myBitmapImage = new BitmapImage();
+            BitmapImage myBitmapImage = new();
 
             // BitmapImage.UriSource must be in a BeginInit/EndInit block
             myBitmapImage.BeginInit();
@@ -114,10 +128,10 @@ namespace STFC_EventLogger
 
         public static string CropImage(string bmpSrc, int x1, int y1, int x2, int y2)
         {
-            using Bitmap bmp = new Bitmap(bmpSrc);
+            using Bitmap bmp = new(bmpSrc);
             Rectangle srcRect = Rectangle.FromLTRB(x1, y1, x2, y2);
-            using Bitmap dest = new Bitmap(srcRect.Width, srcRect.Height);
-            Rectangle destRect = new Rectangle(0, 0, srcRect.Width, srcRect.Height);
+            using Bitmap dest = new(srcRect.Width, srcRect.Height);
+            Rectangle destRect = new(0, 0, srcRect.Width, srcRect.Height);
             using (Graphics graphics = Graphics.FromImage(dest))
             {
                 graphics.DrawImage(bmp, destRect, srcRect, GraphicsUnit.Pixel);
@@ -126,13 +140,13 @@ namespace STFC_EventLogger
             dest.Save(destFile);
             return destFile;
         }
-        
+
 
 
         internal static Image InvertUnsafe(Image imgSource)
         {
 
-            Bitmap bmpDest = new Bitmap(imgSource);
+            Bitmap bmpDest = new(imgSource);
 
             BitmapData bmpSource = bmpDest.LockBits(new Rectangle(0, 0,
                bmpDest.Width, bmpDest.Height), ImageLockMode.ReadWrite,
@@ -169,10 +183,9 @@ namespace STFC_EventLogger
         }
         internal static Image InvertColorMatrix(Image imgSource)
         {
-            Bitmap bmpDest = new Bitmap(imgSource.Width,
-               imgSource.Height);
+            Bitmap bmpDest = new(imgSource.Width, imgSource.Height);
 
-            ColorMatrix clrMatrix = new ColorMatrix(new float[][]
+            ColorMatrix clrMatrix = new(new float[][]
                {
             new float[] {-1, 0, 0, 0, 0},
             new float[] {0, -1, 0, 0, 0},
@@ -181,18 +194,16 @@ namespace STFC_EventLogger
             new float[] {1, 1, 1, 0, 1}
                });
 
-            using (ImageAttributes attrImage = new ImageAttributes())
+            using (ImageAttributes attrImage = new())
             {
 
                 attrImage.SetColorMatrix(clrMatrix);
 
-                using (Graphics g = Graphics.FromImage(bmpDest))
-                {
-                    g.DrawImage(imgSource, new Rectangle(0, 0,
-                    imgSource.Width, imgSource.Height), 0, 0,
-                    imgSource.Width, imgSource.Height, GraphicsUnit.Pixel,
-                    attrImage);
-                }
+                using Graphics g = Graphics.FromImage(bmpDest);
+                g.DrawImage(imgSource, new Rectangle(0, 0,
+                imgSource.Width, imgSource.Height), 0, 0,
+                imgSource.Width, imgSource.Height, GraphicsUnit.Pixel,
+                attrImage);
             }
 
             return bmpDest;
@@ -201,7 +212,7 @@ namespace STFC_EventLogger
         {
             Bitmap bmpDest;
 
-            using (Bitmap bmpSource = new Bitmap(imgSource))
+            using (Bitmap bmpSource = new(imgSource))
             {
                 bmpDest = new Bitmap(bmpSource.Width, bmpSource.Height);
 

@@ -29,7 +29,7 @@ namespace STFC_EventLogger.MVVM
         private decimal? allianceScore;
         private decimal? powerAverage;
         private decimal? levelAverage;
-        private bool scanEnabled;
+        private bool isBusy;
         private string? panelMainMessage;
         private string? panelSubMessage;
 
@@ -46,7 +46,6 @@ namespace STFC_EventLogger.MVVM
             MembersInternal = new();
             Members = new();
             IsBusy = false;
-            TmpFiles = new();
             FilesToScan = new();
             NotRecognizedNames = new();
 
@@ -67,7 +66,6 @@ namespace STFC_EventLogger.MVVM
 
         public ObservableCollection<AllianceMember> Members { get; set; }
         internal List<AllianceMember> MembersInternal { get; set; }
-        public List<string> TmpFiles { get; set; }
         public List<SSTypeAnalyzer> FilesToScan { get; set; }
         public ObservableCollection<AllianceMember> NotRecognizedNames { get; set; }
         public Visibility ColumnVisibility
@@ -108,9 +106,9 @@ namespace STFC_EventLogger.MVVM
         }
         public bool IsBusy
         {
-            get => scanEnabled; set
+            get => isBusy; set
             {
-                scanEnabled = value;
+                isBusy = value;
                 OnPropertyChanged();
             }
         }
@@ -202,7 +200,6 @@ namespace STFC_EventLogger.MVVM
         {
             Members.Clear();
             MembersInternal.Clear();
-            TmpFiles.Clear();
             FilesToScan.Clear();
 
             NotRecognizedNames = new();
@@ -339,17 +336,6 @@ namespace STFC_EventLogger.MVVM
         private void Bgw_Scanner_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             IsBusy = false;
-
-            Task.Run(() =>
-            {
-                foreach (var item in TmpFiles)
-                {
-                    if (File.Exists(item))
-                    {
-                        File.Delete(item);
-                    }
-                }
-            });
         }
         private void Bgw_Scanner_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
@@ -422,7 +408,6 @@ namespace STFC_EventLogger.MVVM
                     string fileNeg = Path.GetTempFileName();
                     imgNeg.Save(fileNeg);
                     tmpFiles.Add(new SSTypeAnalyzer(fileNeg, ImageTypes.Negative));
-                    V.allianceLeaderBoard.TmpFiles.Add(fileNeg);
 
                     x += 1f / V.allianceLeaderBoard.FilesToScan.Count;
                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));

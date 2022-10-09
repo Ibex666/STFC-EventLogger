@@ -6,7 +6,8 @@
         Commodore,
         Premier,
         Operative,
-        Agent
+        Agent,
+        Unknown
     }
 
 }
