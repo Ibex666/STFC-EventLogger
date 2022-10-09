@@ -311,24 +311,30 @@ namespace STFC_EventLogger.MVVM
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
             foreach (var item in MembersInternal)
             {
-                var dop = Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
-                {
-                    item.MergeData();
-                    Members.Add(item);
-                });
+                item.MergeData();
 
                 x += 1f / MembersInternal.Count;
                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
             }
 
-            Finish();
-
-            foreach (var item in Members)
+            x = 0;
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Add Members", ScanWorkerProgressReportMessageTypes.MainMessage));
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            foreach (var item in MembersInternal)
             {
-                item.BestScoreChanged += Member_BestScoreChanged;
-                item.BestLevelChanged += Member_BestLevelChanged;
-                item.BestPowerChanged += Member_BestPowerChanged;
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                {
+                    item.BestScoreChanged += Member_BestScoreChanged;
+                    item.BestLevelChanged += Member_BestLevelChanged;
+                    item.BestPowerChanged += Member_BestPowerChanged;
+                    Members.Add(item);
+
+                    x += 1f / MembersInternal.Count;
+                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                });
             }
+
+            Finish();
         }
         private void Bgw_Scanner_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
@@ -722,12 +728,16 @@ namespace STFC_EventLogger.MVVM
                         member.Scores.AddRange(item.Scores);
                     }
                 }
-                else
+                else if (item.Name.Value != null && item.Name.Value != string.Empty && item.Name.Content != null && item.Name.Content != string.Empty)
                 {
                     MembersInternal.Add(item);
                 }
+                else
+                {
+                    continue;
+                }
 
-                if (item.Name.Value != null && item.Name.Content != null)
+                if (item.Name.Value != null && item.Name.Value != string.Empty && item.Name.Content != null && item.Name.Content != string.Empty)
                 {
                     if (V.OcrGarbage.ContainsKey(item.Name.Value))
                     {

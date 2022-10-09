@@ -34,16 +34,16 @@
 
   <ItemGroup>
     <None Update="Settings\alias.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Settings\old_dictionary.yaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Settings\ocr_garbage.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Settings\config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tessdata_best\eng.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

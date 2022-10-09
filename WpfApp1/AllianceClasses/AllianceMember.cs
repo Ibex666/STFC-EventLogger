@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
@@ -55,6 +57,14 @@ namespace STFC_EventLogger.AllianceClasses
             EventListName = new();
 
             PageType = PageTypes.Unknown;
+
+
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            {
+                accuracyLevelBrush = new();
+                accuracyScoreBrush = new();
+                accuracyPowerBrush = new();
+            });
         }
         public AllianceMember(XmlElement xml, SSTypeAnalyzer file)
         {
@@ -62,7 +72,6 @@ namespace STFC_EventLogger.AllianceClasses
             Scores = new();
             Powers = new();
 
-            //Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
             Name = new OcrName(xml.SelectNodes("./TextLine[2]/String"), file);
             Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), file);
             Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), file));
@@ -78,6 +87,14 @@ namespace STFC_EventLogger.AllianceClasses
             EventListName = new();
 
             PageType = file.PageType;
+
+
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            {
+                accuracyLevelBrush = new();
+                accuracyScoreBrush = new();
+                accuracyPowerBrush = new();
+            });
         }
 
         #endregion
@@ -141,7 +158,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyLevel = value;
                 OnPropertyChanged();
 
-                AccuracyLevelBrush = CalcAccuracyBrush(value, V.us.AccuracyLevelBrushLimits);
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyLevelBrush = CalcAccuracyBrush(value, V.us.AccuracyLevelBrushLimits));
             }
         }
         public float? AccuracyScore
@@ -152,7 +169,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyScore = value;
                 OnPropertyChanged();
 
-                AccuracyScoreBrush = CalcAccuracyBrush(value, V.us.AccuracyScoreBrushLimits);
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyScoreBrush = CalcAccuracyBrush(value, V.us.AccuracyScoreBrushLimits));
             }
         }
         public float? AccuracyPower
@@ -163,7 +180,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyPower = value;
                 OnPropertyChanged();
 
-                AccuracyPowerBrush = CalcAccuracyBrush(value, V.us.AccuracyPowerBrushLimits);
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyPowerBrush = CalcAccuracyBrush(value, V.us.AccuracyPowerBrushLimits));
             }
         }
 
@@ -321,38 +338,47 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyLevel = (float)Math.Round(_vs.Value / (double)Levels.Count, 3);
 
-                    using var img = System.Drawing.Image.FromFile(_bestLevel.FileName);
-                    BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                        img,
-                        _bestLevel.X1 - 5,
-                        _bestLevel.Y1 - 5,
-                        _bestLevel.X2 + 5,
-                        _bestLevel.Y2 + 5,
-                        System.Drawing.Imaging.ImageFormat.Png));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        using var img = System.Drawing.Image.FromFile(_bestLevel.FileName);
+                        BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                            img,
+                            _bestLevel.X1 - 5,
+                            _bestLevel.Y1 - 5,
+                            _bestLevel.X2 + 5,
+                            _bestLevel.Y2 + 5,
+                            System.Drawing.Imaging.ImageFormat.Png));
+                    });
                 }
                 else
                 {
                     if (Levels.Count > 0)
                     {
-                        using var img = System.Drawing.Image.FromFile(Name.FileName);
-                        BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                            img,
-                            Levels[0].X1 - 5,
-                            Levels[0].Y1 - 5,
-                            Levels[0].X2 + 5,
-                            Levels[0].Y2 + 5,
-                            System.Drawing.Imaging.ImageFormat.Png));
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                        {
+                            using var img = System.Drawing.Image.FromFile(Name.FileName);
+                            BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                                    img,
+                                    Levels[0].X1 - 5,
+                                    Levels[0].Y1 - 5,
+                                    Levels[0].X2 + 5,
+                                    Levels[0].Y2 + 5,
+                                    System.Drawing.Imaging.ImageFormat.Png));
+                        });
                     }
                     else
                     {
-                        using var img = System.Drawing.Image.FromFile(Name.FileName);
-                        BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                            img,
-                            V.us.RectAllianceNames.X1,
-                            Name.Y1 - 5,
-                            V.us.RectAllianceNames.X2,
-                            Name.Y2 + 5,
-                            System.Drawing.Imaging.ImageFormat.Png));
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                        {
+                            using var img = System.Drawing.Image.FromFile(Name.FileName);
+                            BestLevelImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                                        img,
+                                        V.us.RectAllianceNames.X1,
+                                        Name.Y1 - 5,
+                                        V.us.RectAllianceNames.X2,
+                                        Name.Y2 + 5,
+                                        System.Drawing.Imaging.ImageFormat.Png));
+                        });
                     }
 
                     AccuracyLevel = 0;
@@ -397,25 +423,31 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyScore = (float)Math.Round(_vs.Value / (double)Scores.Count, 3);
 
-                    using var img = System.Drawing.Image.FromFile(_bestScore.FileName);
-                    BestScoreImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                        img,
-                        V.us.RectEventScores.X1,
-                        _bestScore.Y1 - 5,
-                        V.us.RectEventScores.X2,
-                        _bestScore.Y2 + 5,
-                        System.Drawing.Imaging.ImageFormat.Png));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        using var img = System.Drawing.Image.FromFile(_bestScore.FileName);
+                        BestScoreImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                                        img,
+                                        V.us.RectEventScores.X1,
+                                        _bestScore.Y1 - 5,
+                                        V.us.RectEventScores.X2,
+                                        _bestScore.Y2 + 5,
+                                        System.Drawing.Imaging.ImageFormat.Png));
+                    });
                 }
                 else
                 {
-                    using var img = System.Drawing.Image.FromFile(EventListName.FileName);
-                    BestScoreImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                        img,
-                        V.us.RectEventScores.X1,
-                        EventListName.Y1 - 5,
-                        V.us.RectEventScores.X2,
-                        EventListName.Y2 + 5,
-                        System.Drawing.Imaging.ImageFormat.Png));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        using var img = System.Drawing.Image.FromFile(EventListName.FileName);
+                        BestScoreImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                                            img,
+                                            V.us.RectEventScores.X1,
+                                            EventListName.Y1 - 5,
+                                            V.us.RectEventScores.X2,
+                                            EventListName.Y2 + 5,
+                                            System.Drawing.Imaging.ImageFormat.Png));
+                    });
 
                     AccuracyScore = 0;
                 }
@@ -458,25 +490,31 @@ namespace STFC_EventLogger.AllianceClasses
                     }
                     AccuracyPower = (float)Math.Round(_vs.Value / (double)Powers.Count, 3);
 
-                    using var img = System.Drawing.Image.FromFile(_bestPower.FileName);
-                    BestPowerImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                        img,
-                        V.us.RectAlliancePower.X1,
-                        _bestPower.Y1 - 5,
-                        V.us.RectAlliancePower.X2,
-                        _bestPower.Y2 + 5,
-                        System.Drawing.Imaging.ImageFormat.Png));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        using var img = System.Drawing.Image.FromFile(_bestPower.FileName);
+                        BestPowerImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                            img,
+                            V.us.RectAlliancePower.X1,
+                            _bestPower.Y1 - 5,
+                            V.us.RectAlliancePower.X2,
+                            _bestPower.Y2 + 5,
+                            System.Drawing.Imaging.ImageFormat.Png));
+                    });
                 }
                 else
                 {
-                    using var img = System.Drawing.Image.FromFile(Name.FileName);
-                    BestPowerImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                        img,
-                        V.us.RectAlliancePower.X1,
-                        Rank.Y1,
-                        V.us.RectAlliancePower.X2,
-                        Name.Y2,
-                        System.Drawing.Imaging.ImageFormat.Png));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        using var img = System.Drawing.Image.FromFile(Name.FileName);
+                        BestPowerImage = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
+                            img,
+                            V.us.RectAlliancePower.X1,
+                            Rank.Y1,
+                            V.us.RectAlliancePower.X2,
+                            Name.Y2,
+                            System.Drawing.Imaging.ImageFormat.Png));
+                    });
 
                     AccuracyPower = 0;
                 }

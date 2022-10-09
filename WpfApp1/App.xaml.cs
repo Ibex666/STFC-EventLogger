@@ -20,16 +20,28 @@ namespace STFC_EventLogger
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            try
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                .Build();
+
+            try { V.us = deserializer.Deserialize<UserSettings>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\config.yaml"))); }
+            catch (Exception)
             {
-                var deserializer = new DeserializerBuilder()
-                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
-                    .Build();
+                MessageBox.Show("error loading 'config.yaml'", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Current.Shutdown();
+                return;
+            }
 
-                V.us = deserializer.Deserialize<UserSettings>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\config.yaml")));
-                V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml")));
-                V.OcrGarbage = deserializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\ocr_garbage.yaml")));
+            try { V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml"))); }
+            catch (Exception)
+            {
+                MessageBox.Show("error loading 'alias.yaml'", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Current.Shutdown();
+                return;
+            }
 
+            if (V.Aliase is not null)
+            {
                 foreach (var item in V.Aliase)
                 {
                     if (!V.NameDicts.ContainsKey(item.Name))
@@ -41,15 +53,24 @@ namespace STFC_EventLogger
                         V.NameDicts[item.Name].AddRange(item.AKA.ToList());
                     }
                 }
+            }
+
+
+            try { V.OcrGarbage = deserializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\ocr_garbage.yaml"))); }
+            catch (Exception) { }
+
+            if (V.OcrGarbage is not null)
+            {
                 foreach (var item in V.OcrGarbage)
                 {
                     V.NameDicts[item.Key].AddRange(item.Value);
                 }
             }
-            catch (Exception)
+            else
             {
-                throw;
+                V.OcrGarbage = new();
             }
+
 
             V.frmMain = new MainWindow();
             V.frmMain.Show();
