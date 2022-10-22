@@ -127,9 +127,9 @@ namespace STFC_EventLogger.MVVM
                 switch (ColumnVisibility)
                 {
                     case Visibility.Visible:
-                        return "-";
+                        return "Show less columns";
                     default:
-                        return "+";
+                        return "Show more columns";
                 }
             }
         }

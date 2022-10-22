@@ -6,6 +6,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:ctr="clr-namespace:STFC_EventLogger.Controls"
         xmlns:converters="clr-namespace:STFC_EventLogger"
+        xmlns:onlyIn="clr-namespace:OnlyIn"
         x:Class="STFC_EventLogger.MainWindow"
         mc:Ignorable="d"
         Title="STFC Event Logger" Height="600" Width="1200" WindowStartupLocation="CenterScreen" Icon="/Resources/logo.ico">
@@ -35,6 +36,9 @@
         <System:String x:Key="csScoreImage">Score Image</System:String>
         <System:Double x:Key="labelWidth">125</System:Double>
         <BitmapImage x:Key="img_ok" UriSource="Resources\ok.png"/>
+        <BitmapImage x:Key="img_ocr" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\ocr.png"/>
+        <BitmapImage x:Key="img_copy" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\copy.png"/>
+        <BitmapImage x:Key="img_columns" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\columns.png"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,8 +46,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="210"/>
+            <ColumnDefinition Width="40"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
@@ -286,12 +290,28 @@
         <Grid Grid.Row="1" Grid.ColumnSpan="10" d:Visibility="Hidden" Opacity="0.8" Visibility="{Binding IsBusy, Converter={StaticResource bool2visibility}, ConverterParameter=true}">
             <ctr:LoadingPanel IsLoading="True" Message="{Binding PanelMainMessage}" SubMessage="{Binding PanelSubMessage}"/>
         </Grid>
-        
 
-
-        <Button Content="Scan" Command="{Binding ScanCommand}" Margin="10,10,10,0" VerticalAlignment="Top" Height="20"/>
-        <Button Content="Copy" Command="{Binding CopyDataCommand}" Margin="10,35,10,0" VerticalAlignment="Top" Height="20"/>
-        <Button d:Content="+" Content="{Binding ColumnVisibilityButtonText}" Command="{Binding ColumnVisibilityCommand}" Margin="10,60,69,0" VerticalAlignment="Top" Height="20" Width="20"/>
+        <ToolBar DockPanel.Dock="Top" Margin="0" VerticalAlignment="Top" Background="White" ToolBarTray.IsLocked="True" Loaded="ToolBar_Loaded" Height="90">
+            <Button VerticalAlignment="Top" Width="50" Command="{Binding ScanCommand}" ToolTip="Scan STFC Screenshots" Margin="5,7,5,0">
+                <StackPanel Orientation="Vertical" Margin="0">
+                    <ctr:AutoGrayableImage Source="{StaticResource img_ocr}" Margin="0,0,0,0" Height="50" Width="Auto"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Scan"/>
+                </StackPanel>
+            </Button>
+            <Button VerticalAlignment="Top" Width="50" Command="{Binding CopyDataCommand}" ToolTip="Copy Data" Margin="5,7,5,0">
+                <StackPanel Orientation="Vertical" Margin="0">
+                    <ctr:AutoGrayableImage Source="{StaticResource img_copy}" Margin="0,0,0,0" Height="50" Width="Auto"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Copy"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <CheckBox VerticalAlignment="Top" Width="50" Command="{Binding ColumnVisibilityCommand}" ToolTip="Show more columns" Margin="5,7,5,0">
+                <StackPanel Orientation="Vertical" Margin="0">
+                    <ctr:AutoGrayableImage Source="{StaticResource img_columns}" Margin="0,0,0,0" Height="50" Width="Auto"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" FontSize="8" d:Text="Show more columns" Text="{Binding ColumnVisibilityButtonText}"/>
+                </StackPanel>
+            </CheckBox>
+        </ToolBar>
 
         <Grid Grid.Row="0" Grid.Column="2">
             <DockPanel Height="20" LastChildFill="False" Margin="0,10,0,0" VerticalAlignment="Top">
@@ -318,6 +338,9 @@
                 <TextBlock TextWrapping="Wrap" d:Text="80" Text="{Binding MembersWithScore, Mode=OneWay}" Margin="10,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
             </DockPanel>
         </Grid>
-        <Button Content="" Click="Btn_Test_Click" Margin="70,60,10,0" VerticalAlignment="Top" Height="20" Width="20"/>
+
+        <onlyIn:DebugBuild Grid.Column="1">
+            <Button Content="" Click="Btn_Test_Click" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="20" Width="20"/>
+        </onlyIn:DebugBuild>
     </Grid>
 </Window>

@@ -6,13 +6,32 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Effects\EmbossEffect.fx" />
+    <None Remove="Effects\GrayscaleEffect.fx" />
+    <None Remove="Effects\InvertEffect.fx" />
+    <None Remove="Effects\SepiaEffect.fx" />
+    <None Remove="Resources\columns.png" />
+    <None Remove="Resources\copy.png" />
     <None Remove="Resources\logo.ico" />
+    <None Remove="Resources\ocr.png" />
     <None Remove="Resources\ok.png" />
     <None Remove="Resources\startrek.ico" />
     <None Remove="Resources\startrek.png" />
+    <None Remove="Shader\EmbossEffect.ps" />
+    <None Remove="Shader\GrayscaleEffect.ps" />
+    <None Remove="Shader\InvertEffect.ps" />
+    <None Remove="Shader\SepiaEffect.ps" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Effects\EmbossEffect.fx" />
+    <Content Include="Effects\GrayscaleEffect.fx" />
+    <Content Include="Effects\InvertEffect.fx" />
+    <Content Include="Effects\SepiaEffect.fx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,8 +47,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\columns.png" />
+    <Resource Include="Resources\copy.png" />
     <Resource Include="Resources\logo.ico" />
+    <Resource Include="Resources\ocr.png" />
     <Resource Include="Resources\ok.png" />
+    <Resource Include="Shader\EmbossEffect.ps" />
+    <Resource Include="Shader\GrayscaleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Shader\InvertEffect.ps" />
+    <Resource Include="Shader\SepiaEffect.ps" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +72,9 @@
     </None>
     <None Update="Settings\config.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tessdata_best\eng.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
