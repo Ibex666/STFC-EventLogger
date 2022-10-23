@@ -24,7 +24,7 @@ namespace STFC_EventLogger
         {
             using var image = Pix.LoadFromFile(FileName);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"tessdata"), "eng", EngineMode.TesseractOnly);
-            using var page = engine.Process(image, V.us.RectSsTypeAnalyzer);
+            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.RectSsTypeAnalyzer);
             XmlDocument xdoc = new();
             xdoc.LoadXml(page.GetAltoText(0));
 #pragma warning disable CS8602 // Dereferenzierung eines möglichen Nullverweises.

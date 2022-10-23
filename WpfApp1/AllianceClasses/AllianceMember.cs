@@ -166,7 +166,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyLevel = value;
                 OnPropertyChanged();
 
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyLevelBrush = CalcAccuracyBrush(value, V.us.AccuracyLevelBrushLimits));
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyLevelBrush = CalcAccuracyBrush(value, V.allianceLeaderBoard.SelectedUserConfig.AccuracyLevelBrushLimits));
             }
         }
         public float? AccuracyScore
@@ -177,7 +177,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyScore = value;
                 OnPropertyChanged();
 
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyScoreBrush = CalcAccuracyBrush(value, V.us.AccuracyScoreBrushLimits));
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyScoreBrush = CalcAccuracyBrush(value, V.allianceLeaderBoard.SelectedUserConfig.AccuracyScoreBrushLimits));
             }
         }
         public float? AccuracyPower
@@ -188,7 +188,7 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyPower = value;
                 OnPropertyChanged();
 
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyPowerBrush = CalcAccuracyBrush(value, V.us.AccuracyPowerBrushLimits));
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () => AccuracyPowerBrush = CalcAccuracyBrush(value, V.allianceLeaderBoard.SelectedUserConfig.AccuracyPowerBrushLimits));
             }
         }
 
@@ -346,9 +346,6 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyLevel = (float)Math.Round(_vs.Value / (double)Levels.Count, 3);
 
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    //{
-                    
                     BestLevelImage = ImageFunctions.CropImage(
                         _bestLevel.FileName,
                         _bestLevel.X1 - 5,
@@ -356,15 +353,11 @@ namespace STFC_EventLogger.AllianceClasses
                         _bestLevel.X2 + 5,
                         _bestLevel.Y2 + 5,
                         System.Drawing.Imaging.ImageFormat.Png);
-                    //});
                 }
                 else
                 {
                     if (Levels.Count > 0)
                     {
-                        //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                        //{
-                        //    using var img = System.Drawing.Image.FromFile(Name.FileName);
                         BestLevelImage = ImageFunctions.CropImage(
                                 Name.FileName,
                                 Levels[0].X1 - 5,
@@ -372,21 +365,16 @@ namespace STFC_EventLogger.AllianceClasses
                                 Levels[0].X2 + 5,
                                 Levels[0].Y2 + 5,
                                 System.Drawing.Imaging.ImageFormat.Png);
-                        //});
                     }
                     else
                     {
-                        //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                        //{
-                        //    using var img = System.Drawing.Image.FromFile(Name.FileName);
                         BestLevelImage = ImageFunctions.CropImage(
                                     Name.FileName,
-                                    V.us.RectAllianceNames.X1,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X1,
                                     Name.Y1 - 5,
-                                    V.us.RectAllianceNames.X2,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X2,
                                     Name.Y2 + 5,
                                     System.Drawing.Imaging.ImageFormat.Png);
-                        //});
                     }
 
                     AccuracyLevel = 0;
@@ -431,31 +419,23 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyScore = (float)Math.Round(_vs.Value / (double)Scores.Count, 3);
 
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    //{
-                    //    using var img = System.Drawing.Image.FromFile(_bestScore.FileName);
                     BestScoreImage = ImageFunctions.CropImage(
                                     _bestScore.FileName,
-                                    V.us.RectEventScores.X1,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X1,
                                     _bestScore.Y1 - 5,
-                                    V.us.RectEventScores.X2,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2,
                                     _bestScore.Y2 + 5,
                                     System.Drawing.Imaging.ImageFormat.Png);
-                    //});
                 }
                 else
                 {
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    //{
-                    //    using var img = System.Drawing.Image.FromFile(EventListName.FileName);
                     BestScoreImage = ImageFunctions.CropImage(
                                         EventListName.FileName,
-                                        V.us.RectEventScores.X1,
+                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X1,
                                         EventListName.Y1 - 5,
-                                        V.us.RectEventScores.X2,
+                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2,
                                         EventListName.Y2 + 5,
                                         System.Drawing.Imaging.ImageFormat.Png);
-                    //});
 
                     AccuracyScore = 0;
                 }
@@ -498,31 +478,23 @@ namespace STFC_EventLogger.AllianceClasses
                     }
                     AccuracyPower = (float)Math.Round(_vs.Value / (double)Powers.Count, 3);
 
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    //{
-                    //    using var img = System.Drawing.Image.FromFile(_bestPower.FileName);
                     BestPowerImage = ImageFunctions.CropImage(
                         _bestPower.FileName,
-                        V.us.RectAlliancePower.X1,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X1,
                         _bestPower.Y1 - 5,
-                        V.us.RectAlliancePower.X2,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2,
                         _bestPower.Y2 + 5,
                         System.Drawing.Imaging.ImageFormat.Png);
-                    //});
                 }
                 else
                 {
-                    //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                    //{
-                    //    using var img = System.Drawing.Image.FromFile(Name.FileName);
                     BestPowerImage = ImageFunctions.CropImage(
                         Name.FileName,
-                        V.us.RectAlliancePower.X1,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X1,
                         Rank.Y1,
-                        V.us.RectAlliancePower.X2,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2,
                         Name.Y2,
                         System.Drawing.Imaging.ImageFormat.Png);
-                    //});
 
                     AccuracyPower = 0;
                 }

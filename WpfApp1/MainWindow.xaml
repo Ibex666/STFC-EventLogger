@@ -47,7 +47,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210"/>
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
@@ -311,6 +311,7 @@
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" FontSize="8" d:Text="Show more columns" Text="{Binding ColumnVisibilityButtonText}"/>
                 </StackPanel>
             </CheckBox>
+            <Separator/>
         </ToolBar>
 
         <Grid Grid.Row="0" Grid.Column="2">
@@ -339,8 +340,18 @@
             </DockPanel>
         </Grid>
 
-        <onlyIn:DebugBuild Grid.Column="1">
-            <Button Content="" Click="Btn_Test_Click" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="20" Width="20"/>
+        <TextBlock Margin="10,10,10,0" VerticalAlignment="Top" Grid.Column="1" Text="Scanner Configuration:"/>
+        <ComboBox Margin="10,35,10,0" VerticalAlignment="Top" Grid.Column="1" SelectedItem="{Binding SelectedUserConfig}" ItemsSource="{Binding UserConfigs}"/>
+        
+        
+        
+        <onlyIn:DebugBuild Grid.Column="1" Margin="10,62,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="20">
+            <Button Content="" Click="Btn_Test_Click"/>
         </onlyIn:DebugBuild>
+        <onlyIn:DebugBuild Grid.Column="1" Margin="35,62,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20">
+            <TextBlock d:Text="00:00:10:2548" Text="{Binding ElapsedTime}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        </onlyIn:DebugBuild>
+        
+        
     </Grid>
 </Window>

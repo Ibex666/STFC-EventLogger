@@ -1,4 +1,7 @@
-﻿# Scanbereich für den Spielernamen in der Eventübersicht
+﻿# Anzeigename im DropDown Menü
+DisplayName: "Multi Task small numbers"
+
+# Scanbereich für den Spielernamen in der Eventübersicht
 RectEventNames:
   X: 420
   Y: 240
@@ -7,9 +10,9 @@ RectEventNames:
 
 # Scanbereich für die Punktzahl in der Eventübersicht
 RectEventScores:
-  X: 3450
+  X: 3640
   Y: 240
-  Width: 380
+  Width: 190
   Height: 1760
 
 # Scanbereich für den Spielernamen in der Allianzübersicht

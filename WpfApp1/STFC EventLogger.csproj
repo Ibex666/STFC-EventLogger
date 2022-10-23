@@ -61,8 +61,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Settings\2 Multi Task small Numbers.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Settings\alias.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Settings\4 MT ohne InvImg.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Settings\3 Single Task.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Settings\old_dictionary.yaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -70,8 +79,8 @@
     <None Update="Settings\ocr_garbage.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Settings\config.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="Settings\1 Multi Task.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tessdata\eng.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

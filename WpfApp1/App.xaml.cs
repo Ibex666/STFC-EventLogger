@@ -24,12 +24,21 @@ namespace STFC_EventLogger
                 .WithNamingConvention(PascalCaseNamingConvention.Instance)
                 .Build();
 
-            try { V.us = deserializer.Deserialize<UserSettings>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\config.yaml"))); }
-            catch (Exception)
+            bool _first = true;
+            foreach (var file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\"), "*.config.yaml"))
             {
-                MessageBox.Show("error loading 'config.yaml'", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Current.Shutdown();
-                return;
+                try
+                {
+                    UserConfig config = deserializer.Deserialize<UserConfig>(File.ReadAllText(file));
+                    V.allianceLeaderBoard.UserConfigs.Add(config);
+
+                    if (_first)
+                    {
+                        _first = false;
+                        V.allianceLeaderBoard.SelectedUserConfig = config;
+                    }
+                }
+                catch (Exception) { }
             }
 
             try { V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml"))); }

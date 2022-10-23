@@ -20,7 +20,6 @@ namespace STFC_EventLogger
         /// <summary>
         /// User Settings
         /// </summary>
-        internal static UserSettings us = new();
         internal static AllianceLeaderBoard allianceLeaderBoard = new();
 
         internal static Dictionary<string, List<string>> NameDicts = new();

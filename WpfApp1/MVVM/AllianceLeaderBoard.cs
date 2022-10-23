@@ -17,12 +17,17 @@ using System.Threading;
 using Tesseract;
 using System.Drawing;
 using System.Text;
+using System.Diagnostics;
 
 namespace STFC_EventLogger.MVVM
 {
     public class AllianceLeaderBoard : INotifyPropertyChanged
     {
         #region #- Private Fields -#
+
+#if DEBUG
+        private Stopwatch? stopwatch;
+#endif
 
         private readonly BackgroundWorker bgw_Scanner;
         private Visibility columnVisibility;
@@ -32,17 +37,21 @@ namespace STFC_EventLogger.MVVM
         private bool isBusy;
         private string? panelMainMessage;
         private string? panelSubMessage;
+        private string? elapsedTime;
 
         private ICommand? scanCommand;
         private ICommand? copyDataCommand;
         private ICommand? columnVisibilityCommand;
 
+
         #endregion
 
         #region #- Constructor -#
 
+
         public AllianceLeaderBoard()
         {
+            UserConfigs = new();
             MembersInternal = new();
             Members = new();
             IsBusy = false;
@@ -58,11 +67,16 @@ namespace STFC_EventLogger.MVVM
             bgw_Scanner.DoWork += Bgw_Scanner_DoWork;
             bgw_Scanner.RunWorkerCompleted += Bgw_Scanner_RunWorkerCompleted;
             bgw_Scanner.ProgressChanged += Bgw_Scanner_ProgressChanged;
+
+            SelectedUserConfig = new();
         }
 
         #endregion
 
         #region #- Public Properties -#
+
+        public UserConfig SelectedUserConfig { get; set; }
+        public List<UserConfig> UserConfigs { get; set; }
 
         public ObservableCollection<AllianceMember> Members { get; set; }
         internal List<AllianceMember> MembersInternal { get; set; }
@@ -152,6 +166,14 @@ namespace STFC_EventLogger.MVVM
                 OnPropertyChanged();
             }
         }
+        public string? ElapsedTime
+        {
+            get => elapsedTime; set
+            {
+                elapsedTime = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ICommand? ScanCommand
         {
@@ -183,6 +205,8 @@ namespace STFC_EventLogger.MVVM
                 return columnVisibilityCommand;
             }
         }
+
+
 
         #endregion
 
@@ -229,6 +253,11 @@ namespace STFC_EventLogger.MVVM
             }
 
             IsBusy = true;
+
+#if DEBUG
+            ElapsedTime = string.Empty;
+            stopwatch = Stopwatch.StartNew();
+#endif
 
             bgw_Scanner.RunWorkerAsync();
         }
@@ -278,7 +307,7 @@ namespace STFC_EventLogger.MVVM
         }
         private void Bgw_Scanner_DoWork(object? sender, DoWorkEventArgs e)
         {
-            if (V.us.UseInvertedImages)
+            if (SelectedUserConfig.UseInvertedImages)
             {
                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Invert Images", ScanWorkerProgressReportMessageTypes.MainMessage));
                 InvertImages();
@@ -336,6 +365,15 @@ namespace STFC_EventLogger.MVVM
         private void Bgw_Scanner_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
             IsBusy = false;
+
+#if DEBUG
+            if (stopwatch != null)
+            {
+                stopwatch.Stop();
+                ElapsedTime = stopwatch.Elapsed.ToString(@"mm\:ss\.ff");
+                stopwatch = null;
+            }
+#endif
         }
         private void Bgw_Scanner_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
@@ -351,6 +389,13 @@ namespace STFC_EventLogger.MVVM
                 }
 
             }
+
+#if DEBUG
+            if (stopwatch != null)
+            {
+                ElapsedTime = stopwatch.Elapsed.ToString(@"mm\:ss\.ff");
+            }
+#endif
         }
 
         private void Member_BestScoreChanged(object? sender, EventArgs e)
@@ -395,7 +440,7 @@ namespace STFC_EventLogger.MVVM
 
             List<Task> tasks = new();
             List<SSTypeAnalyzer> tmpFiles = new();
-            using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
+            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
             foreach (var file in V.allianceLeaderBoard.FilesToScan)
             {
                 semaphore.Wait();
@@ -426,7 +471,7 @@ namespace STFC_EventLogger.MVVM
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
             List<Task> tasks = new();
-            using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
+            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
             foreach (var file in V.allianceLeaderBoard.FilesToScan)
             {
                 semaphore.Wait();
@@ -452,7 +497,7 @@ namespace STFC_EventLogger.MVVM
 
             List<Task> tasks = new();
 
-            using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
+            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
             var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.MemberList);
 
             foreach (var file in files)
@@ -464,7 +509,7 @@ namespace STFC_EventLogger.MVVM
 
                     using (var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"tessdata"), "eng", EngineMode.TesseractOnly))
                     {
-                        using var page = engine.Process(image, V.us.RectAllianceNames);
+                        using var page = engine.Process(image, SelectedUserConfig.RectAllianceNames);
                         XmlDocument xdoc = new();
                         xdoc.LoadXml(page.GetAltoText(0));
 
@@ -508,15 +553,15 @@ namespace STFC_EventLogger.MVVM
                                 x += y;
                                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(V.us.RectAlliancePower.X, _am.Rank.Y, V.us.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Tesseract));
+                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Tesseract));
                                 x += y;
                                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(V.us.RectAlliancePower.X, _am.Rank.Y, V.us.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Fast));
+                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Fast));
                                 x += y;
                                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(V.us.RectAlliancePower.X, _am.Rank.Y, V.us.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Best));
+                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Best));
                                 x += y;
                                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
@@ -559,7 +604,7 @@ namespace STFC_EventLogger.MVVM
 
             List<Task> tasks = new();
 
-            using SemaphoreSlim semaphore = new(V.us.MaxParallelTasks);
+            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
             var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.EventList);
             foreach (var file in files)
             {
@@ -572,7 +617,7 @@ namespace STFC_EventLogger.MVVM
                     GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
                     using (var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode))
                     {
-                        using var page = engine.Process(image, V.us.RectEventNames);
+                        using var page = engine.Process(image, SelectedUserConfig.RectEventNames);
                         XmlDocument xdoc = new();
                         xdoc.LoadXml(page.GetAltoText(0));
 
@@ -614,15 +659,15 @@ namespace STFC_EventLogger.MVVM
                                     int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(member);
                                     V.allianceLeaderBoard.MembersInternal[idx].EventListName = _name;
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
+                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
+                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
+                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
                                 }
@@ -635,15 +680,15 @@ namespace STFC_EventLogger.MVVM
                                         PageType = PageTypes.EventList
                                     };
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
+                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
+                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(V.us.RectEventScores.X1, _name.Y1 - 10, V.us.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
+                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.X1, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
                                     x += y;
                                     bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
 
@@ -677,13 +722,7 @@ namespace STFC_EventLogger.MVVM
             {
                 item.Name.Value = null;
                 using var img = Image.FromFile(item.Name.FileName);
-                //item.Name.Image = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
-                //    img,
-                //    item.PageType == PageTypes.MemberList ? V.us.RectAllianceNames.X1 : V.us.RectEventNames.X1,
-                //    item.Name.Y1 - 5,
-                //    item.PageType == PageTypes.MemberList ? V.us.RectAllianceNames.X2 : V.us.RectEventNames.X2,
-                //    item.Name.Y2 + 5,
-                //    System.Drawing.Imaging.ImageFormat.Png));
+
                 item.Name.Image = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
                     img,
                     item.Name.X1 - 5,
