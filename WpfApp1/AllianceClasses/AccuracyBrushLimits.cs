@@ -46,8 +46,8 @@ namespace STFC_EventLogger.AllianceClasses
         {
             var split = value.Split(',');
             AccuracyBrushLimits r = new();
-            r.Min = int.Parse(split[0].Trim());
-            r.Max = int.Parse(split[1].Trim());
+            r.Min = float.Parse(split[0].Trim().Replace(".", ","));
+            r.Max = float.Parse(split[1].Trim().Replace(".", ","));
 
             var converter = new BrushConverter();
             r.Brush = (SolidColorBrush)converter.ConvertFromString(split[2].Trim());
