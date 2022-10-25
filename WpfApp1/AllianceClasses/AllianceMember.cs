@@ -370,9 +370,9 @@ namespace STFC_EventLogger.AllianceClasses
                     {
                         BestLevelImage = ImageFunctions.CropImage(
                                     Name.FileName,
-                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X1,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.Start.X,
                                     Name.Y1 - 5,
-                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X2,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.End.X,
                                     Name.Y2 + 5,
                                     System.Drawing.Imaging.ImageFormat.Png);
                     }
@@ -421,9 +421,9 @@ namespace STFC_EventLogger.AllianceClasses
 
                     BestScoreImage = ImageFunctions.CropImage(
                                     _bestScore.FileName,
-                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X1,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.Start.X,
                                     _bestScore.Y1 - 5,
-                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2,
+                                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.End.X,
                                     _bestScore.Y2 + 5,
                                     System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -431,9 +431,9 @@ namespace STFC_EventLogger.AllianceClasses
                 {
                     BestScoreImage = ImageFunctions.CropImage(
                                         EventListName.FileName,
-                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X1,
+                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.Start.X,
                                         EventListName.Y1 - 5,
-                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2,
+                                        V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.End.X,
                                         EventListName.Y2 + 5,
                                         System.Drawing.Imaging.ImageFormat.Png);
 
@@ -480,9 +480,9 @@ namespace STFC_EventLogger.AllianceClasses
 
                     BestPowerImage = ImageFunctions.CropImage(
                         _bestPower.FileName,
-                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X1,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.Start.X,
                         _bestPower.Y1 - 5,
-                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.End.X,
                         _bestPower.Y2 + 5,
                         System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -490,9 +490,9 @@ namespace STFC_EventLogger.AllianceClasses
                 {
                     BestPowerImage = ImageFunctions.CropImage(
                         Name.FileName,
-                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X1,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.Start.X,
                         Rank.Y1,
-                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2,
+                        V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.End.X,
                         Name.Y2,
                         System.Drawing.Imaging.ImageFormat.Png);
 

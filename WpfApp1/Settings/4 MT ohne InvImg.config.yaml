@@ -3,38 +3,48 @@ DisplayName: "Multi Task ohne InvImg"
 
 # Scanbereich für den Spielernamen in der Eventübersicht
 RectEventNames:
-  X: 420
-  Y: 240
-  Width: 580
-  Height: 1760
+  Start:
+    X: 420
+    Y: 240
+  End:
+    X: 1000
+    Y: 2000
 
 # Scanbereich für die Punktzahl in der Eventübersicht
 RectEventScores:
-  X: 3450
-  Y: 240
-  Width: 380
-  Height: 1760
+  Start:
+    X: 3450
+    Y: 240
+  End:
+    X: 3830
+    Y: 2000
 
 # Scanbereich für den Spielernamen in der Allianzübersicht
 RectAllianceNames:
-  X: 245
-  Y: 210
-  Width: 380
-  Height: 1805
+  Start:
+    X: 245
+    Y: 210
+  End:
+    X: 625
+    Y: 2015
 
 # Scanbereich für Power in der Allianzübersicht
 RectAlliancePower:
-  X: 3535
-  Y: 210
-  Width: 265
-  Height: 1805
-
+  Start:
+    X: 3535
+    Y: 210
+  End:
+    X: 3800
+    Y: 2015
+  
 # Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
 RectSsTypeAnalyzer:
-  X: 160
-  Y: 20
-  Width: 270
-  Height: 60
+  Start:
+    X: 160
+    Y: 20
+  End:
+    X: 430
+    Y: 80
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren

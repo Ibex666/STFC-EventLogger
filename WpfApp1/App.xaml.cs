@@ -38,7 +38,9 @@ namespace STFC_EventLogger
                         V.allianceLeaderBoard.SelectedUserConfig = config;
                     }
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                }
             }
 
             try { V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml"))); }

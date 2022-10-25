@@ -42,5 +42,17 @@ namespace STFC_EventLogger.AllianceClasses
         {
             return !(left == right);
         }
+        public static implicit operator AccuracyBrushLimits(string value)
+        {
+            var split = value.Split(',');
+            AccuracyBrushLimits r = new();
+            r.Min = int.Parse(split[0].Trim());
+            r.Max = int.Parse(split[1].Trim());
+
+            var converter = new BrushConverter();
+            r.Brush = (SolidColorBrush)converter.ConvertFromString(split[2].Trim());
+
+            return r;
+        }
     }
 }

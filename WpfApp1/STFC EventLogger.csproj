@@ -61,6 +61,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Settings\99 Test.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Settings\2 Multi Task small Numbers.config.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
