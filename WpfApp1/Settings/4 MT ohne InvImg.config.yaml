@@ -1,51 +1,6 @@
 ﻿# Anzeigename im DropDown Menü
 DisplayName: "Multi Task ohne InvImg"
 
-# Scanbereich für den Spielernamen in der Eventübersicht
-RectEventNames:
-  Start:
-    X: 420
-    Y: 240
-  End:
-    X: 1000
-    Y: 2000
-
-# Scanbereich für die Punktzahl in der Eventübersicht
-RectEventScores:
-  Start:
-    X: 3450
-    Y: 240
-  End:
-    X: 3830
-    Y: 2000
-
-# Scanbereich für den Spielernamen in der Allianzübersicht
-RectAllianceNames:
-  Start:
-    X: 245
-    Y: 210
-  End:
-    X: 625
-    Y: 2015
-
-# Scanbereich für Power in der Allianzübersicht
-RectAlliancePower:
-  Start:
-    X: 3535
-    Y: 210
-  End:
-    X: 3800
-    Y: 2015
-  
-# Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
-RectSsTypeAnalyzer:
-  Start:
-    X: 160
-    Y: 20
-  End:
-    X: 430
-    Y: 80
-
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
 MaxParallelTasks: 8
@@ -53,38 +8,43 @@ MaxParallelTasks: 8
 # sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
 UseInvertedImages: false
 
+# Scanbereich für den Spielernamen in der Eventübersicht
+# Rectangle "X1, Y1, X2, Y2"
+RectEventNames: "420, 240, 1000, 2000"
+
+# Scanbereich für die Punktzahl in der Eventübersicht
+# Rectangle "X1, Y1, X2, Y2"
+RectEventScores: "3450, 240, 3830, 2000"
+
+# Scanbereich für den Spielernamen in der Allianzübersicht
+# Rectangle "X1, Y1, X2, Y2"
+RectAllianceNames: "245, 210, 625, 2015"
+
+# Scanbereich für Power in der Allianzübersicht
+# Rectangle "X1, Y1, X2, Y2"
+RectAlliancePower: "3535, 210, 3800, 2015"
+  
+# Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
+# Rectangle "X1, Y1, X2, Y2"
+RectSsTypeAnalyzer: "160, 20, 430, 80"
+  
 # Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Level'
+# "Min, Max, Color"
 AccuracyLevelBrushLimits:
-- Min: 0
-  Max: 0.1
-  Brush: "#ffd44545"
-- Min: 0.101
-  Max: 0.25
-  Brush: "#ffff7545"
-- Min: 0.251
-  Max: 0.5
-  Brush: "#fffff156"
+- "0, 0.1, #ffd44545"
+- "0.101, 0.25, #ffff7545"
+- "0.251, 0.5, #fffff156"
 
 # Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Score'
+# "Min, Max, Color"
 AccuracyScoreBrushLimits:
-- Min: 0
-  Max: 0.333
-  Brush: "#ffd44545"
-- Min: 0.334
-  Max: 0.5
-  Brush: "#ffff7545"
-- Min: 0.501
-  Max: 0.8
-  Brush: "#fffff156"
+- "0, 0.333, #ffd44545"
+- "0.334, 0.5, #ffff7545"
+- "0.501, 0.8, #fffff156"
   
 # Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Power'
+# "Min, Max, Color"
 AccuracyPowerBrushLimits:
-- Min: 0
-  Max: 0.333
-  Brush: "#ffd44545"
-- Min: 0.334
-  Max: 0.5
-  Brush: "#ffff7545"
-- Min: 0.501
-  Max: 0.8
-  Brush: "#fffff156"
+- "0, 0.333, #ffd44545"
+- "0.334, 0.5, #ffff7545"
+- "0.501, 0.8, #fffff156"
