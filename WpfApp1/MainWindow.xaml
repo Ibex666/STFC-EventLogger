@@ -39,6 +39,28 @@
         <BitmapImage x:Key="img_ocr" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\ocr.png"/>
         <BitmapImage x:Key="img_copy" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\copy.png"/>
         <BitmapImage x:Key="img_columns" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\columns.png"/>
+        <Style x:Key="GlobalCellStyle" TargetType="{x:Type DataGridCell}">
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="IsFocused" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="LawnGreen"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </MultiTrigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="IsFocused" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -57,33 +79,12 @@
         <Grid Grid.Row="1" Grid.ColumnSpan="10">
             <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding Members}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False">
                 <DataGrid.CellStyle>
-                    <Style TargetType="{x:Type DataGridCell}">
-                        <Style.Triggers>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                    <Condition Property="IsFocused" Value="True"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" Value="LightGray"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="BorderBrush" Value="LawnGreen"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                    <Condition Property="IsFocused" Value="false"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" Value="LightGray"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                            </MultiTrigger>
-                        </Style.Triggers>
-                    </Style>
+                    <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource GlobalCellStyle}"/>
                 </DataGrid.CellStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{StaticResource csName}" Binding="{Binding Name.Value}" IsReadOnly="True" Width="150">
                         <DataGridTextColumn.CellStyle>
-                            <Style TargetType="{x:Type DataGridCell}">
+                            <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource GlobalCellStyle}">
                                 <Setter Property="ToolTip" Value="{Binding NameColumnTooltip}" />
                             </Style>
                         </DataGridTextColumn.CellStyle>
@@ -342,16 +343,16 @@
 
         <TextBlock Margin="10,10,10,0" VerticalAlignment="Top" Grid.Column="1" Text="Scanner Configuration:"/>
         <ComboBox Margin="10,35,10,0" VerticalAlignment="Top" Grid.Column="1" SelectedItem="{Binding SelectedUserConfig}" ItemsSource="{Binding UserConfigs}"/>
-        
-        
-        
+
+
+
         <onlyIn:DebugBuild Grid.Column="1" Margin="10,62,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="20">
             <Button Content="" Click="Btn_Test_Click"/>
         </onlyIn:DebugBuild>
         <onlyIn:DebugBuild Grid.Column="1" Margin="35,62,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20">
             <TextBlock d:Text="00:00:10:2548" Text="{Binding ElapsedTime}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </onlyIn:DebugBuild>
-        
-        
+
+
     </Grid>
 </Window>
