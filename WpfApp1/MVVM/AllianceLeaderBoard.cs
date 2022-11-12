@@ -347,18 +347,18 @@ namespace STFC_EventLogger.MVVM
 
             float x = 0;
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Merge Data", ScanWorkerProgressReportMessageTypes.MainMessage));
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            ReportPercentageSubMessage(x);
             foreach (var item in MembersInternal)
             {
                 item.MergeData();
 
                 x += 1f / MembersInternal.Count;
-                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                ReportPercentageSubMessage(x);
             }
 
             x = 0;
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Add Members", ScanWorkerProgressReportMessageTypes.MainMessage));
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            ReportPercentageSubMessage(x);
             foreach (var item in MembersInternal)
             {
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
@@ -369,7 +369,7 @@ namespace STFC_EventLogger.MVVM
                     Members.Add(item);
 
                     x += 1f / MembersInternal.Count;
-                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                    ReportPercentageSubMessage(x);
                 });
             }
 
@@ -449,7 +449,8 @@ namespace STFC_EventLogger.MVVM
         private void InvertImages()
         {
             float x = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            float y = 1f / (V.allianceLeaderBoard.FilesToScan.Count / 2);
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
             List<SSTypeAnalyzer> tmpFiles = new();
@@ -460,6 +461,8 @@ namespace STFC_EventLogger.MVVM
 
                 var t = Task.Factory.StartNew(() =>
                 {
+                    ReportPercentageSubMessage(x += y);
+
                     using Image img = Image.FromFile(file.FileName);
                     using Image imgNeg = ImageFunctions.InvertUnsafe(img);
 
@@ -467,8 +470,7 @@ namespace STFC_EventLogger.MVVM
                     imgNeg.Save(fileNeg);
                     tmpFiles.Add(new SSTypeAnalyzer(fileNeg, ImageTypes.Negative));
 
-                    x += 1f / V.allianceLeaderBoard.FilesToScan.Count;
-                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                    ReportPercentageSubMessage(x += y);
 
                     semaphore.Release();
                 });
@@ -481,7 +483,8 @@ namespace STFC_EventLogger.MVVM
         private void AnalyzeScreenshots()
         {
             float x = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            float y = 1f / (V.allianceLeaderBoard.FilesToScan.Count / 2);
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
@@ -491,10 +494,11 @@ namespace STFC_EventLogger.MVVM
 
                 var t = Task.Factory.StartNew(() =>
                 {
+                    ReportPercentageSubMessage(x += y);
+
                     file.Analyze();
 
-                    x += 1f / V.allianceLeaderBoard.FilesToScan.Count;
-                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                    ReportPercentageSubMessage(x += y);
 
                     semaphore.Release();
                 });
@@ -727,6 +731,9 @@ namespace STFC_EventLogger.MVVM
 
         private void ReportPercentageSubMessage(float percentage)
         {
+            if (percentage >= 1)
+                percentage = 1;
+
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{percentage,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
         }
 
