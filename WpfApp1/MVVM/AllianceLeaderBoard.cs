@@ -18,6 +18,7 @@ using Tesseract;
 using System.Drawing;
 using System.Text;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace STFC_EventLogger.MVVM
 {
@@ -505,7 +506,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
 
@@ -525,8 +526,7 @@ namespace STFC_EventLogger.MVVM
                         XmlDocument xdoc = new();
                         xdoc.LoadXml(page.GetAltoText(0));
 
-                        x += 0.1f / files.Count();
-                        bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                        ReportPercentageSubMessage(x += 0.1f / files.Count());
 
                         var nodes = xdoc.SelectNodes("//TextBlock");
                         if (nodes != null)
@@ -558,24 +558,19 @@ namespace STFC_EventLogger.MVVM
                                 }
 
                                 _am.Levels.Add(ScanMemberLevel(image, new Rect(_am.Levels[0].X1 - 10, _am.Levels[0].Y1 - 10, _am.Levels[0].Width + 20, _am.Levels[0].Height + 20), file, ScanMethods.Fast));
-                                x += y;
-                                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                ReportPercentageSubMessage(x += y);
 
                                 _am.Levels.Add(ScanMemberLevel(image, new Rect(_am.Levels[0].X1 - 10, _am.Levels[0].Y1 - 10, _am.Levels[0].Width + 20, _am.Levels[0].Height + 20), file, ScanMethods.Best));
-                                x += y;
-                                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                ReportPercentageSubMessage(x += y);
 
                                 _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Tesseract));
-                                x += y;
-                                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                ReportPercentageSubMessage(x += y);
 
                                 _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Fast));
-                                x += y;
-                                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                ReportPercentageSubMessage(x += y);
 
                                 _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Best));
-                                x += y;
-                                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                ReportPercentageSubMessage(x += y);
 
                                 if (_am.Name.RecognizedName)
                                 {
@@ -598,8 +593,7 @@ namespace STFC_EventLogger.MVVM
                         }
                     }
 
-                    x += 0.1f / files.Count();
-                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                    ReportPercentageSubMessage(x += 0.1f / files.Count());
 
                     image.Dispose();
                     semaphore.Release();
@@ -612,7 +606,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
 
@@ -633,16 +627,22 @@ namespace STFC_EventLogger.MVVM
                         XmlDocument xdoc = new();
                         xdoc.LoadXml(page.GetAltoText(0));
 
-                        x += 0.1f / files.Count();
-                        bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                        ReportPercentageSubMessage(x += 0.1f / files.Count());
 
                         var nodes = xdoc.SelectNodes("//TextLine/String[@CONTENT!=' ']/..");
                         if (nodes != null)
                         {
                             y = 0.8f / (files.Count() * nodes.Count * 3);
-                            foreach (XmlElement node in nodes)
+
+                            var data = OcrResponse.TextLine.GetAllTextLines(nodes);
+
+                            foreach (Rect dataRow in file.EventListDataRows)
                             {
-                                OcrName _name = new(node.SelectNodes(".//String"), file);
+                                var d = data.Where(_ => _.X1 >= dataRow.X1 && _.Y1 >= dataRow.Y1 && _.X2 <= dataRow.X2 && _.Y2 <= dataRow.Y2).ToList();
+                                if (d.Count == 0)
+                                    continue;
+
+                                OcrName _name = new(d[0].XmlStrings, file);
                                 if (_name.RecognizedName == false)
                                 {
                                     OcrName ocrName_fast = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Tesseract);
@@ -666,22 +666,23 @@ namespace STFC_EventLogger.MVVM
 
 
                                 AllianceMember? member = V.allianceLeaderBoard.MembersInternal.SingleOrDefault(_ => _.Name == _name);
+                                var scoreRect = new Rect(SelectedUserConfig.RectEventScores.Start.X,
+                                                         dataRow.Y1,
+                                                         SelectedUserConfig.RectEventScores.Width,
+                                                         dataRow.Height);
                                 if (member != null)
                                 {
                                     int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(member);
                                     V.allianceLeaderBoard.MembersInternal[idx].EventListName = _name;
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Tesseract));
+                                    ReportPercentageSubMessage(x += y);
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Fast));
+                                    ReportPercentageSubMessage(x += y);
 
-                                    member.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Best));
+                                    ReportPercentageSubMessage(x += y);
                                 }
                                 else
                                 {
@@ -692,17 +693,14 @@ namespace STFC_EventLogger.MVVM
                                         PageType = PageTypes.EventList
                                     };
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Tesseract));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Tesseract));
+                                    ReportPercentageSubMessage(x += y);
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Fast));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Fast));
+                                    ReportPercentageSubMessage(x += y);
 
-                                    am.Scores.Add(ScanMemberScore(image, new Rect(SelectedUserConfig.RectEventScores.Start.X, _name.Y1 - 10, SelectedUserConfig.RectEventScores.Width, _name.Height + 20), file, ScanMethods.Best));
-                                    x += y;
-                                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Best));
+                                    ReportPercentageSubMessage(x += y);
 
                                     if (_name.RecognizedName)
                                     {
@@ -717,8 +715,7 @@ namespace STFC_EventLogger.MVVM
                         }
                     }
 
-                    x += 0.1f / files.Count();
-                    bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{x,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+                    ReportPercentageSubMessage(x += 0.1f / files.Count());
 
                     image.Dispose();
                     semaphore.Release();
@@ -727,6 +724,12 @@ namespace STFC_EventLogger.MVVM
             }
             Task.WaitAll(tasks.ToArray());
         }
+
+        private void ReportPercentageSubMessage(float percentage)
+        {
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{percentage,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
+        }
+
         private void HandleNotRecognizedNames()
         {
             // taking screenshots from the name

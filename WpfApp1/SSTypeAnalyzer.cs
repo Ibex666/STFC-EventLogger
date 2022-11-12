@@ -13,12 +13,13 @@ namespace STFC_EventLogger
         {
             FileName = file;
             ImageType = imageType;
+            EventListDataRows = new List<Rect>();
         }
 
         public string FileName { get; set; }
         public PageTypes PageType { get; set; }
         public ImageTypes ImageType { get; set; }
-
+        public List<Rect> EventListDataRows { get; set; }
 
         public void Analyze()
         {
@@ -38,12 +39,39 @@ namespace STFC_EventLogger
                         break;
                     default:
                         PageType = PageTypes.EventList;
+                        GetEventListRects(image);
                         break;
                 }
             }
 #pragma warning restore CS8602 // Dereferenzierung eines möglichen Nullverweises.
         }
 
+        private void GetEventListRects(Pix image)
+        {
+            F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
+            using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
+            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.RectEventScoresAnalyzer);
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(page.GetAltoText(0));
+            var nodes = xdoc.SelectNodes("//ComposedBlock");
+            if (nodes != null)
+            {
+                foreach (XmlElement node in nodes)
+                {
+                    int x = V.allianceLeaderBoard.SelectedUserConfig.RectEventNames.X;
+                    int y = int.Parse(node.GetAttribute("VPOS"));
+                    int w = V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2 - x;
+                    int h = int.Parse(node.GetAttribute("HEIGHT"));
+
+                    int d = (int)(h * 1.5);
+                    y -= d;
+                    h += (d * 2);
+
+                    var r = new Rect(x, y, w, h);
+                    EventListDataRows.Add(r);
+                }
+            }
+        }
 
         public override bool Equals(object? obj)
         {

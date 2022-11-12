@@ -38,7 +38,7 @@ namespace STFC_EventLogger
                         V.allianceLeaderBoard.SelectedUserConfig = config;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
             }
