@@ -13,6 +13,7 @@ namespace STFC_EventLogger
 
         public Rect RectEventNames { get; set; }
         public Rect RectEventScores { get; set; }
+        public Rect RectEventScoresAnalyzer { get; set; }
         public Rect RectAllianceNames { get; set; }
         public Rect RectAlliancePower { get; set; }
         public Rect RectSsTypeAnalyzer { get; set; }
@@ -35,6 +36,7 @@ namespace STFC_EventLogger
                    EqualityComparer<Dictionary<string, List<string>>>.Default.Equals(Aliase, other.Aliase) &&
                    EqualityComparer<Rect>.Default.Equals(RectEventNames, other.RectEventNames) &&
                    EqualityComparer<Rect>.Default.Equals(RectEventScores, other.RectEventScores) &&
+                   EqualityComparer<Rect>.Default.Equals(RectEventScoresAnalyzer, other.RectEventScoresAnalyzer) &&
                    EqualityComparer<Rect>.Default.Equals(RectAllianceNames, other.RectAllianceNames) &&
                    EqualityComparer<Rect>.Default.Equals(RectAlliancePower, other.RectAlliancePower) &&
                    EqualityComparer<Rect>.Default.Equals(RectSsTypeAnalyzer, other.RectSsTypeAnalyzer) &&
@@ -52,6 +54,7 @@ namespace STFC_EventLogger
             hash.Add(Aliase);
             hash.Add(RectEventNames);
             hash.Add(RectEventScores);
+            hash.Add(RectEventScoresAnalyzer);
             hash.Add(RectAllianceNames);
             hash.Add(RectAlliancePower);
             hash.Add(RectSsTypeAnalyzer);

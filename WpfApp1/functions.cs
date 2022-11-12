@@ -58,5 +58,34 @@ namespace STFC_EventLogger
             // return result
             return matrix[source1Length, source2Length];
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scanMethod"></param>
+        /// <param name="tessdata"></param>
+        /// <param name="engineMode"></param>
+        internal static void GetEngineModeData(ScanMethods scanMethod, out string tessdata, out EngineMode engineMode)
+        {
+            switch (scanMethod)
+            {
+                case ScanMethods.Tesseract:
+                    tessdata = @"tessdata";
+                    engineMode = EngineMode.TesseractOnly;
+                    break;
+                case ScanMethods.Fast:
+                    tessdata = @"tessdata_fast";
+                    engineMode = EngineMode.LstmOnly;
+                    break;
+                case ScanMethods.Best:
+                    tessdata = @"tessdata_best";
+                    engineMode = EngineMode.LstmOnly;
+                    break;
+                default:
+                    tessdata = @"tessdata";
+                    engineMode = EngineMode.TesseractOnly;
+                    break;
+            }
+        }
     }
 }

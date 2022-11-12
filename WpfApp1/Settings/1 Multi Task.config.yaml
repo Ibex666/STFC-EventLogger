@@ -16,6 +16,10 @@ RectEventNames: "420, 240, 1000, 2000"
 # Rectangle "X1, Y1, X2, Y2"
 RectEventScores: "3450, 240, 3830, 2000"
 
+# Scanbereich zum analysieren der Event Score Positionen
+# Rectangle "X1, Y1, X2, Y2"
+RectEventScoresAnalyzer: "3700, 240, 3800, 2000"
+
 # Scanbereich für den Spielernamen in der Allianzübersicht
 # Rectangle "X1, Y1, X2, Y2"
 RectAllianceNames: "245, 210, 625, 2015"
