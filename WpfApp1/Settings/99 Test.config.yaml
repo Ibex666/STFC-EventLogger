@@ -1,5 +1,5 @@
 ﻿# Anzeigename im DropDown Menü
-DisplayName: "Test"
+DisplayName: "Test Hase"
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
@@ -10,27 +10,27 @@ UseInvertedImages: true
 
 # Scanbereich für den Spielernamen in der Eventübersicht
 # Rectangle "X1, Y1, X2, Y2"
-RectEventNames: "420, 240, 1000, 2000"
+RectEventNames: "225, 160, 600, 1030"
 
 # Scanbereich für die Punktzahl in der Eventübersicht
 # Rectangle "X1, Y1, X2, Y2"
-RectEventScores: "3450, 240, 3830, 2000"
+RectEventScores: "1700, 160, 1910, 1030"
 
 # Scanbereich zum analysieren der Event Score Positionen
 # Rectangle "X1, Y1, X2, Y2"
-RectEventScoresAnalyzer: "3700, 240, 3800, 2000"
+RectEventScoresAnalyzer: "1860, 160, 1910, 1030"
 
 # Scanbereich für den Spielernamen in der Allianzübersicht
 # Rectangle "X1, Y1, X2, Y2"
-RectAllianceNames: "245, 210, 625, 2015"
+RectAllianceNames: "130, 130, 360, 1000"
 
 # Scanbereich für Power in der Allianzübersicht
 # Rectangle "X1, Y1, X2, Y2"
-RectAlliancePower: "3535, 210, 3800, 2015"
+RectAlliancePower: "1755, 130, 1900, 1000"
   
 # Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
 # Rectangle "X1, Y1, X2, Y2"
-RectSsTypeAnalyzer: "160, 20, 430, 80"
+RectSsTypeAnalyzer: "80, 30, 240, 70"
 
 # Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Level'
 # "Min, Max, Color"

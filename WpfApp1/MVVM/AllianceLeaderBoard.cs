@@ -538,6 +538,18 @@ namespace STFC_EventLogger.MVVM
                             y = 0.8f / (files.Count() * nodes.Count * 5);
                             foreach (XmlElement node in nodes)
                             {
+                                int cc = 0;
+                                try
+                                {
+#pragma warning disable CS8602 // Dereferenzierung eines möglichen Nullverweises.
+                                    cc = node.SelectNodes("./TextLine").Count;
+#pragma warning restore CS8602 // Dereferenzierung eines möglichen Nullverweises.
+                                }
+                                catch (Exception) { }
+
+                                if (cc <= 1)
+                                    continue;
+
                                 AllianceMember _am = new(node, file);
 
                                 if (_am.Name.RecognizedName == false)
