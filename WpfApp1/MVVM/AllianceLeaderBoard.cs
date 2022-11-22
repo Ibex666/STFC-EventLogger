@@ -655,7 +655,20 @@ namespace STFC_EventLogger.MVVM
                                 if (d.Count == 0)
                                     continue;
 
-                                OcrName _name = new(d[0].XmlStrings, file);
+                                List<XmlNode> nodeslist = new List<XmlNode>();
+                                foreach (var item in d)
+                                {
+                                    if (item.XmlStrings != null)
+                                    {
+                                        foreach (XmlNode item2 in item.XmlStrings)
+                                        {
+                                            nodeslist.Add(item2);
+                                        }
+                                    }
+                                }
+
+                                //OcrName _name = new(d[0].XmlStrings, file);
+                                OcrName _name = new(nodeslist, file);
                                 if (_name.RecognizedName == false)
                                 {
                                     OcrName ocrName_fast = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Tesseract);

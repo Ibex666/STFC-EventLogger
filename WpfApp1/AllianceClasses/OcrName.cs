@@ -113,6 +113,102 @@ namespace STFC_EventLogger.AllianceClasses
                 }
             }
         }
+        public OcrName(List<XmlNode> xml, SSTypeAnalyzer file) : base()
+        {
+            if (xml == null || xml.Count == 0)
+                return;
+            FileName = file.FileName;
+            ImageType = file.ImageType;
+            RecognizedName = false;
+
+            X = int.MaxValue;
+            Y = int.MaxValue;
+            Height = 0;
+            int _hpos_max = 0;
+
+            StringBuilder _sb = new();
+            float _wc = 0;
+
+            for (int i = xml.Count == 1 ? 0 : 1; i < xml.Count; i++)
+            {
+#pragma warning disable CS8602 // Dereferenzierung eines möglichen Nullverweises.
+                var attr = xml[i].Attributes;
+                if (attr == null)
+                    continue;
+
+                int _HPos = int.Parse(attr["HPOS"].Value);
+
+                if (_HPos < X)
+                    X = _HPos;
+                if (_HPos > _hpos_max)
+                {
+                    _hpos_max = _HPos;
+                    Width = int.Parse(attr["WIDTH"].Value);
+                }
+
+                int _VPos = int.Parse(attr["VPOS"].Value);
+                if (_VPos < Y)
+                    Y = _VPos;
+
+
+                int _Height = int.Parse(attr["HEIGHT"].Value);
+                if (_Height > Height)
+                    Height = _Height;
+
+                _wc += float.Parse(attr["WC"].Value.Replace(".", ","));
+                _sb.Append(attr["CONTENT"].Value);
+#pragma warning restore CS8602 // Dereferenzierung eines möglichen Nullverweises.
+            }
+
+            Width += _hpos_max - X;
+            WC = (float)Math.Round(_wc / xml.Count, 2);
+            Content = _sb.ToString();
+            Value = Content;
+
+            var a = V.NameDicts.FirstOrDefault(item => item.Value.Contains(Content, StringComparer.OrdinalIgnoreCase));
+            if (a.Key != null)
+            {
+                Value = a.Key;
+                RecognizedName = true;
+                WC = 1;
+            }
+            else
+            {
+                List<int> distances = new();
+                List<LevensteinNameDistance> nameDistances = new();
+                foreach (var item in V.NameDicts)
+                {
+                    foreach (var v in item.Value)
+                    {
+                        int d = F.LevensteinDistance(Content, v);
+                        nameDistances.Add(new LevensteinNameDistance(item.Key, Content, d));
+                        distances.Add(d);
+                    }
+                }
+                ClosestNames = nameDistances.Where(_ => _.Distance == distances.Min()).ToList();
+                if (ClosestNames.Count == 1)
+                {
+                    if (ClosestNames[0].Accuracy >= MinClosestNameAccuracy)
+                    {
+                        Value = ClosestNames[0].Name;
+                        WC = ClosestNames[0].Accuracy;
+                        RecognizedName = true;
+                    }
+                }
+                else if (ClosestNames.Count > 1)
+                {
+                    if (ClosestNames.All(_ => _.Name == ClosestNames[0].Name))
+                    {
+                        if (ClosestNames.Any(_ => _.Accuracy >= MinClosestNameAccuracy))
+                        {
+                            Value = ClosestNames[0].Name;
+                            WC = ClosestNames[0].Accuracy;
+                            RecognizedName = true;
+                        }
+                    }
+                }
+            }
+        }
 
         public override string? ToString()
         {
