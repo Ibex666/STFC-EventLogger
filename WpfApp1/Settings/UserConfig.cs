@@ -16,6 +16,7 @@ namespace STFC_EventLogger
         public Rect RectEventScoresAnalyzer { get; set; }
         public Rect RectAllianceNames { get; set; }
         public Rect RectAlliancePower { get; set; }
+        public Rect RectAlliancePowerAnalyzer { get; set; }
         public Rect RectSsTypeAnalyzer { get; set; }
         public byte MaxParallelTasks { get; set; }
         public bool UseInvertedImages { get; set; }
@@ -39,6 +40,7 @@ namespace STFC_EventLogger
                    EqualityComparer<Rect>.Default.Equals(RectEventScoresAnalyzer, other.RectEventScoresAnalyzer) &&
                    EqualityComparer<Rect>.Default.Equals(RectAllianceNames, other.RectAllianceNames) &&
                    EqualityComparer<Rect>.Default.Equals(RectAlliancePower, other.RectAlliancePower) &&
+                   EqualityComparer<Rect>.Default.Equals(RectAlliancePowerAnalyzer, other.RectAlliancePowerAnalyzer) &&
                    EqualityComparer<Rect>.Default.Equals(RectSsTypeAnalyzer, other.RectSsTypeAnalyzer) &&
                    MaxParallelTasks == other.MaxParallelTasks &&
                    UseInvertedImages == other.UseInvertedImages &&
@@ -57,6 +59,7 @@ namespace STFC_EventLogger
             hash.Add(RectEventScoresAnalyzer);
             hash.Add(RectAllianceNames);
             hash.Add(RectAlliancePower);
+            hash.Add(RectAlliancePowerAnalyzer);
             hash.Add(RectSsTypeAnalyzer);
             hash.Add(MaxParallelTasks);
             hash.Add(UseInvertedImages);

@@ -14,12 +14,14 @@ namespace STFC_EventLogger
             FileName = file;
             ImageType = imageType;
             EventListDataRows = new List<Rect>();
+            AllianceListDataRows = new List<Rect>();
         }
 
         public string FileName { get; set; }
         public PageTypes PageType { get; set; }
         public ImageTypes ImageType { get; set; }
         public List<Rect> EventListDataRows { get; set; }
+        public List<Rect> AllianceListDataRows { get; set; }
 
         public void Analyze()
         {
@@ -36,6 +38,7 @@ namespace STFC_EventLogger
                 {
                     case "members":
                         PageType = PageTypes.MemberList;
+                        GetAllianceListRects(image);
                         break;
                     default:
                         PageType = PageTypes.EventList;
@@ -69,6 +72,31 @@ namespace STFC_EventLogger
 
                     var r = new Rect(x, y, w, h);
                     EventListDataRows.Add(r);
+                }
+            }
+        }
+        private void GetAllianceListRects(Pix image)
+        {
+            F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
+            using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
+            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePowerAnalyzer);
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(page.GetAltoText(0));
+            var nodes = xdoc.SelectNodes("//ComposedBlock");
+            if (nodes != null)
+            {
+                foreach (XmlElement node in nodes)
+                {
+                    int x = V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X;
+                    int y = int.Parse(node.GetAttribute("VPOS"));
+                    int w = V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2 - x;
+                    int h = int.Parse(node.GetAttribute("HEIGHT"));
+
+                    y -= h;
+                    h += (int)(h * 2.3);
+
+                    var r = new Rect(x, y, w, h);
+                    AllianceListDataRows.Add(r);
                 }
             }
         }

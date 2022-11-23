@@ -27,6 +27,10 @@ RectAllianceNames: "130, 130, 360, 1000"
 # Scanbereich für Power in der Allianzübersicht
 # Rectangle "X1, Y1, X2, Y2"
 RectAlliancePower: "1755, 130, 1900, 1000"
+
+# Scanbereich zum analysieren der Allianz Member Positionen
+# Rectangle "X1, Y1, X2, Y2"
+RectAlliancePowerAnalyzer: "1755, 130, 1790, 1000"
   
 # Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
 # Rectangle "X1, Y1, X2, Y2"
