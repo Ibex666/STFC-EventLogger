@@ -3,10 +3,10 @@ DisplayName: "Test Hase"
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
-MaxParallelTasks: 8
+MaxParallelTasks: 1
 
 # sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
-UseInvertedImages: true
+UseInvertedImages: false
 
 # Scanbereich für den Spielernamen in der Eventübersicht
 # Rectangle "X1, Y1, X2, Y2"
