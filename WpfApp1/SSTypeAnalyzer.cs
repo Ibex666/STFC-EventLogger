@@ -22,7 +22,7 @@ namespace STFC_EventLogger
         public ImageTypes ImageType { get; set; }
         public List<EventListDataRow> EventListDataRows { get; set; }
         public List<AllianceListDataRow> AllianceListDataRows { get; set; }
-
+        
         public void Analyze()
         {
             using var image = Pix.LoadFromFile(FileName);
@@ -99,17 +99,22 @@ namespace STFC_EventLogger
                     int y = int.Parse(node.GetAttribute("VPOS"));
                     int h = int.Parse(node.GetAttribute("HEIGHT"));
 
+                    int y1 = y + (h / 2);
+                    int h1 = h + (h / 2);
+
                     y -= h;
                     h += (int)(h * 2.3);
+
+                    
 
                     AllianceListDataRows.Add(new AllianceListDataRow(total: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
                                                                                      y,
                                                                                      V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.Width,
                                                                                      h),
                                                                      name: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
-                                                                                    y,
+                                                                                    y1,
                                                                                     V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX1X2,
-                                                                                    h),
+                                                                                    h1),
                                                                      power: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
                                                                                      y,
                                                                                      V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX3X4,

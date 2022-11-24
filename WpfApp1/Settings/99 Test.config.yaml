@@ -3,7 +3,7 @@ DisplayName: "Test Hase"
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
-MaxParallelTasks: 1
+MaxParallelTasks: 8
 
 # sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
 UseInvertedImages: false

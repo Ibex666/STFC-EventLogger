@@ -1,6 +1,6 @@
 ﻿namespace STFC_EventLogger
 {
-    enum ScanMethods
+    public enum ScanMethods
     {
         None,
         Tesseract,

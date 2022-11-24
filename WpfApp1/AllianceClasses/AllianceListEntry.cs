@@ -10,39 +10,38 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    public class AllianceListEntry : IEquatable<AllianceListEntry?>
+    public class AllianceListEntry
     {
         #region #- Private Fields -#
+
+        private readonly SSTypeAnalyzer _file;
 
         #endregion
 
         #region #- Constructor -#
 
-        public AllianceListEntry(string nameXML, string powerXML, SSTypeAnalyzer file)
+        public AllianceListEntry(SSTypeAnalyzer file)
         {
-            //Name = new OcrName(name.SelectNodes("./TextLine[2]/String"), file);
-            //Rank = new OcrRank(name.SelectSingleNode("./TextLine[1]/String"), file);
-            //Level = new OcrLevel(name.SelectSingleNode("./TextLine[2]/String[1]"), file);
-            //Power = new OcrPower(power, file);
+            Data = new();
 
-            ImageType = file.ImageType;
             FileName = file.FileName;
+            ImageType = file.ImageType;
+
+            _file = file;
         }
 
         #endregion
 
         #region #- Public Properties -#
 
-        public OcrName Name { get; set; }
-        public OcrRank Rank { get; set; }
-        public OcrLevel Level { get; set; }
-        public OcrPower Power { get; set; }
-
         public string FileName { get; set; }
         public ImageTypes ImageType { get; set; }
+
+        public List<AllianceListEntryData> Data { get; set; }
 
         #endregion
 
@@ -52,6 +51,15 @@ namespace STFC_EventLogger.AllianceClasses
 
         #region #- Instance Methods -#
 
+        public void AddData(AllianceListEntryData data)
+        {
+            Data.Add(data);
+        }
+        public void AddData(string nameXML, string powerXML, ScanMethods scanMethods)
+        {
+            Data.Add(new AllianceListEntryData(nameXML, powerXML, scanMethods));
+        }
+
         #endregion
 
         #region #- Static Methods -#
@@ -60,37 +68,25 @@ namespace STFC_EventLogger.AllianceClasses
 
         #region #- Interface/Overridden Methods -#
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as AllianceListEntry);
-        }
-        public bool Equals(AllianceListEntry? other)
-        {
-            return other is not null &&
-                   EqualityComparer<OcrName>.Default.Equals(Name, other.Name);
-        }
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name);
-        }
-        public override string? ToString()
-        {
-            return $"{Name.Value} / {Rank.Value} / {Level.Value} / {Power.Value}";
-        }
 
         #endregion
 
         #region #- Operators -#
 
-        public static bool operator ==(AllianceListEntry? left, AllianceListEntry? right)
+        #endregion
+    }
+
+    public class AllianceListEntryData
+    {
+        public AllianceListEntryData(string? nameXML, string? powerXML, ScanMethods scanMethods)
         {
-            return EqualityComparer<AllianceListEntry>.Default.Equals(left, right);
-        }
-        public static bool operator !=(AllianceListEntry? left, AllianceListEntry? right)
-        {
-            return !(left == right);
+            NameXML = nameXML;
+            PowerXML = powerXML;
+            ScanMethods = scanMethods;
         }
 
-        #endregion
+        public string? NameXML { get; set; }
+        public string? PowerXML { get; set; }
+        public ScanMethods ScanMethods { get; set; }
     }
 }

@@ -17,6 +17,9 @@ namespace STFC_EventLogger.AllianceClasses
     {
         #region #- Private Fields -#
 
+        private readonly string _nameXML;
+        private readonly string _scoreXML;
+
         #endregion
 
         #region #- Constructor -#
@@ -26,8 +29,15 @@ namespace STFC_EventLogger.AllianceClasses
             //Name = new OcrName(name.SelectNodes("./TextLine[2]/String"), file);
             //Score = new(score, file);
 
+            Name = new();
+            Score = new();
+
+
             ImageType = file.ImageType;
             FileName = file.FileName;
+
+            _nameXML = nameXML;
+            _scoreXML = scoreXML;
         }
 
         #endregion

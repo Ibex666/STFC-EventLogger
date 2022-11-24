@@ -647,30 +647,22 @@ namespace STFC_EventLogger.MVVM
 
                     foreach (var datarow in file.AllianceListDataRows)
                     {
+                        y = 0.8f / (files.Count() * file.AllianceListDataRows.Count * 3);
+
                         var name = ScanArea(image, datarow.NameRect, ScanMethods.Tesseract);
                         var power = ScanArea(image, datarow.PowerRect, ScanMethods.Tesseract);
-
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(power))
-                        {
-                            V.allianceLeaderBoard.AllianceListEntries.Add(new AllianceListEntry(name, power, file));
-                        }
-
-                        name = ScanArea(image, datarow.NameRect, ScanMethods.Fast);
-                        power = ScanArea(image, datarow.PowerRect, ScanMethods.Fast);
-
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(power))
-                        {
-                            V.allianceLeaderBoard.AllianceListEntries.Add(new AllianceListEntry(name, power, file));
-                        }
+                        datarow.AddData(name, power, ScanMethods.Tesseract);
+                        ReportPercentageSubMessage(x += y, file.FileName);
 
                         name = ScanArea(image, datarow.NameRect, ScanMethods.Best);
                         power = ScanArea(image, datarow.PowerRect, ScanMethods.Best);
+                        datarow.AddData(name, power, ScanMethods.Best);
+                        ReportPercentageSubMessage(x += y, file.FileName);
 
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(power))
-                        {
-                            V.allianceLeaderBoard.AllianceListEntries.Add(new AllianceListEntry(name, power, file));
-                        }
-
+                        name = ScanArea(image, datarow.NameRect, ScanMethods.Fast);
+                        power = ScanArea(image, datarow.PowerRect, ScanMethods.Fast);
+                        datarow.AddData(name, power, ScanMethods.Fast);
+                        ReportPercentageSubMessage(x += y, file.FileName);
                     }
 
                     ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
@@ -839,30 +831,22 @@ namespace STFC_EventLogger.MVVM
 
                     foreach (var datarow in file.EventListDataRows)
                     {
+                        y = 0.8f / (files.Count() * file.EventListDataRows.Count * 3);
+
                         var name = ScanArea(image, datarow.NameRect, ScanMethods.Tesseract);
                         var score = ScanArea(image, datarow.ScoreRect, ScanMethods.Tesseract);
-
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(score))
-                        {
-                            V.allianceLeaderBoard.EventListEntries.Add(new EventListEntry(name, score, file));
-                        }
+                        datarow.AddData(name, score, ScanMethods.Tesseract);
+                        ReportPercentageSubMessage(x += y, file.FileName);
 
                         name = ScanArea(image, datarow.NameRect, ScanMethods.Fast);
                         score = ScanArea(image, datarow.ScoreRect, ScanMethods.Fast);
-
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(score))
-                        {
-                            V.allianceLeaderBoard.EventListEntries.Add(new EventListEntry(name, score, file));
-                        }
+                        datarow.AddData(name, score, ScanMethods.Fast);
+                        ReportPercentageSubMessage(x += y, file.FileName);
 
                         name = ScanArea(image, datarow.NameRect, ScanMethods.Best);
                         score = ScanArea(image, datarow.ScoreRect, ScanMethods.Best);
-
-                        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(score))
-                        {
-                            V.allianceLeaderBoard.EventListEntries.Add(new EventListEntry(name, score, file));
-                        }
-
+                        datarow.AddData(name, score, ScanMethods.Best);
+                        ReportPercentageSubMessage(x += y, file.FileName);
                     }
 
                     ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
