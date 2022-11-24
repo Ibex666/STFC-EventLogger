@@ -13,15 +13,15 @@ namespace STFC_EventLogger
         {
             FileName = file;
             ImageType = imageType;
-            EventListDataRows = new List<Rect>();
-            AllianceListDataRows = new List<Rect>();
+            EventListDataRows = new();
+            AllianceListDataRows = new();
         }
 
         public string FileName { get; set; }
         public PageTypes PageType { get; set; }
         public ImageTypes ImageType { get; set; }
-        public List<Rect> EventListDataRows { get; set; }
-        public List<Rect> AllianceListDataRows { get; set; }
+        public List<EventListDataRow> EventListDataRows { get; set; }
+        public List<AllianceListDataRow> AllianceListDataRows { get; set; }
 
         public void Analyze()
         {
@@ -53,7 +53,7 @@ namespace STFC_EventLogger
         {
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.RectEventScoresAnalyzer);
+            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.EventListAnalyzerRect);
             XmlDocument xdoc = new();
             xdoc.LoadXml(page.GetAltoText(0));
             var nodes = xdoc.SelectNodes("//ComposedBlock");
@@ -61,17 +61,26 @@ namespace STFC_EventLogger
             {
                 foreach (XmlElement node in nodes)
                 {
-                    int x = V.allianceLeaderBoard.SelectedUserConfig.RectEventNames.X;
                     int y = int.Parse(node.GetAttribute("VPOS"));
-                    int w = V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.X2 - x;
                     int h = int.Parse(node.GetAttribute("HEIGHT"));
 
                     int d = (int)(h * 1.5);
                     y -= d;
                     h += (d * 2);
 
-                    var r = new Rect(x, y, w, h);
-                    EventListDataRows.Add(r);
+                    EventListDataRows.Add(new EventListDataRow(total: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X1,
+                                                                               y,
+                                                                               V.allianceLeaderBoard.SelectedUserConfig.EventListBP.Width,
+                                                                               h),
+                                                               name: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X1,
+                                                                              y,
+                                                                              V.allianceLeaderBoard.SelectedUserConfig.EventListBP.WidthX1X2,
+                                                                              h),
+                                                               score: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X3,
+                                                                               y,
+                                                                               V.allianceLeaderBoard.SelectedUserConfig.EventListBP.WidthX3X4,
+                                                                               h)
+                                                               ));
                 }
             }
         }
@@ -79,7 +88,7 @@ namespace STFC_EventLogger
         {
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePowerAnalyzer);
+            using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.AllianceListAnalyzerRect);
             XmlDocument xdoc = new();
             xdoc.LoadXml(page.GetAltoText(0));
             var nodes = xdoc.SelectNodes("//ComposedBlock");
@@ -87,16 +96,25 @@ namespace STFC_EventLogger
             {
                 foreach (XmlElement node in nodes)
                 {
-                    int x = V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.X;
                     int y = int.Parse(node.GetAttribute("VPOS"));
-                    int w = V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.X2 - x;
                     int h = int.Parse(node.GetAttribute("HEIGHT"));
 
                     y -= h;
                     h += (int)(h * 2.3);
 
-                    var r = new Rect(x, y, w, h);
-                    AllianceListDataRows.Add(r);
+                    AllianceListDataRows.Add(new AllianceListDataRow(total: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
+                                                                                     y,
+                                                                                     V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.Width,
+                                                                                     h),
+                                                                     name: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
+                                                                                    y,
+                                                                                    V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX1X2,
+                                                                                    h),
+                                                                     power: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
+                                                                                     y,
+                                                                                     V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX3X4,
+                                                                                     h)
+                                                                     ));
                 }
             }
         }
