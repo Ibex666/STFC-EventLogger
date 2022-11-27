@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Text;
 using System.Diagnostics;
 using System.Xml.Linq;
+using System.Windows.Documents;
 
 namespace STFC_EventLogger.MVVM
 {
@@ -86,7 +87,7 @@ namespace STFC_EventLogger.MVVM
         internal List<AllianceListEntry> AllianceListEntries { get; set; }
         internal List<EventListEntry> EventListEntries { get; set; }
 
-        [Obsolete]
+        
         internal List<AllianceMember> MembersInternal { get; set; }
 
 
@@ -328,11 +329,11 @@ namespace STFC_EventLogger.MVVM
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Analyze Screenshots", ScanWorkerProgressReportMessageTypes.MainMessage));
             AnalyzeScreenshots();
 
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Scan Member List", ScanWorkerProgressReportMessageTypes.MainMessage));
-            ScanMemberList();
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Scan Screenshots", ScanWorkerProgressReportMessageTypes.MainMessage));
+            ScanScreenshots();
 
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Scan Event List", ScanWorkerProgressReportMessageTypes.MainMessage));
-            ScanEventList();
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("do some more stuff...", ScanWorkerProgressReportMessageTypes.MainMessage));
+            DoSomeMoreStuff();
 
             if (NotRecognizedNames.Count > 0)
             {
@@ -517,8 +518,7 @@ namespace STFC_EventLogger.MVVM
             }
             Task.WaitAll(tasks.ToArray());
         }
-        [Obsolete]
-        private void ScanMemberList_alt()
+        private void ScanScreenshots()
         {
             float x = 0;
             float y = 0;
@@ -527,329 +527,36 @@ namespace STFC_EventLogger.MVVM
             List<Task> tasks = new();
 
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.MemberList);
 
-            foreach (var file in files)
+            foreach (var file in FilesToScan)
             {
                 semaphore.Wait();
                 var t = Task.Factory.StartNew(() =>
                 {
                     Pix image = Pix.LoadFromFile(file.FileName);
 
-                    using (var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"tessdata"), "eng", EngineMode.TesseractOnly))
+                    foreach (var datarow in file.DataRows)
                     {
-                        using var page = engine.Process(image, SelectedUserConfig.RectAllianceNames);
-                        XmlDocument xdoc = new();
-                        xdoc.LoadXml(page.GetAltoText(0));
+                        y = 0.8f / (FilesToScan.Count * file.DataRows.Count * 3);
 
-                        ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
-
-                        var nodes = xdoc.SelectNodes("//TextBlock");
-                        if (nodes != null)
-                        {
-                            y = 0.8f / (files.Count() * nodes.Count * 5);
-                            foreach (XmlElement node in nodes)
-                            {
-                                int cc = 0;
-
-                                var textlines = node.SelectNodes("./TextLine");
-                                if (textlines != null)
-                                    cc = textlines.Count;
-
-                                if (cc <= 1)
-                                    continue;
-
-                                AllianceMember _am = new(node, file);
-
-                                if (_am.Name.RecognizedName == false)
-                                {
-                                    OcrName ocrName_fast = ScanMemberName(image, new Rect(_am.Name.X1 - 10, _am.Name.Y1 - 10, _am.Name.Width + 20, _am.Name.Height + 20), file, ScanMethods.Fast);
-                                    if (ocrName_fast.RecognizedName == false)
-                                    {
-                                        OcrName ocrName_best = ScanMemberName(image, new Rect(_am.Name.X1 - 10, _am.Name.Y1 - 10, _am.Name.Width + 20, _am.Name.Height + 20), file, ScanMethods.Best);
-                                        if (ocrName_best.RecognizedName == false)
-                                        {
-
-                                        }
-                                        else
-                                        {
-                                            _am.Name = ocrName_best;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _am.Name = ocrName_fast;
-                                    }
-                                }
-
-                                _am.Levels.Add(ScanMemberLevel(image, new Rect(_am.Levels[0].X1 - 10, _am.Levels[0].Y1 - 10, _am.Levels[0].Width + 20, _am.Levels[0].Height + 20), file, ScanMethods.Fast));
-                                ReportPercentageSubMessage(x += y, file.FileName);
-
-                                _am.Levels.Add(ScanMemberLevel(image, new Rect(_am.Levels[0].X1 - 10, _am.Levels[0].Y1 - 10, _am.Levels[0].Width + 20, _am.Levels[0].Height + 20), file, ScanMethods.Best));
-                                ReportPercentageSubMessage(x += y, file.FileName);
-
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Tesseract));
-                                ReportPercentageSubMessage(x += y, file.FileName);
-
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Fast));
-                                ReportPercentageSubMessage(x += y, file.FileName);
-
-                                _am.Powers.Add(ScanMemberPower(image, new Rect(SelectedUserConfig.RectAlliancePower.Start.X, _am.Rank.Y, SelectedUserConfig.RectAlliancePower.Width, _am.Levels[0].Height + _am.Levels[0].Y - _am.Rank.Y), file, ScanMethods.Best));
-                                ReportPercentageSubMessage(x += y, file.FileName);
-
-                                if (_am.Name.RecognizedName)
-                                {
-                                    if (V.allianceLeaderBoard.MembersInternal.Contains(_am))
-                                    {
-                                        int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(_am);
-                                        V.allianceLeaderBoard.MembersInternal[idx].Levels.AddRange(_am.Levels);
-                                        V.allianceLeaderBoard.MembersInternal[idx].Powers.AddRange(_am.Powers);
-                                    }
-                                    else
-                                    {
-                                        V.allianceLeaderBoard.MembersInternal.Add(_am);
-                                    }
-                                }
-                                else
-                                {
-                                    V.allianceLeaderBoard.NotRecognizedNames.Add(_am);
-                                }
-                            }
-                        }
-                    }
-
-                    ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
-
-                    image.Dispose();
-                    semaphore.Release();
-                });
-                tasks.Add(t);
-            }
-            Task.WaitAll(tasks.ToArray());
-        }
-        private void ScanMemberList()
-        {
-            float x = 0;
-            float y = 0;
-            ReportPercentageSubMessage(x, null);
-
-            List<Task> tasks = new();
-
-            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.MemberList);
-
-            foreach (var file in files)
-            {
-                semaphore.Wait();
-                var t = Task.Factory.StartNew(() =>
-                {
-                    Pix image = Pix.LoadFromFile(file.FileName);
-
-                    foreach (var datarow in file.AllianceListDataRows)
-                    {
-                        y = 0.8f / (files.Count() * file.AllianceListDataRows.Count * 3);
-
-                        var name = ScanArea(image, datarow.NameRect, ScanMethods.Tesseract);
-                        var power = ScanArea(image, datarow.PowerRect, ScanMethods.Tesseract);
-                        datarow.AddData(name, power, ScanMethods.Tesseract);
-                        ReportPercentageSubMessage(x += y, file.FileName);
-
-                        name = ScanArea(image, datarow.NameRect, ScanMethods.Best);
-                        power = ScanArea(image, datarow.PowerRect, ScanMethods.Best);
-                        datarow.AddData(name, power, ScanMethods.Best);
-                        ReportPercentageSubMessage(x += y, file.FileName);
-
-                        name = ScanArea(image, datarow.NameRect, ScanMethods.Fast);
-                        power = ScanArea(image, datarow.PowerRect, ScanMethods.Fast);
-                        datarow.AddData(name, power, ScanMethods.Fast);
-                        ReportPercentageSubMessage(x += y, file.FileName);
-                    }
-
-                    ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
-
-                    image.Dispose();
-                    semaphore.Release();
-                });
-                tasks.Add(t);
-            }
-            Task.WaitAll(tasks.ToArray());
-        }
-        [Obsolete]
-        private void ScanEventList_alt()
-        {
-            float x = 0;
-            float y = 0;
-            ReportPercentageSubMessage(x, null);
-
-            List<Task> tasks = new();
-
-            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.EventList);
-            foreach (var file in files)
-            {
-                semaphore.Wait();
-
-                var t = Task.Factory.StartNew(() =>
-                {
-                    Pix image = Pix.LoadFromFile(file.FileName);
-
-                    GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
-                    using (var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode))
-                    {
-                        using var page = engine.Process(image, SelectedUserConfig.RectEventNames);
-                        XmlDocument xdoc = new();
-                        xdoc.LoadXml(page.GetAltoText(0));
-
-                        ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
-
-                        var nodes = xdoc.SelectNodes("//TextLine/String[@CONTENT!=' ']/..");
-                        if (nodes != null)
-                        {
-                            y = 0.8f / (files.Count() * nodes.Count * 3);
-
-                            var data = OcrResponse.TextLine.GetAllTextLines(nodes);
-
-                            foreach (var feldr in file.EventListDataRows)
-                            {
-                                Rect dataRow = feldr.TotalRect;
-                                var d = data.Where(_ => _.X1 >= dataRow.X1 && _.Y1 >= dataRow.Y1 && _.X2 <= dataRow.X2 && _.Y2 <= dataRow.Y2).ToList();
-                                if (d.Count == 0)
-                                    continue;
-
-                                List<XmlNode> nodeslist = new List<XmlNode>();
-                                foreach (var item in d)
-                                {
-                                    if (item.XmlStrings != null)
-                                    {
-                                        foreach (XmlNode item2 in item.XmlStrings)
-                                        {
-                                            nodeslist.Add(item2);
-                                        }
-                                    }
-                                }
-
-                                //OcrName _name = new(d[0].XmlStrings, file);
-                                OcrName _name = new(nodeslist, file);
-                                if (_name.RecognizedName == false)
-                                {
-                                    OcrName ocrName_fast = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Tesseract);
-                                    if (ocrName_fast.RecognizedName == false)
-                                    {
-                                        OcrName ocrName_best = ScanMemberName(image, new Rect(_name.X1 - 10, _name.Y1 - 10, _name.Width + 20, _name.Height + 020), file, ScanMethods.Best);
-                                        if (ocrName_best.RecognizedName == false)
-                                        {
-
-                                        }
-                                        else
-                                        {
-                                            _name = ocrName_best;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _name = ocrName_fast;
-                                    }
-                                }
-
-
-                                AllianceMember? member = V.allianceLeaderBoard.MembersInternal.FirstOrDefault(_ => _.Name == _name);
-                                var scoreRect = new Rect(SelectedUserConfig.RectEventScores.Start.X,
-                                                         dataRow.Y1,
-                                                         SelectedUserConfig.RectEventScores.Width,
-                                                         dataRow.Height);
-                                if (member != null)
-                                {
-                                    int idx = V.allianceLeaderBoard.MembersInternal.IndexOf(member);
-                                    V.allianceLeaderBoard.MembersInternal[idx].EventListName = _name;
-
-                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Tesseract));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-
-                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Fast));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-
-                                    member.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Best));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-                                }
-                                else
-                                {
-                                    AllianceMember am = new()
-                                    {
-                                        Name = _name,
-                                        EventListName = _name,
-                                        PageType = PageTypes.EventList
-                                    };
-
-                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Tesseract));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-
-                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Fast));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-
-                                    am.Scores.Add(ScanMemberScore(image, scoreRect, file, ScanMethods.Best));
-                                    ReportPercentageSubMessage(x += y, file.FileName);
-
-                                    if (_name.RecognizedName)
-                                    {
-                                        V.allianceLeaderBoard.MembersInternal.Add(am);
-                                    }
-                                    else
-                                    {
-                                        V.allianceLeaderBoard.NotRecognizedNames.Add(am);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
-
-                    image.Dispose();
-                    semaphore.Release();
-                });
-                tasks.Add(t);
-            }
-            Task.WaitAll(tasks.ToArray());
-        }
-        private void ScanEventList()
-        {
-            float x = 0;
-            float y = 0;
-            ReportPercentageSubMessage(x, null);
-
-            List<Task> tasks = new();
-
-            using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            var files = V.allianceLeaderBoard.FilesToScan.Where(_ => _.PageType == PageTypes.EventList);
-
-            foreach (var file in files)
-            {
-                semaphore.Wait();
-                var t = Task.Factory.StartNew(() =>
-                {
-                    Pix image = Pix.LoadFromFile(file.FileName);
-
-                    foreach (var datarow in file.EventListDataRows)
-                    {
-                        y = 0.8f / (files.Count() * file.EventListDataRows.Count * 3);
-
-                        var name = ScanArea(image, datarow.NameRect, ScanMethods.Tesseract);
-                        var score = ScanArea(image, datarow.ScoreRect, ScanMethods.Tesseract);
+                        var name = ScanArea(image, datarow.Rect2, ScanMethods.Tesseract);
+                        var score = ScanArea(image, datarow.Rect3, ScanMethods.Tesseract);
                         datarow.AddData(name, score, ScanMethods.Tesseract);
                         ReportPercentageSubMessage(x += y, file.FileName);
 
-                        name = ScanArea(image, datarow.NameRect, ScanMethods.Fast);
-                        score = ScanArea(image, datarow.ScoreRect, ScanMethods.Fast);
+                        name = ScanArea(image, datarow.Rect2, ScanMethods.Fast);
+                        score = ScanArea(image, datarow.Rect3, ScanMethods.Fast);
                         datarow.AddData(name, score, ScanMethods.Fast);
                         ReportPercentageSubMessage(x += y, file.FileName);
 
-                        name = ScanArea(image, datarow.NameRect, ScanMethods.Best);
-                        score = ScanArea(image, datarow.ScoreRect, ScanMethods.Best);
+                        name = ScanArea(image, datarow.Rect2, ScanMethods.Best);
+                        score = ScanArea(image, datarow.Rect3, ScanMethods.Best);
                         datarow.AddData(name, score, ScanMethods.Best);
                         ReportPercentageSubMessage(x += y, file.FileName);
+
                     }
 
-                    ReportPercentageSubMessage(x += 0.1f / files.Count(), file.FileName);
+                    ReportPercentageSubMessage(x += 0.1f / FilesToScan.Count, file.FileName);
 
                     image.Dispose();
                     semaphore.Release();
@@ -857,6 +564,55 @@ namespace STFC_EventLogger.MVVM
                 tasks.Add(t);
             }
             Task.WaitAll(tasks.ToArray());
+        }
+        private void DoSomeMoreStuff()
+        {
+            foreach (var file in FilesToScan)
+            {
+                foreach (var dr in file.DataRows)
+                {
+                    var ale = AllianceListEntry.FromSsTypeAnalyzer(dr, file);
+                    var ele = EventListEntry.FromSsTypeAnalyzer(dr, file);
+
+                    if (ale != null && ale.Name != null)
+                        AllianceListEntries.Add(ale);
+
+                    if (ele != null && ele.Name != null)
+                        EventListEntries.Add(ele);
+                }
+            }
+
+            foreach (var entry in AllianceListEntries)
+            {
+                var member = new AllianceMember(entry);
+                if (MembersInternal.Contains(member))
+                {
+                    int idx = MembersInternal.IndexOf(member);
+                    MembersInternal[idx].Levels.AddRange(member.Levels);
+                    MembersInternal[idx].Powers.AddRange(member.Powers);
+                }
+                else
+                {
+                    MembersInternal.Add(member);
+                }
+            }
+            foreach (var entry in EventListEntries)
+            {
+                AllianceMember? member = MembersInternal.FirstOrDefault(_ => _.Name == entry.Name);
+                if (member != null)
+                {
+                    int idx = MembersInternal.IndexOf(member);
+
+                    member.EventListName = entry.Name;
+                    member.Scores.AddRange(entry.Scores);                    
+                }
+                else
+                {
+                    MembersInternal.Add(new AllianceMember(entry));
+                }
+            }
+
+
         }
 
         private void ReportPercentageSubMessage(float percentage, string? filename)

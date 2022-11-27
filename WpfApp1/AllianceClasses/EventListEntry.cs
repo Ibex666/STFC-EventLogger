@@ -8,49 +8,65 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
 
 namespace STFC_EventLogger.AllianceClasses
 {
-    public class EventListEntry : IEquatable<EventListEntry?>
+    public class EventListEntry
     {
         #region #- Private Fields -#
-
-        private readonly string _nameXML;
-        private readonly string _scoreXML;
 
         #endregion
 
         #region #- Constructor -#
 
-        public EventListEntry(string nameXML, string scoreXML, SSTypeAnalyzer file)
+        public EventListEntry(DataRow dataRow, SSTypeAnalyzer file)
         {
-            //Name = new OcrName(name.SelectNodes("./TextLine[2]/String"), file);
-            //Score = new(score, file);
+            File = file;
+            Names = new();
+            Scores = new();
+            
+            NameImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect2Image);
+            ScoreImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect3Image);
 
-            Name = new();
-            Score = new();
+            dataRow.Data.ForEach((d) =>
+            {
+                var n = OcrName.FromEventList(d.Xml1, file);
+                if (n != null)
+                    Names.Add(n);
 
+                var s = OcrScore.FromEventList(d.Xml2, file);
+                if (s != null)
+                    Scores.Add(s);
+            });
 
-            ImageType = file.ImageType;
-            FileName = file.FileName;
+            Names.Sort((x, y) => y.Recognised.CompareTo(x.Recognised));
+            Names.Sort((x, y) => y.WC.CompareTo(x.WC));
 
-            _nameXML = nameXML;
-            _scoreXML = scoreXML;
+            if (Names.All(_ => _.Recognised == false))
+            {
+
+            }
+            else
+            {
+                Name = Names[0];
+            }
         }
 
         #endregion
 
         #region #- Public Properties -#
 
+        public SSTypeAnalyzer File { get; private set; }
+
         public OcrName Name { get; set; }
-        public OcrScore Score { get; set; }
+        public List<OcrName> Names { get; set; }
+        public List<OcrScore> Scores { get; set; }
 
-        public string FileName { get; set; }
-        public ImageTypes ImageType { get; set; }
-
-
+        public BitmapImage NameImage { get; set; }
+        public BitmapImage ScoreImage { get; set; }
 
         #endregion
 
@@ -64,40 +80,29 @@ namespace STFC_EventLogger.AllianceClasses
 
         #region #- Static Methods -#
 
+        public static EventListEntry? FromSsTypeAnalyzer(DataRow dataRow, SSTypeAnalyzer file)
+        {
+            if (file.PageType != PageTypes.EventList)
+                return null;
+
+            var ret = new EventListEntry(dataRow, file);
+
+            if (ret.Names.All(_ => string.IsNullOrWhiteSpace(_.Content)) |
+                ret.Scores.All(_ => string.IsNullOrWhiteSpace(_.Content)))
+            {
+                return null;
+            }
+
+            return ret;
+        }
+
         #endregion
 
         #region #- Interface/Overridden Methods -#
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as EventListEntry);
-        }
-        public bool Equals(EventListEntry? other)
-        {
-            return other is not null &&
-                   EqualityComparer<OcrName>.Default.Equals(Name, other.Name);
-        }
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name);
-        }
-        public override string? ToString()
-        {
-            return $"{Name.Value} / {Score.Value}";
-        }
-
         #endregion
 
         #region #- Operators -#
-
-        public static bool operator ==(EventListEntry? left, EventListEntry? right)
-        {
-            return EqualityComparer<EventListEntry>.Default.Equals(left, right);
-        }
-        public static bool operator !=(EventListEntry? left, EventListEntry? right)
-        {
-            return !(left == right);
-        }
 
         #endregion
     }

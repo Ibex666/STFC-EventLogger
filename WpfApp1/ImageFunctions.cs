@@ -76,6 +76,8 @@ namespace STFC_EventLogger
         public static string CropImage(string imgFile, int x1, int y1, int x2, int y2, ImageFormat imageFormat)
         {
             string tmp = Path.GetTempFileName();
+            var ext = Path.GetExtension(imgFile);
+            tmp = Path.ChangeExtension(tmp, ext);
 
             Task.Run(() =>
             {
@@ -90,6 +92,7 @@ namespace STFC_EventLogger
 
             return tmp;
         }
+        public static string CropImage(string imgFile, Rect r, ImageFormat imageFormat) => CropImage(imgFile, r.X1, r.Y1, r.X2, r.Y2, imageFormat);
 
         public static byte[] ToByteArray(this System.Drawing.Image image)
         {

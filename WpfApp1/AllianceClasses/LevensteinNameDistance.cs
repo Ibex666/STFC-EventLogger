@@ -1,4 +1,6 @@
-﻿namespace STFC_EventLogger.AllianceClasses
+﻿using YamlDotNet.Core.Tokens;
+
+namespace STFC_EventLogger.AllianceClasses
 {
     public class LevensteinNameDistance
     {
@@ -16,5 +18,9 @@
         public string Name { get; set; }
         public float Accuracy { get; set; }
 
+        public override string? ToString()
+        {
+            return $"{Name} / {ScanContent} / {Distance} / {Accuracy}";
+        }
     }
 }

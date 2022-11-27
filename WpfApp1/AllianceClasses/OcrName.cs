@@ -1,6 +1,7 @@
 ﻿using STFC_EventLogger.MVVM;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -14,7 +15,6 @@ namespace STFC_EventLogger.AllianceClasses
 
         public string? Value { get; set; }
         public List<LevensteinNameDistance>? ClosestNames { get; set; }
-        public bool RecognizedName { get; set; }
 
         public OcrName() : base() { }
         public OcrName(XmlNodeList? xml, SSTypeAnalyzer file) : base()
@@ -23,7 +23,7 @@ namespace STFC_EventLogger.AllianceClasses
                 return;
             FileName = file.FileName;
             ImageType = file.ImageType;
-            RecognizedName = false;
+            Recognised = false;
 
             X = int.MaxValue;
             Y = int.MaxValue;
@@ -73,7 +73,7 @@ namespace STFC_EventLogger.AllianceClasses
             if (a.Key != null)
             {
                 Value = a.Key;
-                RecognizedName = true;
+                Recognised = true;
                 WC = 1;
             }
             else
@@ -96,7 +96,7 @@ namespace STFC_EventLogger.AllianceClasses
                     {
                         Value = ClosestNames[0].Name;
                         WC = ClosestNames[0].Accuracy;
-                        RecognizedName = true;
+                        Recognised = true;
                     }
                 }
                 else if (ClosestNames.Count > 1)
@@ -107,7 +107,7 @@ namespace STFC_EventLogger.AllianceClasses
                         {
                             Value = ClosestNames[0].Name;
                             WC = ClosestNames[0].Accuracy;
-                            RecognizedName = true;
+                            Recognised = true;
                         }
                     }
                 }
@@ -119,7 +119,7 @@ namespace STFC_EventLogger.AllianceClasses
                 return;
             FileName = file.FileName;
             ImageType = file.ImageType;
-            RecognizedName = false;
+            Recognised = false;
 
             X = int.MaxValue;
             Y = int.MaxValue;
@@ -169,7 +169,7 @@ namespace STFC_EventLogger.AllianceClasses
             if (a.Key != null)
             {
                 Value = a.Key;
-                RecognizedName = true;
+                Recognised = true;
                 WC = 1;
             }
             else
@@ -192,7 +192,7 @@ namespace STFC_EventLogger.AllianceClasses
                     {
                         Value = ClosestNames[0].Name;
                         WC = ClosestNames[0].Accuracy;
-                        RecognizedName = true;
+                        Recognised = true;
                     }
                 }
                 else if (ClosestNames.Count > 1)
@@ -203,7 +203,7 @@ namespace STFC_EventLogger.AllianceClasses
                         {
                             Value = ClosestNames[0].Name;
                             WC = ClosestNames[0].Accuracy;
-                            RecognizedName = true;
+                            Recognised = true;
                         }
                     }
                 }
@@ -212,7 +212,7 @@ namespace STFC_EventLogger.AllianceClasses
 
         public override string? ToString()
         {
-            return $"{Value} / {Content} / {WC}";
+            return $"{Value} / {Content} / {WC} / {Recognised}";
         }
 
         public override bool Equals(object? obj)
@@ -246,6 +246,37 @@ namespace STFC_EventLogger.AllianceClasses
         public static bool operator !=(OcrName? left, OcrName? right)
         {
             return !(left == right);
+        }
+
+        public static OcrName? FromAllianceList(string xml, SSTypeAnalyzer file)
+        {
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(xml);
+            var nodes = xdoc.SelectNodes("//String");
+            if (nodes != null)
+            {
+                return new OcrName(nodes, file)
+                {
+                    ScannerXml = xml,
+                };
+            }
+
+            return null;
+        }
+        public static OcrName? FromEventList(string xml, SSTypeAnalyzer file)
+        {
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(xml);
+            var nodes = xdoc.SelectNodes("//String");
+            if (nodes != null)
+            {
+                return new OcrName(nodes, file)
+                {
+                    ScannerXml = xml,
+                };
+            }
+
+            return null;
         }
     }
 }

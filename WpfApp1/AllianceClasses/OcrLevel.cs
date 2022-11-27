@@ -13,7 +13,8 @@ namespace STFC_EventLogger.AllianceClasses
         {
             if (Content != null)
             {
-                if (uint.TryParse(CleanContentNumberString(Content), out uint tmp))
+                Recognised = uint.TryParse(CleanContentNumberString(Content), out uint tmp);
+                if (Recognised)
                 {
                     Value = tmp;
                 }
@@ -22,7 +23,7 @@ namespace STFC_EventLogger.AllianceClasses
 
         public override string? ToString()
         {
-            return $"{Value} / {Content} / {WC}";
+            return $"{Value} / {Content} / {WC} / {Recognised}";
         }
 
         public override bool Equals(object? obj)
@@ -49,6 +50,22 @@ namespace STFC_EventLogger.AllianceClasses
         public static bool operator !=(OcrLevel? left, OcrLevel? right)
         {
             return !(left == right);
+        }
+
+        public static OcrLevel? FromAllianceList(string xml, SSTypeAnalyzer file)
+        {
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(xml);
+            var nodes = xdoc.SelectSingleNode("//String[1]");
+            if (nodes != null)
+            {
+                return new OcrLevel(nodes, file)
+                {
+                    ScannerXml = xml,
+                };
+            }
+
+            return null;
         }
     }
 }

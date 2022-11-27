@@ -104,6 +104,74 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyPowerBrush = new();
             });
         }
+        public AllianceMember(AllianceListEntry entry)
+        {
+            Levels = new();
+            Scores = new();
+            Powers = new();
+
+            Name = entry.Name;
+            Levels.AddRange(entry.Levels);
+            Powers.AddRange(entry.Powers);
+            Rank = new OcrRank();
+
+            BestLevel = new();
+            BestScore = new();
+            BestPower = new();
+
+            accuracyLevelBrush = new();
+            accuracyScoreBrush = new();
+            accuracyPowerBrush = new();
+
+            BestLevelImage = string.Empty;
+            BestScoreImage = string.Empty;
+            BestPowerImage = string.Empty;
+
+            EventListName = new();
+
+            PageType = entry.File.PageType;
+
+
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            {
+                accuracyLevelBrush = new();
+                accuracyScoreBrush = new();
+                accuracyPowerBrush = new();
+            });
+        }
+        public AllianceMember(EventListEntry entry)
+        {
+            Levels = new();
+            Scores = new();
+            Powers = new();
+
+            Name = entry.Name;
+            EventListName = entry.Name;
+            Scores.AddRange(entry.Scores);
+            Rank = new OcrRank();
+
+            BestLevel = new();
+            BestScore = new();
+            BestPower = new();
+
+            accuracyLevelBrush = new();
+            accuracyScoreBrush = new();
+            accuracyPowerBrush = new();
+
+            BestLevelImage = string.Empty;
+            BestScoreImage = string.Empty;
+            BestPowerImage = string.Empty;
+
+            PageType = entry.File.PageType;
+
+
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            {
+                accuracyLevelBrush = new();
+                accuracyScoreBrush = new();
+                accuracyPowerBrush = new();
+            });
+        }
 
         #endregion
 

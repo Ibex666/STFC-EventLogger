@@ -10,6 +10,7 @@ namespace STFC_EventLogger.AllianceClasses
         #region #- Public Properties -#
 
         public string? Content { get; protected set; }
+        public string ScannerXml { get; protected set; }
         public int X { get; protected set; }
         public int Y { get; protected set; }
         public int X1 => X;
@@ -19,6 +20,7 @@ namespace STFC_EventLogger.AllianceClasses
         public int Width { get; protected set; }
         public int Height { get; protected set; }
         public float WC { get; protected set; }
+        public bool Recognised { get; protected set; }
         public BitmapImage? Image { get; set; }
         public string FileName { get; set; }
         public ImageTypes ImageType { get; set; }
@@ -59,6 +61,9 @@ namespace STFC_EventLogger.AllianceClasses
         {
             _content = _content.Replace(".", "");
             _content = _content.Replace(",", "");
+            _content = _content.Replace("'", "");
+            _content = _content.Replace("`", "");
+            _content = _content.Replace("´", "");
             _content = _content.Replace("»", "");
 
             _content = _content.Replace("l+", "4");

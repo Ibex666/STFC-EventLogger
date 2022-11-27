@@ -13,7 +13,8 @@ namespace STFC_EventLogger.AllianceClasses
         {
             if (Content != null)
             {
-                if (ulong.TryParse(CleanContentNumberString(Content), out ulong tmp))
+                Recognised = ulong.TryParse(CleanContentNumberString(Content), out ulong tmp);
+                if (Recognised)
                 {
                     Value = tmp;
                 }
@@ -22,7 +23,7 @@ namespace STFC_EventLogger.AllianceClasses
 
         public override string? ToString()
         {
-            return $"{Value} / {Content} / {WC}";
+            return $"{Value} / {Content} / {WC} / {Recognised}";
         }
 
         public override bool Equals(object? obj)
@@ -56,6 +57,22 @@ namespace STFC_EventLogger.AllianceClasses
         public static bool operator !=(OcrPower? left, OcrPower? right)
         {
             return !(left == right);
+        }
+
+        public static OcrPower? FromAllianceList(string xml, SSTypeAnalyzer file)
+        {
+            XmlDocument xdoc = new();
+            xdoc.LoadXml(xml);
+            var nodes = xdoc.SelectNodes("//String");
+            if (nodes != null && nodes.Count > 0)
+            {
+                return new OcrPower(nodes[0], file)
+                {
+                    ScannerXml = xml,
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using STFC_EventLogger.AllianceClasses;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Windows.Xps.Packaging;
 using System.Xml;
 using Tesseract;
+using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace STFC_EventLogger
 {
@@ -13,16 +15,14 @@ namespace STFC_EventLogger
         {
             FileName = file;
             ImageType = imageType;
-            EventListDataRows = new();
-            AllianceListDataRows = new();
+            DataRows = new();
         }
 
         public string FileName { get; set; }
         public PageTypes PageType { get; set; }
         public ImageTypes ImageType { get; set; }
-        public List<EventListDataRow> EventListDataRows { get; set; }
-        public List<AllianceListDataRow> AllianceListDataRows { get; set; }
-        
+        public List<DataRow> DataRows { get; set; }
+
         public void Analyze()
         {
             using var image = Pix.LoadFromFile(FileName);
@@ -51,6 +51,8 @@ namespace STFC_EventLogger
 
         private void GetEventListRects(Pix image)
         {
+            var lbp = V.allianceLeaderBoard.SelectedUserConfig.EventListBP;
+
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
             using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.EventListAnalyzerRect);
@@ -68,24 +70,23 @@ namespace STFC_EventLogger
                     y -= d;
                     h += (d * 2);
 
-                    EventListDataRows.Add(new EventListDataRow(total: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X1,
-                                                                               y,
-                                                                               V.allianceLeaderBoard.SelectedUserConfig.EventListBP.Width,
-                                                                               h),
-                                                               name: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X1,
-                                                                              y,
-                                                                              V.allianceLeaderBoard.SelectedUserConfig.EventListBP.WidthX1X2,
-                                                                              h),
-                                                               score: new Rect(V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X3,
-                                                                               y,
-                                                                               V.allianceLeaderBoard.SelectedUserConfig.EventListBP.WidthX3X4,
-                                                                               h)
-                                                               ));
+                    var dr = new DataRow()
+                    {
+                        Rect1 = new Rect(lbp.X1, y, lbp.Width, h),
+                        Rect2 = new Rect(lbp.X1, y, lbp.WidthX1X2, h),
+                        Rect3 = new Rect(lbp.X3, y, lbp.WidthX3X4, h)
+                    };
+                    dr.Rect2Image = ImageFunctions.CropImage(FileName, dr.Rect2, ImageFormat.Png);
+                    dr.Rect3Image = ImageFunctions.CropImage(FileName, dr.Rect3, ImageFormat.Png);
+
+                    DataRows.Add(dr);
                 }
             }
         }
         private void GetAllianceListRects(Pix image)
         {
+            var lbp = V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP;
+
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
             using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.AllianceListAnalyzerRect);
@@ -105,21 +106,16 @@ namespace STFC_EventLogger
                     y -= h;
                     h += (int)(h * 2.3);
 
-                    
+                    var dr = new DataRow()
+                    {
+                        Rect1 = new Rect(lbp.X1, y, lbp.Width, h),
+                        Rect2 = new Rect(lbp.X1, y1, lbp.WidthX1X2, h1),
+                        Rect3 = new Rect(lbp.X3, y, lbp.WidthX3X4, h)
+                    };
+                    dr.Rect2Image = ImageFunctions.CropImage(FileName, dr.Rect2, ImageFormat.Png);
+                    dr.Rect3Image = ImageFunctions.CropImage(FileName, dr.Rect3, ImageFormat.Png);
 
-                    AllianceListDataRows.Add(new AllianceListDataRow(total: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
-                                                                                     y,
-                                                                                     V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.Width,
-                                                                                     h),
-                                                                     name: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
-                                                                                    y1,
-                                                                                    V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX1X2,
-                                                                                    h1),
-                                                                     power: new Rect(V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
-                                                                                     y,
-                                                                                     V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.WidthX3X4,
-                                                                                     h)
-                                                                     ));
+                    DataRows.Add(dr);
                 }
             }
         }

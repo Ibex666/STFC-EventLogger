@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,30 +19,61 @@ namespace STFC_EventLogger.AllianceClasses
     {
         #region #- Private Fields -#
 
-        private readonly SSTypeAnalyzer _file;
-
         #endregion
 
         #region #- Constructor -#
 
-        public AllianceListEntry(SSTypeAnalyzer file)
+        private AllianceListEntry(DataRow dataRow, SSTypeAnalyzer file)
         {
-            Data = new();
+            File = file;
+            Names = new();
+            Levels = new();
+            Powers = new();
 
-            FileName = file.FileName;
-            ImageType = file.ImageType;
+            NameImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect2Image);
+            PowerImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect3Image);
 
-            _file = file;
+            dataRow.Data.ForEach((d) =>
+            {
+                var n = OcrName.FromAllianceList(d.Xml1, file);
+                if (n != null)
+                    Names.Add(n);
+
+                var l = OcrLevel.FromAllianceList(d.Xml1, file);
+                if (l != null)
+                    Levels.Add(l);
+
+                var p = OcrPower.FromAllianceList(d.Xml2, file);
+                if (p != null)
+                    Powers.Add(p);
+            });
+
+            Names.Sort((x, y) => y.Recognised.CompareTo(x.Recognised));
+            Names.Sort((x, y) => y.WC.CompareTo(x.WC));
+
+            if (Names.All(_ => _.Recognised == false))
+            {
+
+            }
+            else
+            {
+                Name = Names[0];
+            }
         }
 
         #endregion
 
         #region #- Public Properties -#
 
-        public string FileName { get; set; }
-        public ImageTypes ImageType { get; set; }
+        public SSTypeAnalyzer File { get; private set; }
 
-        public List<AllianceListEntryData> Data { get; set; }
+        public OcrName Name { get; set; }
+        public List<OcrName> Names { get; set; }
+        public List<OcrLevel> Levels { get; set; }
+        public List<OcrPower> Powers { get; set; }
+
+        public BitmapImage NameImage { get; set; }
+        public BitmapImage PowerImage { get; set; }
 
         #endregion
 
@@ -51,42 +83,34 @@ namespace STFC_EventLogger.AllianceClasses
 
         #region #- Instance Methods -#
 
-        public void AddData(AllianceListEntryData data)
-        {
-            Data.Add(data);
-        }
-        public void AddData(string nameXML, string powerXML, ScanMethods scanMethods)
-        {
-            Data.Add(new AllianceListEntryData(nameXML, powerXML, scanMethods));
-        }
-
         #endregion
 
         #region #- Static Methods -#
 
+        public static AllianceListEntry? FromSsTypeAnalyzer(DataRow dataRow, SSTypeAnalyzer file)
+        {
+            if (file.PageType != PageTypes.MemberList)
+                return null;
+
+            var ret = new AllianceListEntry(dataRow, file);
+
+            if (ret.Names.All(_ => string.IsNullOrWhiteSpace(_.Content)) |
+                ret.Powers.All(_ => string.IsNullOrWhiteSpace(_.Content)))
+            {
+                return null;
+            }
+
+            return ret;
+        }
+
         #endregion
 
         #region #- Interface/Overridden Methods -#
-
 
         #endregion
 
         #region #- Operators -#
 
         #endregion
-    }
-
-    public class AllianceListEntryData
-    {
-        public AllianceListEntryData(string? nameXML, string? powerXML, ScanMethods scanMethods)
-        {
-            NameXML = nameXML;
-            PowerXML = powerXML;
-            ScanMethods = scanMethods;
-        }
-
-        public string? NameXML { get; set; }
-        public string? PowerXML { get; set; }
-        public ScanMethods ScanMethods { get; set; }
     }
 }
