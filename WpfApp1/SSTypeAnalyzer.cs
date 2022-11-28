@@ -51,14 +51,15 @@ namespace STFC_EventLogger
 
         private void GetEventListRects(Pix image)
         {
-            var lbp = V.allianceLeaderBoard.SelectedUserConfig.EventListBP;
+            var config = V.allianceLeaderBoard.SelectedUserConfig;
+            var lbp = config.EventListBP;
 
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
             using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.EventListAnalyzerRect);
             XmlDocument xdoc = new();
             xdoc.LoadXml(page.GetAltoText(0));
-            var nodes = xdoc.SelectNodes("//ComposedBlock");
+            var nodes = xdoc.SelectNodes("//TextLine");
             if (nodes != null)
             {
                 foreach (XmlElement node in nodes)
@@ -76,6 +77,10 @@ namespace STFC_EventLogger
                         Rect2 = new Rect(lbp.X1, y, lbp.WidthX1X2, h),
                         Rect3 = new Rect(lbp.X3, y, lbp.WidthX3X4, h)
                     };
+
+                    if (dr.TotalRect.Y1 < (config.EventListAnalyzerRect.Y1 - 5) || dr.TotalRect.Y2 > config.EventListAnalyzerRect.Y2)
+                        continue;
+
                     dr.Rect2Image = ImageFunctions.CropImage(FileName, dr.Rect2, ImageFormat.Png);
                     dr.Rect3Image = ImageFunctions.CropImage(FileName, dr.Rect3, ImageFormat.Png);
 
@@ -85,14 +90,15 @@ namespace STFC_EventLogger
         }
         private void GetAllianceListRects(Pix image)
         {
-            var lbp = V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP;
+            var config = V.allianceLeaderBoard.SelectedUserConfig;
+            var lbp = config.AllianceListBP;
 
             F.GetEngineModeData(ScanMethods.Fast, out string tessdata, out EngineMode engineMode);
             using var engine = new TesseractEngine(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
             using var page = engine.Process(image, V.allianceLeaderBoard.SelectedUserConfig.AllianceListAnalyzerRect);
             XmlDocument xdoc = new();
             xdoc.LoadXml(page.GetAltoText(0));
-            var nodes = xdoc.SelectNodes("//ComposedBlock");
+            var nodes = xdoc.SelectNodes("//TextLine");
             if (nodes != null)
             {
                 foreach (XmlElement node in nodes)
@@ -112,6 +118,10 @@ namespace STFC_EventLogger
                         Rect2 = new Rect(lbp.X1, y1, lbp.WidthX1X2, h1),
                         Rect3 = new Rect(lbp.X3, y, lbp.WidthX3X4, h)
                     };
+
+                    if (dr.TotalRect.Y1 < (config.AllianceListAnalyzerRect.Y1 - 5) || dr.TotalRect.Y2 > config.AllianceListAnalyzerRect.Y2)
+                        continue;
+
                     dr.Rect2Image = ImageFunctions.CropImage(FileName, dr.Rect2, ImageFormat.Png);
                     dr.Rect3Image = ImageFunctions.CropImage(FileName, dr.Rect3, ImageFormat.Png);
 

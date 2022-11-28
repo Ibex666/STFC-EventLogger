@@ -1,5 +1,5 @@
 ﻿# Anzeigename im DropDown Menü
-xDisplayName: "Multi Task"
+DisplayName: "Multi Task"
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
@@ -8,21 +8,21 @@ MaxParallelTasks: 8
 # sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
 UseInvertedImages: true
 
-# Event List Boundary Points
-# BoundaryPoints "X1, X2, X3, X4"
-AllianceListBP: "245, 625, 3535, 3800"
+# Scanbereich zum analysieren der Alliance List Screenshots
+# Rectangle "X1, Y1, X2, Y2"
+AllianceListAnalyzerRect: "3535, 200, 3735, 2015"
 
 # Alliance List Boundary Points
 # BoundaryPoints "X1, X2, X3, X4"
-EventListBP: "420, 600, 3450, 3830"
+AllianceListBP: "245, 625, 3535, 3800"
 
-# Scanbereich zum analysieren der Alliance List Screenshots
+# Scanbereich zum analysieren der Event List Screenshots
 # Rectangle "X1, Y1, X2, Y2"
-AllianceListAnalyzerRect: "3535, 210, 3650, 2015"
+EventListAnalyzerRect: "3600, 225, 3800, 2015"
 
-# Scanbereich zum analysieren der Event Score Positionen
-# Rectangle "X1, Y1, X2, Y2"
-EventListAnalyzerRect: "3700, 240, 3800, 2000"
+# Event List Boundary Points
+# BoundaryPoints "X1, X2, X3, X4"
+EventListBP: "420, 1000, 3450, 3830"
   
 # Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
 # Rectangle "X1, Y1, X2, Y2"

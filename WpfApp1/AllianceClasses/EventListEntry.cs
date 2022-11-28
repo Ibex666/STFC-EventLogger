@@ -47,10 +47,14 @@ namespace STFC_EventLogger.AllianceClasses
 
             if (Names.All(_ => _.Recognised == false))
             {
+                RecognisedName = false;
 
+                // muss noch geändert werden!!!!!
+                Name = Names[0];
             }
             else
             {
+                RecognisedName = true;
                 Name = Names[0];
             }
         }
@@ -67,6 +71,8 @@ namespace STFC_EventLogger.AllianceClasses
 
         public BitmapImage NameImage { get; set; }
         public BitmapImage ScoreImage { get; set; }
+
+        public bool RecognisedName { get; set; }
 
         #endregion
 

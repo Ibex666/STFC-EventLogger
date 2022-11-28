@@ -60,7 +60,7 @@ namespace STFC_EventLogger.MVVM
             Members = new();
             IsBusy = false;
             FilesToScan = new();
-            NotRecognizedNames = new();
+            NotRecognisedNames = new();
 
             columnVisibility = Visibility.Hidden;
 
@@ -87,12 +87,12 @@ namespace STFC_EventLogger.MVVM
         internal List<AllianceListEntry> AllianceListEntries { get; set; }
         internal List<EventListEntry> EventListEntries { get; set; }
 
-        
+
         internal List<AllianceMember> MembersInternal { get; set; }
 
 
         public List<SSTypeAnalyzer> FilesToScan { get; set; }
-        public ObservableCollection<AllianceMember> NotRecognizedNames { get; set; }
+        public ObservableCollection<AllianceMember> NotRecognisedNames { get; set; }
         public Visibility ColumnVisibility
         {
             get { return columnVisibility; }
@@ -239,7 +239,7 @@ namespace STFC_EventLogger.MVVM
             EventListEntries.Clear();
             FilesToScan.Clear();
 
-            NotRecognizedNames = new();
+            NotRecognisedNames = new();
 
             AllianceScore = null;
             LevelAverage = null;
@@ -335,7 +335,7 @@ namespace STFC_EventLogger.MVVM
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("do some more stuff...", ScanWorkerProgressReportMessageTypes.MainMessage));
             DoSomeMoreStuff();
 
-            if (NotRecognizedNames.Count > 0)
+            if (NotRecognisedNames.Count > 0)
             {
 #if DEBUG
                 if (stopwatch != null)
@@ -539,19 +539,19 @@ namespace STFC_EventLogger.MVVM
                     {
                         y = 0.8f / (FilesToScan.Count * file.DataRows.Count * 3);
 
-                        var name = ScanArea(image, datarow.Rect2, ScanMethods.Tesseract);
-                        var score = ScanArea(image, datarow.Rect3, ScanMethods.Tesseract);
-                        datarow.AddData(name, score, ScanMethods.Tesseract);
+                        var xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Tesseract);
+                        var xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Tesseract);
+                        datarow.AddData(xml1, xml2, ScanMethods.Tesseract);
                         ReportPercentageSubMessage(x += y, file.FileName);
 
-                        name = ScanArea(image, datarow.Rect2, ScanMethods.Fast);
-                        score = ScanArea(image, datarow.Rect3, ScanMethods.Fast);
-                        datarow.AddData(name, score, ScanMethods.Fast);
+                        xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Fast);
+                        xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Fast);
+                        datarow.AddData(xml1, xml2, ScanMethods.Fast);
                         ReportPercentageSubMessage(x += y, file.FileName);
 
-                        name = ScanArea(image, datarow.Rect2, ScanMethods.Best);
-                        score = ScanArea(image, datarow.Rect3, ScanMethods.Best);
-                        datarow.AddData(name, score, ScanMethods.Best);
+                        xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Best);
+                        xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Best);
+                        datarow.AddData(xml1, xml2, ScanMethods.Best);
                         ReportPercentageSubMessage(x += y, file.FileName);
 
                     }
@@ -585,15 +585,22 @@ namespace STFC_EventLogger.MVVM
             foreach (var entry in AllianceListEntries)
             {
                 var member = new AllianceMember(entry);
-                if (MembersInternal.Contains(member))
+                if (entry.RecognisedName)
                 {
-                    int idx = MembersInternal.IndexOf(member);
-                    MembersInternal[idx].Levels.AddRange(member.Levels);
-                    MembersInternal[idx].Powers.AddRange(member.Powers);
+                    if (MembersInternal.Contains(member))
+                    {
+                        int idx = MembersInternal.IndexOf(member);
+                        MembersInternal[idx].Levels.AddRange(member.Levels);
+                        MembersInternal[idx].Powers.AddRange(member.Powers);
+                    }
+                    else
+                    {
+                        MembersInternal.Add(member);
+                    }
                 }
                 else
                 {
-                    MembersInternal.Add(member);
+                    NotRecognisedNames.Add(member);
                 }
             }
             foreach (var entry in EventListEntries)
@@ -604,15 +611,20 @@ namespace STFC_EventLogger.MVVM
                     int idx = MembersInternal.IndexOf(member);
 
                     member.EventListName = entry.Name;
-                    member.Scores.AddRange(entry.Scores);                    
+                    member.Scores.AddRange(entry.Scores);
                 }
                 else
                 {
-                    MembersInternal.Add(new AllianceMember(entry));
+                    if (entry.RecognisedName)
+                    {
+                        MembersInternal.Add(new AllianceMember(entry));
+                    }
+                    else
+                    {
+                        NotRecognisedNames.Add(new AllianceMember(entry));
+                    }
                 }
             }
-
-
         }
 
         private void ReportPercentageSubMessage(float percentage, string? filename)
@@ -627,7 +639,7 @@ namespace STFC_EventLogger.MVVM
         private void HandleNotRecognizedNames()
         {
             // taking screenshots from the name
-            foreach (var item in NotRecognizedNames)
+            foreach (var item in NotRecognisedNames)
             {
                 item.Name.Value = null;
                 using var img = Image.FromFile(item.Name.FileName);
@@ -644,7 +656,7 @@ namespace STFC_EventLogger.MVVM
             NotRecognizedNamesWindow window = new();
             window.ShowDialog();
 
-            foreach (var item in NotRecognizedNames)
+            foreach (var item in NotRecognisedNames)
             {
                 AllianceMember? member = MembersInternal.SingleOrDefault(_ => _.Name == item.Name);
                 if (member != null)
@@ -850,10 +862,10 @@ namespace STFC_EventLogger.MVVM
             return ret;
         }
 
-        private static string? ScanArea(Pix image, Rect scanArea, ScanMethods scanMethod)
+        private static string ScanArea(Pix image, Rect scanArea, ScanMethods scanMethod)
         {
             GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
-            string? ret = null;
+            string ret = string.Empty;
 
             if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
                 return ret;

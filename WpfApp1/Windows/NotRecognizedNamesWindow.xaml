@@ -9,7 +9,7 @@
         xmlns:local="clr-namespace:STFC_EventLogger.Windows"
         xmlns:mvvm="clr-namespace:STFC_EventLogger.MVVM" d:DataContext="{d:DesignInstance Type=mvvm:AllianceLeaderBoard}"
         mc:Ignorable="d"
-        Title="NotRecognizedNames" Height="291" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+        Title="Handle not recognised names" Height="291" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
     <Window.Resources>
         <converters:ParametrizedBooleanToVisibilityConverter x:Key="bool2visibility"/>
         <System:String x:Key="csName">Name</System:String>
@@ -37,7 +37,7 @@
         <System:Double x:Key="labelWidth">125</System:Double>
     </Window.Resources>
     <Grid>
-        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding NotRecognizedNames}" AutoGenerateColumns="False" RowHeight="25" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False" Margin="0,0,0,40">
+        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding NotRecognisedNames}" AutoGenerateColumns="False" RowHeight="25" RowHeaderWidth="20" CanUserDeleteRows="False" CanUserAddRows="False" Margin="0,0,0,40">
             <DataGrid.CellStyle>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Style.Triggers>

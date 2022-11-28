@@ -3,26 +3,26 @@ DisplayName: "Test Hase"
 
 # maximal gleichzeitig laufende Aufgaben : 1-n
 # der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
-MaxParallelTasks: 8
+MaxParallelTasks: 6
 
 # sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
-UseInvertedImages: false
-
-# Event List Boundary Points
-# BoundaryPoints "X1, X2, X3, X4"
-AllianceListBP: "130, 360, 1755, 1900"
-
-# Alliance List Boundary Points
-# BoundaryPoints "X1, X2, X3, X4"
-EventListBP: "225, 600, 1700, 1910"
-
-# Scanbereich zum analysieren der Event List Screenshots
-# Rectangle "X1, Y1, X2, Y2"
-EventListAnalyzerRect: "1860, 160, 1910, 1030"
+UseInvertedImages: true
 
 # Scanbereich zum analysieren der Alliance List Screenshots
 # Rectangle "X1, Y1, X2, Y2"
-AllianceListAnalyzerRect: "1755, 130, 1790, 1000"
+AllianceListAnalyzerRect: "1755, 130, 1855, 1040"
+
+# Alliance List Boundary Points
+# BoundaryPoints "X1, X2, X3, X4"
+AllianceListBP: "130, 360, 1755, 1900"
+
+# Scanbereich zum analysieren der Event List Screenshots
+# Rectangle "X1, Y1, X2, Y2"
+EventListAnalyzerRect: "1810, 145, 1910, 1040"
+
+# Event List Boundary Points
+# BoundaryPoints "X1, X2, X3, X4"
+EventListBP: "225, 600, 1700, 1910"
 
 # Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
 # Rectangle "X1, Y1, X2, Y2"
@@ -48,25 +48,3 @@ AccuracyPowerBrushLimits:
 - "0, 0.333, #ffd44545"
 - "0.334, 0.5, #ffff7545"
 - "0.501, 0.8, #fffff156"
-
-
-
-
-#-----------------------------------------------------------#
-#obsolete
-
-# Scanbereich für den Spielernamen in der Eventübersicht
-# Rectangle "X1, Y1, X2, Y2"
-RectEventNames: "225, 160, 600, 1030"
-
-# Scanbereich für die Punktzahl in der Eventübersicht
-# Rectangle "X1, Y1, X2, Y2"
-RectEventScores: "1700, 160, 1910, 1030"
-
-# Scanbereich für den Spielernamen in der Allianzübersicht
-# Rectangle "X1, Y1, X2, Y2"
-RectAllianceNames: "130, 130, 360, 1000"
-
-# Scanbereich für Power in der Allianzübersicht
-# Rectangle "X1, Y1, X2, Y2"
-RectAlliancePower: "1755, 130, 1900, 1000"
