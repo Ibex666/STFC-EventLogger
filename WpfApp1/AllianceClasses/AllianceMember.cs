@@ -115,6 +115,9 @@ namespace STFC_EventLogger.AllianceClasses
             Powers.AddRange(entry.Powers);
             Rank = new OcrRank();
 
+            AllianceNameImage = entry.NameImage;
+            AlliancePowerImage = entry.PowerImage;
+
             BestLevel = new();
             BestScore = new();
             BestPower = new();
@@ -149,6 +152,9 @@ namespace STFC_EventLogger.AllianceClasses
             EventListName = entry.Name;
             Scores.AddRange(entry.Scores);
             Rank = new OcrRank();
+
+            EventNameImage = entry.NameImage;
+            EventScoreImage = entry.ScoreImage;
 
             BestLevel = new();
             BestScore = new();
@@ -225,6 +231,11 @@ namespace STFC_EventLogger.AllianceClasses
         public string BestLevelImage { get; set; }
         public string BestScoreImage { get; set; }
         public string BestPowerImage { get; set; }
+
+        public string? AllianceNameImage { get; set; }
+        public string? AlliancePowerImage { get; set; }
+        public string? EventNameImage { get; set; }
+        public string? EventScoreImage { get; set; }
 
         public float? AccuracyLevel
         {
@@ -414,35 +425,35 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyLevel = (float)Math.Round(_vs.Value / (double)Levels.Count, 3);
 
-                    //BestLevelImage = ImageFunctions.CropImage(
-                    //    _bestLevel.FileName,
-                    //    _bestLevel.X1 - 5,
-                    //    _bestLevel.Y1 - 5,
-                    //    _bestLevel.X2 + 5,
-                    //    _bestLevel.Y2 + 5,
-                    //    System.Drawing.Imaging.ImageFormat.Png);
+                    BestLevelImage = ImageFunctions.CropImage(
+                        _bestLevel.FileName,
+                        _bestLevel.X1 - 5,
+                        _bestLevel.Y1 - 5,
+                        _bestLevel.X2 + 5,
+                        _bestLevel.Y2 + 5,
+                        System.Drawing.Imaging.ImageFormat.Png);
                 }
                 else
                 {
                     if (Levels.Count > 0)
                     {
-                        //BestLevelImage = ImageFunctions.CropImage(
-                        //        Name.FileName,
-                        //        Levels[0].X1 - 5,
-                        //        Levels[0].Y1 - 5,
-                        //        Levels[0].X2 + 5,
-                        //        Levels[0].Y2 + 5,
-                        //        System.Drawing.Imaging.ImageFormat.Png);
+                        BestLevelImage = ImageFunctions.CropImage(
+                                Name.FileName,
+                                Levels[0].X1 - 5,
+                                Levels[0].Y1 - 5,
+                                Levels[0].X2 + 5,
+                                Levels[0].Y2 + 5,
+                                System.Drawing.Imaging.ImageFormat.Png);
                     }
                     else
                     {
-                        //BestLevelImage = ImageFunctions.CropImage(
-                        //            Name.FileName,
-                        //            V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.Start.X,
-                        //            Name.Y1 - 5,
-                        //            V.allianceLeaderBoard.SelectedUserConfig.RectAllianceNames.End.X,
-                        //            Name.Y2 + 5,
-                        //            System.Drawing.Imaging.ImageFormat.Png);
+                        BestLevelImage = ImageFunctions.CropImage(
+                                    Name.FileName,
+                                    V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X1,
+                                    Name.Y1 - 5,
+                                    V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X2,
+                                    Name.Y2 + 5,
+                                    System.Drawing.Imaging.ImageFormat.Png);
                     }
 
                     AccuracyLevel = 0;
@@ -487,23 +498,23 @@ namespace STFC_EventLogger.AllianceClasses
 
                     AccuracyScore = (float)Math.Round(_vs.Value / (double)Scores.Count, 3);
 
-                    //BestScoreImage = ImageFunctions.CropImage(
-                    //                _bestScore.FileName,
-                    //                V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.Start.X,
-                    //                _bestScore.Y1 - 5,
-                    //                V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.End.X,
-                    //                _bestScore.Y2 + 5,
-                    //                System.Drawing.Imaging.ImageFormat.Png);
+                    BestScoreImage = ImageFunctions.CropImage(
+                                    _bestScore.FileName,
+                                    V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X3,
+                                    _bestScore.Y1 - 5,
+                                    V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X4,
+                                    _bestScore.Y2 + 5,
+                                    System.Drawing.Imaging.ImageFormat.Png);
                 }
                 else
                 {
-                    //BestScoreImage = ImageFunctions.CropImage(
-                    //                    EventListName.FileName,
-                    //                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.Start.X,
-                    //                    EventListName.Y1 - 5,
-                    //                    V.allianceLeaderBoard.SelectedUserConfig.RectEventScores.End.X,
-                    //                    EventListName.Y2 + 5,
-                    //                    System.Drawing.Imaging.ImageFormat.Png);
+                    BestScoreImage = ImageFunctions.CropImage(
+                                        EventListName.FileName,
+                                        V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X3,
+                                        EventListName.Y1 - 5,
+                                        V.allianceLeaderBoard.SelectedUserConfig.EventListBP.X4,
+                                        EventListName.Y2 + 5,
+                                        System.Drawing.Imaging.ImageFormat.Png);
 
                     AccuracyScore = 0;
                 }
@@ -546,23 +557,23 @@ namespace STFC_EventLogger.AllianceClasses
                     }
                     AccuracyPower = (float)Math.Round(_vs.Value / (double)Powers.Count, 3);
 
-                    //BestPowerImage = ImageFunctions.CropImage(
-                    //    _bestPower.FileName,
-                    //    V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.Start.X,
-                    //    _bestPower.Y1 - 5,
-                    //    V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.End.X,
-                    //    _bestPower.Y2 + 5,
-                    //    System.Drawing.Imaging.ImageFormat.Png);
+                    BestPowerImage = ImageFunctions.CropImage(
+                        _bestPower.FileName,
+                        V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
+                        _bestPower.Y1 - 5,
+                        V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X4,
+                        _bestPower.Y2 + 5,
+                        System.Drawing.Imaging.ImageFormat.Png);
                 }
                 else
                 {
-                    //BestPowerImage = ImageFunctions.CropImage(
-                    //    Name.FileName,
-                    //    V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.Start.X,
-                    //    Rank.Y1,
-                    //    V.allianceLeaderBoard.SelectedUserConfig.RectAlliancePower.End.X,
-                    //    Name.Y2,
-                    //    System.Drawing.Imaging.ImageFormat.Png);
+                    BestPowerImage = ImageFunctions.CropImage(
+                        Name.FileName,
+                        V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
+                        Rank.Y1,
+                        V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X4,
+                        Name.Y2,
+                        System.Drawing.Imaging.ImageFormat.Png);
 
                     AccuracyPower = 0;
                 }

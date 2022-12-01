@@ -44,6 +44,7 @@ namespace STFC_EventLogger.MVVM
         private ICommand? scanCommand;
         private ICommand? copyDataCommand;
         private ICommand? columnVisibilityCommand;
+        private AllianceMember? selectedMember;
 
 
         #endregion
@@ -83,6 +84,19 @@ namespace STFC_EventLogger.MVVM
         public List<UserConfig> UserConfigs { get; set; }
 
         public ObservableCollection<AllianceMember> Members { get; set; }
+
+        public AllianceMember? SelectedMember
+        {
+            get
+            {
+                return selectedMember;
+            }
+            set
+            {
+                selectedMember = value;
+                OnPropertyChanged();
+            }
+        }
 
         internal List<AllianceListEntry> AllianceListEntries { get; set; }
         internal List<EventListEntry> EventListEntries { get; set; }
@@ -612,6 +626,8 @@ namespace STFC_EventLogger.MVVM
 
                     member.EventListName = entry.Name;
                     member.Scores.AddRange(entry.Scores);
+                    member.EventNameImage ??= entry.NameImage;
+                    member.EventScoreImage ??= entry.ScoreImage;
                 }
                 else
                 {

@@ -28,8 +28,8 @@ namespace STFC_EventLogger.AllianceClasses
             Names = new();
             Scores = new();
             
-            NameImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect2Image);
-            ScoreImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect3Image);
+            NameImage = dataRow.Rect2Image;
+            ScoreImage = dataRow.Rect3Image;
 
             dataRow.Data.ForEach((d) =>
             {
@@ -69,8 +69,8 @@ namespace STFC_EventLogger.AllianceClasses
         public List<OcrName> Names { get; set; }
         public List<OcrScore> Scores { get; set; }
 
-        public BitmapImage NameImage { get; set; }
-        public BitmapImage ScoreImage { get; set; }
+        public string NameImage { get; set; }
+        public string ScoreImage { get; set; }
 
         public bool RecognisedName { get; set; }
 

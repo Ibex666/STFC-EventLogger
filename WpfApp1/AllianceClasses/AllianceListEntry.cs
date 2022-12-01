@@ -30,8 +30,8 @@ namespace STFC_EventLogger.AllianceClasses
             Levels = new();
             Powers = new();
 
-            NameImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect2Image);
-            PowerImage = ImageFunctions.BitmapImageFromFile(dataRow.Rect3Image);
+            NameImage = dataRow.Rect2Image;
+            PowerImage = dataRow.Rect3Image;
 
             dataRow.Data.ForEach((d) =>
             {
@@ -76,8 +76,8 @@ namespace STFC_EventLogger.AllianceClasses
         public List<OcrLevel> Levels { get; set; }
         public List<OcrPower> Powers { get; set; }
 
-        public BitmapImage NameImage { get; set; }
-        public BitmapImage PowerImage { get; set; }
+        public string NameImage { get; set; }
+        public string PowerImage { get; set; }
 
         public bool RecognisedName { get; set; }
 
