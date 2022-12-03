@@ -20,6 +20,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Windows.Documents;
+using static System.Net.WebRequestMethods;
 
 namespace STFC_EventLogger.MVVM
 {
@@ -336,14 +337,14 @@ namespace STFC_EventLogger.MVVM
         {
             if (SelectedUserConfig.UseInvertedImages)
             {
-                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Invert Images", ScanWorkerProgressReportMessageTypes.MainMessage));
+                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("invert Screenshots...", ScanWorkerProgressReportMessageTypes.MainMessage));
                 InvertImages();
             }
 
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Analyze Screenshots", ScanWorkerProgressReportMessageTypes.MainMessage));
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("analyze Screenshots...", ScanWorkerProgressReportMessageTypes.MainMessage));
             AnalyzeScreenshots();
 
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Scan Screenshots", ScanWorkerProgressReportMessageTypes.MainMessage));
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("scan Screenshots...", ScanWorkerProgressReportMessageTypes.MainMessage));
             ScanScreenshots();
 
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("do some more stuff...", ScanWorkerProgressReportMessageTypes.MainMessage));
@@ -357,7 +358,7 @@ namespace STFC_EventLogger.MVVM
                     stopwatch.Stop();
                 }
 #endif
-                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("handle not recognized names", ScanWorkerProgressReportMessageTypes.MainMessage));
+                bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("handle not recognized names...", ScanWorkerProgressReportMessageTypes.MainMessage));
                 bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("", ScanWorkerProgressReportMessageTypes.SubMessage));
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -372,7 +373,7 @@ namespace STFC_EventLogger.MVVM
             }
 
             float x = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Merge Data", ScanWorkerProgressReportMessageTypes.MainMessage));
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("merge data", ScanWorkerProgressReportMessageTypes.MainMessage));
             ReportPercentageSubMessage(x, null);
             foreach (var item in MembersInternal)
             {
@@ -383,7 +384,7 @@ namespace STFC_EventLogger.MVVM
             }
 
             x = 0;
-            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("Add Members", ScanWorkerProgressReportMessageTypes.MainMessage));
+            bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("add members", ScanWorkerProgressReportMessageTypes.MainMessage));
             ReportPercentageSubMessage(x, null);
             foreach (var item in MembersInternal)
             {
@@ -475,20 +476,18 @@ namespace STFC_EventLogger.MVVM
         private void InvertImages()
         {
             float x = 0;
-            float y = 1f / (V.allianceLeaderBoard.FilesToScan.Count / 2);
+            float y = 1f / FilesToScan.Count;
             ReportPercentageSubMessage(x, null);
 
             List<Task> tasks = new();
             List<SSTypeAnalyzer> tmpFiles = new();
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            foreach (var file in V.allianceLeaderBoard.FilesToScan)
+            foreach (var file in FilesToScan)
             {
                 semaphore.Wait();
 
                 var t = Task.Factory.StartNew(() =>
                 {
-                    ReportPercentageSubMessage(x += y, file.FileName);
-
                     using Image img = Image.FromFile(file.FileName);
                     using Image imgNeg = ImageFunctions.InvertUnsafe(img);
 
@@ -509,19 +508,17 @@ namespace STFC_EventLogger.MVVM
         private void AnalyzeScreenshots()
         {
             float x = 0;
-            float y = 1f / (V.allianceLeaderBoard.FilesToScan.Count / 2);
+            float y = 1f / FilesToScan.Count;
             ReportPercentageSubMessage(x, null);
 
             List<Task> tasks = new();
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
-            foreach (var file in V.allianceLeaderBoard.FilesToScan)
+            foreach (var file in FilesToScan)
             {
                 semaphore.Wait();
 
                 var t = Task.Factory.StartNew(() =>
                 {
-                    ReportPercentageSubMessage(x += y, file.FileName);
-
                     file.Analyze();
 
                     ReportPercentageSubMessage(x += y, file.FileName);
@@ -542,6 +539,8 @@ namespace STFC_EventLogger.MVVM
 
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
 
+            y = 1f / (FilesToScan.Sum(_ => _.DataRows.Count) * 3);
+
             foreach (var file in FilesToScan)
             {
                 semaphore.Wait();
@@ -551,8 +550,6 @@ namespace STFC_EventLogger.MVVM
 
                     foreach (var datarow in file.DataRows)
                     {
-                        y = 0.8f / (FilesToScan.Count * file.DataRows.Count * 3);
-
                         var xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Tesseract);
                         var xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Tesseract);
                         datarow.AddData(xml1, xml2, ScanMethods.Tesseract);
@@ -567,10 +564,7 @@ namespace STFC_EventLogger.MVVM
                         xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Best);
                         datarow.AddData(xml1, xml2, ScanMethods.Best);
                         ReportPercentageSubMessage(x += y, file.FileName);
-
                     }
-
-                    ReportPercentageSubMessage(x += 0.1f / FilesToScan.Count, file.FileName);
 
                     image.Dispose();
                     semaphore.Release();
@@ -581,10 +575,17 @@ namespace STFC_EventLogger.MVVM
         }
         private void DoSomeMoreStuff()
         {
+            float x = 0;
+            float y = 0;
+            ReportPercentageSubMessage(x, null);
+
+            y = 0.4f / (FilesToScan.Sum(_ => _.DataRows.Count));
             foreach (var file in FilesToScan)
             {
                 foreach (var dr in file.DataRows)
                 {
+                    y = 0.4f / (FilesToScan.Count * file.DataRows.Count);
+
                     var ale = AllianceListEntry.FromSsTypeAnalyzer(dr, file);
                     var ele = EventListEntry.FromSsTypeAnalyzer(dr, file);
 
@@ -593,9 +594,12 @@ namespace STFC_EventLogger.MVVM
 
                     if (ele != null && ele.Name != null)
                         EventListEntries.Add(ele);
+
+                    ReportPercentageSubMessage(x += y, file.FileName);
                 }
             }
 
+            y = 0.3f / AllianceListEntries.Count;
             foreach (var entry in AllianceListEntries)
             {
                 var member = new AllianceMember(entry);
@@ -616,7 +620,11 @@ namespace STFC_EventLogger.MVVM
                 {
                     NotRecognisedNames.Add(member);
                 }
+
+                ReportPercentageSubMessage(x += y, null);
             }
+
+            y = 0.3f / EventListEntries.Count;
             foreach (var entry in EventListEntries)
             {
                 AllianceMember? member = MembersInternal.FirstOrDefault(_ => _.Name == entry.Name);
@@ -640,6 +648,8 @@ namespace STFC_EventLogger.MVVM
                         NotRecognisedNames.Add(new AllianceMember(entry));
                     }
                 }
+
+                ReportPercentageSubMessage(x += y, null);
             }
         }
 

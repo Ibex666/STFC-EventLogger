@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Net.Http.Headers;
 
 namespace STFC_EventLogger
 {
@@ -40,8 +43,7 @@ namespace STFC_EventLogger
 
         private void Btn_Test_Click(object sender, RoutedEventArgs e)
         {
-            List<DataRowEntry> drl = new();
-            V.allianceLeaderBoard.FilesToScan.ForEach((x) => { x.DataRows.ForEach((y) => { drl.AddRange(y.Data); }); });
+            
         }
     }
 }
