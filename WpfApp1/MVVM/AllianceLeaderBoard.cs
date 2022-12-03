@@ -31,7 +31,6 @@ namespace STFC_EventLogger.MVVM
 #if DEBUG
         private Stopwatch? stopwatch;
 #endif
-        private string? last_scanned_file;
         private readonly BackgroundWorker bgw_Scanner;
         private Visibility columnVisibility;
         private decimal? allianceScore;
@@ -374,18 +373,18 @@ namespace STFC_EventLogger.MVVM
 
             float x = 0;
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("merge data", ScanWorkerProgressReportMessageTypes.MainMessage));
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
             foreach (var item in MembersInternal)
             {
                 item.MergeData();
 
                 x += 1f / MembersInternal.Count;
-                ReportPercentageSubMessage(x, null);
+                ReportPercentageSubMessage(x);
             }
 
             x = 0;
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport("add members", ScanWorkerProgressReportMessageTypes.MainMessage));
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
             foreach (var item in MembersInternal)
             {
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
@@ -396,7 +395,7 @@ namespace STFC_EventLogger.MVVM
                     Members.Add(item);
 
                     x += 1f / MembersInternal.Count;
-                    ReportPercentageSubMessage(x, null);
+                    ReportPercentageSubMessage(x);
                 });
             }
 
@@ -477,7 +476,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 1f / FilesToScan.Count;
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
             List<SSTypeAnalyzer> tmpFiles = new();
@@ -495,7 +494,7 @@ namespace STFC_EventLogger.MVVM
                     imgNeg.Save(fileNeg);
                     tmpFiles.Add(new SSTypeAnalyzer(fileNeg, ImageTypes.Negative));
 
-                    ReportPercentageSubMessage(x += y, file.FileName);
+                    ReportPercentageSubMessage(x += y);
 
                     semaphore.Release();
                 });
@@ -509,7 +508,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 1f / FilesToScan.Count;
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
             using SemaphoreSlim semaphore = new(SelectedUserConfig.MaxParallelTasks);
@@ -521,7 +520,7 @@ namespace STFC_EventLogger.MVVM
                 {
                     file.Analyze();
 
-                    ReportPercentageSubMessage(x += y, file.FileName);
+                    ReportPercentageSubMessage(x += y);
 
                     semaphore.Release();
                 });
@@ -533,7 +532,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 0;
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
 
             List<Task> tasks = new();
 
@@ -553,17 +552,17 @@ namespace STFC_EventLogger.MVVM
                         var xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Tesseract);
                         var xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Tesseract);
                         datarow.AddData(xml1, xml2, ScanMethods.Tesseract);
-                        ReportPercentageSubMessage(x += y, file.FileName);
+                        ReportPercentageSubMessage(x += y);
 
                         xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Fast);
                         xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Fast);
                         datarow.AddData(xml1, xml2, ScanMethods.Fast);
-                        ReportPercentageSubMessage(x += y, file.FileName);
+                        ReportPercentageSubMessage(x += y);
 
                         xml1 = ScanArea(image, datarow.Rect2, ScanMethods.Best);
                         xml2 = ScanArea(image, datarow.Rect3, ScanMethods.Best);
                         datarow.AddData(xml1, xml2, ScanMethods.Best);
-                        ReportPercentageSubMessage(x += y, file.FileName);
+                        ReportPercentageSubMessage(x += y);
                     }
 
                     image.Dispose();
@@ -577,7 +576,7 @@ namespace STFC_EventLogger.MVVM
         {
             float x = 0;
             float y = 0;
-            ReportPercentageSubMessage(x, null);
+            ReportPercentageSubMessage(x);
 
             y = 0.4f / (FilesToScan.Sum(_ => _.DataRows.Count));
             foreach (var file in FilesToScan)
@@ -595,7 +594,7 @@ namespace STFC_EventLogger.MVVM
                     if (ele != null && ele.Name != null)
                         EventListEntries.Add(ele);
 
-                    ReportPercentageSubMessage(x += y, file.FileName);
+                    ReportPercentageSubMessage(x += y);
                 }
             }
 
@@ -621,7 +620,7 @@ namespace STFC_EventLogger.MVVM
                     NotRecognisedNames.Add(member);
                 }
 
-                ReportPercentageSubMessage(x += y, null);
+                ReportPercentageSubMessage(x += y);
             }
 
             y = 0.3f / EventListEntries.Count;
@@ -649,17 +648,16 @@ namespace STFC_EventLogger.MVVM
                     }
                 }
 
-                ReportPercentageSubMessage(x += y, null);
+                ReportPercentageSubMessage(x += y);
             }
         }
 
-        private void ReportPercentageSubMessage(float percentage, string? filename)
+        private void ReportPercentageSubMessage(float percentage)
         {
             if (percentage >= 1)
                 percentage = 1;
 
             bgw_Scanner.ReportProgress(0, new ScanWorkerProgressReport($"{percentage,0:p1}", ScanWorkerProgressReportMessageTypes.SubMessage));
-            last_scanned_file = filename;
         }
 
         private void HandleNotRecognizedNames()
@@ -751,146 +749,9 @@ namespace STFC_EventLogger.MVVM
 
         #region #- Static Methods -#
 
-        private static void GetEngineModeData(ScanMethods scanMethod, out string tessdata, out EngineMode engineMode)
-        {
-            switch (scanMethod)
-            {
-                case ScanMethods.Tesseract:
-                    tessdata = @"tessdata";
-                    engineMode = EngineMode.TesseractOnly;
-                    break;
-                case ScanMethods.Fast:
-                    tessdata = @"tessdata_fast";
-                    engineMode = EngineMode.LstmOnly;
-                    break;
-                case ScanMethods.Best:
-                    tessdata = @"tessdata_best";
-                    engineMode = EngineMode.LstmOnly;
-                    break;
-                default:
-                    tessdata = @"tessdata";
-                    engineMode = EngineMode.TesseractOnly;
-                    break;
-            }
-        }
-
-        [Obsolete]
-        private static OcrPower ScanMemberPower(Pix image, Rect scanArea, SSTypeAnalyzer file, ScanMethods scanMethod)
-        {
-            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
-
-            OcrPower ret = new()
-            {
-                FileName = file.FileName
-            };
-            if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
-                return ret;
-
-            try
-            {
-                using var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-                using var page = engine.Process(image, scanArea);
-                XmlDocument xdoc = new();
-                xdoc.LoadXml(page.GetAltoText(0));
-                var nodes = xdoc.SelectNodes("//String");
-                if (nodes != null && nodes.Count > 0)
-                {
-                    ret = new OcrPower(nodes[0], file);
-                }
-            }
-            catch (AccessViolationException) { }
-
-            return ret;
-        }
-        [Obsolete]
-        private static OcrLevel ScanMemberLevel(Pix image, Rect scanArea, SSTypeAnalyzer file, ScanMethods scanMethod)
-        {
-            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
-
-            OcrLevel ret = new()
-            {
-                FileName = file.FileName
-            };
-            if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
-                return ret;
-
-            try
-            {
-                using var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-                using var page = engine.Process(image, scanArea);
-                XmlDocument xdoc = new();
-                xdoc.LoadXml(page.GetAltoText(0));
-                var nodes = xdoc.SelectNodes("//String");
-                if (nodes != null && nodes.Count > 0)
-                {
-                    ret = new OcrLevel(nodes[0], file);
-                }
-            }
-            catch (AccessViolationException) { }
-
-            return ret;
-        }
-        [Obsolete]
-        private static OcrScore ScanMemberScore(Pix image, Rect scanArea, SSTypeAnalyzer file, ScanMethods scanMethod)
-        {
-            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
-
-            OcrScore ret = new()
-            {
-                FileName = file.FileName
-            };
-            if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
-                return ret;
-
-            try
-            {
-                using var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-                using var page = engine.Process(image, scanArea);
-                XmlDocument xdoc = new();
-                xdoc.LoadXml(page.GetAltoText(0));
-                var nodes = xdoc.SelectNodes("//String");
-                if (nodes != null && nodes.Count > 0)
-                {
-                    ret = new OcrScore(nodes[0], file);
-                }
-            }
-            catch (AccessViolationException) { }
-
-            return ret;
-        }
-        [Obsolete]
-        private static OcrName ScanMemberName(Pix image, Rect scanArea, SSTypeAnalyzer file, ScanMethods scanMethod)
-        {
-            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
-
-            OcrName ret = new()
-            {
-                FileName = file.FileName
-            };
-            if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
-                return ret;
-
-            try
-            {
-                using var engine = new TesseractEngine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, tessdata), "eng", engineMode);
-                using var page = engine.Process(image, scanArea);
-                XmlDocument xdoc = new();
-                xdoc.LoadXml(page.GetAltoText(0));
-                //Name = new OcrName(xml.SelectNodes("./TextLine[2]/String[position()>1]"), file);
-                var nodes = xdoc.SelectNodes("//String");
-                if (nodes != null && nodes.Count > 0)
-                {
-                    ret = new OcrName(nodes, file);
-                }
-            }
-            catch (AccessViolationException) { }
-
-            return ret;
-        }
-
         private static string ScanArea(Pix image, Rect scanArea, ScanMethods scanMethod)
         {
-            GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
+            F.GetEngineModeData(scanMethod, out string tessdata, out EngineMode engineMode);
             string ret = string.Empty;
 
             if (scanArea.Start.X < 0 | scanArea.Start.Y < 0 | scanArea.End.X > image.Width | scanArea.End.Y > image.Height)
