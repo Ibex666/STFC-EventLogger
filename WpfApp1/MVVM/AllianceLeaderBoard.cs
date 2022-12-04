@@ -43,6 +43,7 @@ namespace STFC_EventLogger.MVVM
 
         private ICommand? scanCommand;
         private ICommand? copyDataCommand;
+        private ICommand? memberAdministrationCommand;
         private ICommand? columnVisibilityCommand;
         private AllianceMember? selectedMember;
 
@@ -220,6 +221,16 @@ namespace STFC_EventLogger.MVVM
                 return copyDataCommand;
             }
         }
+        public ICommand? MemberAdministrationCommand
+        {
+            get
+            {
+                memberAdministrationCommand ??= new RelayCommand(
+                        p => !IsBusy,
+                        p => OpenMemberAdministration());
+                return memberAdministrationCommand;
+            }
+        }
         public ICommand? ColumnVisibilityCommand
         {
             get
@@ -230,8 +241,6 @@ namespace STFC_EventLogger.MVVM
                 return columnVisibilityCommand;
             }
         }
-
-
 
         #endregion
 
@@ -318,6 +327,13 @@ namespace STFC_EventLogger.MVVM
                     Members[Members.IndexOf(item)].PowerRanking = i++;
             }
 
+        }
+        private void OpenMemberAdministration()
+        {
+            MemberAdministration aa = new MemberAdministration();
+            aa.Owner = V.frmMain;
+            aa.ShowDialog();
+            
         }
         private void ToggleColumnVisibility()
         {

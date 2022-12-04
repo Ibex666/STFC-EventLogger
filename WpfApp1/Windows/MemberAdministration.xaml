@@ -1,0 +1,31 @@
+﻿<Window x:Class="STFC_EventLogger.Windows.MemberAdministration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:STFC_EventLogger.Windows"
+        mc:Ignorable="d"
+        Title="MemberAdministration" Height="450" Width="800" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="dg_Names" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding Aliase}" SelectedItem="{Binding SelectedMember}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="dg_AKA" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding SelectedMember.AKA}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="AKA" Binding="{Binding Text}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="dg_Garbage" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding SelectedMember.OcrGarbage}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="OCR Garbage" Binding="{Binding Text}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

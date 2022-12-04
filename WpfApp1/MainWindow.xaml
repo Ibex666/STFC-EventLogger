@@ -39,6 +39,7 @@
         <BitmapImage x:Key="img_ocr" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\ocr.png"/>
         <BitmapImage x:Key="img_copy" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\copy.png"/>
         <BitmapImage x:Key="img_columns" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\columns.png"/>
+        <BitmapImage x:Key="img_members" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="Resources\members.png"/>
         <Style x:Key="GlobalCellStyle" TargetType="{x:Type DataGridCell}">
             <Style.Triggers>
                 <MultiTrigger>
@@ -69,7 +70,7 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="210"/>
+            <ColumnDefinition Width="270"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="350"/>
@@ -297,13 +298,13 @@
             <Button VerticalAlignment="Top" Width="50" Command="{Binding ScanCommand}" ToolTip="Scan STFC Screenshots" Margin="5,7,5,0">
                 <StackPanel Orientation="Vertical" Margin="0">
                     <ctr:AutoGrayableImage Source="{StaticResource img_ocr}" Margin="0,0,0,0" Height="50" Width="Auto"/>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Scan"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Scan" TextAlignment="Center" FontSize="10"/>
                 </StackPanel>
             </Button>
             <Button VerticalAlignment="Top" Width="50" Command="{Binding CopyDataCommand}" ToolTip="Copy Data" Margin="5,7,5,0">
                 <StackPanel Orientation="Vertical" Margin="0">
                     <ctr:AutoGrayableImage Source="{StaticResource img_copy}" Margin="0,0,0,0" Height="50" Width="Auto"/>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Copy"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Copy" TextAlignment="Center" FontSize="10"/>
                 </StackPanel>
             </Button>
             <Separator/>
@@ -313,6 +314,13 @@
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" FontSize="8" d:Text="Show more columns" Text="{Binding ColumnVisibilityButtonText}"/>
                 </StackPanel>
             </CheckBox>
+            <Separator/>
+            <Button VerticalAlignment="Top" Width="50" Command="{Binding MemberAdministrationCommand}" ToolTip="opens members administration" Margin="5,7,5,0">
+                <StackPanel Orientation="Vertical" Margin="0">
+                    <ctr:AutoGrayableImage Source="{StaticResource img_members}" Margin="0,0,0,0" Height="50" Width="Auto"/>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Text="Members" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
             <Separator/>
         </ToolBar>
 

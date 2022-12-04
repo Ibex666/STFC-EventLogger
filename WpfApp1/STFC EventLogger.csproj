@@ -17,6 +17,7 @@
     <None Remove="Resources\columns.png" />
     <None Remove="Resources\copy.png" />
     <None Remove="Resources\logo.ico" />
+    <None Remove="Resources\members.png" />
     <None Remove="Resources\ocr.png" />
     <None Remove="Resources\ok.png" />
     <None Remove="Resources\startrek.ico" />
@@ -50,6 +51,7 @@
     <Resource Include="Resources\columns.png" />
     <Resource Include="Resources\copy.png" />
     <Resource Include="Resources\logo.ico" />
+    <Resource Include="Resources\members.png" />
     <Resource Include="Resources\ocr.png" />
     <Resource Include="Resources\ok.png" />
     <Resource Include="Shader\EmbossEffect.ps" />
