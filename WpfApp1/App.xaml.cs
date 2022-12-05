@@ -29,6 +29,8 @@ namespace STFC_EventLogger
         }
         protected override void OnExit(ExitEventArgs e)
         {
+            F.GenerateAliaseAndOcrGarbage();
+
             F.SaveAliase();
             F.SaveOcrGarbage();
 

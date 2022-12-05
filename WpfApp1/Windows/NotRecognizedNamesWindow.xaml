@@ -80,5 +80,6 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button Content="OK" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="60" Click="Button_Click"/>
+        <Button Content="Members" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="60" Click="Members_Click" />
     </Grid>
 </Window>

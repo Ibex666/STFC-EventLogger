@@ -22,9 +22,9 @@ namespace STFC_EventLogger.Windows
         public MemberAdministration()
         {
             InitializeComponent();
-            dg_Names.DataContext = V.aliasAdministration;
-            dg_AKA.DataContext = V.aliasAdministration;
-            dg_Garbage.DataContext = V.aliasAdministration;
+            dg_Names.DataContext = V.memberAdministrationMVVM;
+            dg_AKA.DataContext = V.memberAdministrationMVVM;
+            dg_Garbage.DataContext = V.memberAdministrationMVVM;
         }
     }
 }

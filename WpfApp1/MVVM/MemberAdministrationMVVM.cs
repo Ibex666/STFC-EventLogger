@@ -2,19 +2,19 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace STFC_EventLogger
+namespace STFC_EventLogger.MVVM
 {
-    public class AliasAdministration : INotifyPropertyChanged
+    public class MemberAdministrationMVVM : INotifyPropertyChanged
     {
         #region #- Private Fields -#
 
-        private AliasClass? selectedMember;
+        private MemberAdministrationAlias? selectedMember;
 
         #endregion
 
         #region #- Constructor -#
 
-        public AliasAdministration()
+        public MemberAdministrationMVVM()
         {
             Aliase = new();
         }
@@ -23,8 +23,8 @@ namespace STFC_EventLogger
 
         #region #- Public Properties -#
 
-        public List<AliasClass> Aliase { get; set; }
-        public AliasClass? SelectedMember
+        public List<MemberAdministrationAlias> Aliase { get; set; }
+        public MemberAdministrationAlias? SelectedMember
         {
             get
             {

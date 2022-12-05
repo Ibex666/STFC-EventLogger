@@ -149,10 +149,18 @@ namespace STFC_EventLogger
                     if (!V.NameDicts.ContainsKey(item.Name))
                     {
                         V.NameDicts.Add(item.Name, item.AKA.ToList());
+
+                        var maa = new MemberAdministrationAlias();
+                        maa.Name = item.Name;
+                        maa.AKA.AddRange(item.AKA.Select(_ => (StringWrapper)_).ToList());
+                        V.memberAdministrationMVVM.Aliase.Add(maa);
                     }
                     else
                     {
                         V.NameDicts[item.Name].AddRange(item.AKA.ToList());
+
+                        var maa = V.memberAdministrationMVVM.Aliase.First(_ => _.Name == item.Name);
+                        maa.AKA.AddRange(item.AKA.Select(_ => (StringWrapper)_).ToList());
                     }
                 }
             }
@@ -169,12 +177,40 @@ namespace STFC_EventLogger
                     if (V.NameDicts.ContainsKey(item.Key))
                     {
                         V.NameDicts[item.Key].AddRange(item.Value);
+
+                        var maa = V.memberAdministrationMVVM.Aliase.First(_ => _.Name == item.Key);
+                        maa.OcrGarbage.AddRange(item.Value.Select(_ => (StringWrapper)_).ToList());
                     }
                 }
             }
             else
             {
                 V.OcrGarbage = new();
+            }
+        }
+        internal static void GenerateAliaseAndOcrGarbage()
+        {
+            V.Aliase.Clear();
+            V.OcrGarbage.Clear();
+            V.NameDicts.Clear();
+
+            foreach (var a in V.memberAdministrationMVVM.Aliase)
+            {
+                V.NameDicts.Add(a.Name, a.AKA.Select(_ => (string)_).ToList());
+
+
+                var ac = new AliasClass();
+                ac.Name = a.Name;
+                ac.AKA.AddRange(a.AKA.Select(_ => (string)_).ToList());
+
+                V.Aliase.Add(ac);
+
+                if (a.OcrGarbage.Count > 0)
+                {
+                    V.NameDicts[a.Name].AddRange(a.OcrGarbage.Select(_ => (string)_).ToList());
+
+                    V.OcrGarbage.Add(a.Name, a.OcrGarbage.Select(_ => (string)_).ToList());
+                }
             }
         }
 

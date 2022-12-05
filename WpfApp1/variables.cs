@@ -21,7 +21,7 @@ namespace STFC_EventLogger
         /// User Settings
         /// </summary>
         internal static AllianceLeaderBoard allianceLeaderBoard = new();
-        internal static AliasAdministration aliasAdministration = new();
+        internal static MemberAdministrationMVVM memberAdministrationMVVM = new();
 
         internal static Dictionary<string, List<string>> NameDicts = new();
         internal static List<AliasClass> Aliase = new();

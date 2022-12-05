@@ -37,5 +37,21 @@ namespace STFC_EventLogger.Windows
         {
             Close();
         }
+
+        private void Members_Click(object sender, RoutedEventArgs e)
+        {
+            MemberAdministration aa = new()
+            {
+                Owner = this,
+            };
+            aa.ShowDialog();
+
+            F.GenerateAliaseAndOcrGarbage();
+
+            List<string> source = new(V.NameDicts.Keys.ToArray());
+            source.Sort();
+
+            dgcb.ItemsSource = source;
+        }
     }
 }

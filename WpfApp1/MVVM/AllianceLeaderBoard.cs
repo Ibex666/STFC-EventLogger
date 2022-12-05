@@ -330,10 +330,13 @@ namespace STFC_EventLogger.MVVM
         }
         private void OpenMemberAdministration()
         {
-            MemberAdministration aa = new MemberAdministration();
-            aa.Owner = V.frmMain;
+            MemberAdministration aa = new()
+            {
+                Owner = V.frmMain
+            };
             aa.ShowDialog();
-            
+
+            F.GenerateAliaseAndOcrGarbage();
         }
         private void ToggleColumnVisibility()
         {
