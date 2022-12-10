@@ -12,6 +12,7 @@ using System.Xml;
 
 namespace STFC_EventLogger
 {
+    [Obsolete("only for compability, will be removed later")]
     public class AliasClass : IEquatable<AliasClass?>, IComparable<AliasClass>
     {
         #region #- Private Fields -#
@@ -59,6 +60,7 @@ namespace STFC_EventLogger
 
         public int CompareTo(AliasClass? other)
         {
+            if (other == null) return 1;
             return Name.CompareTo(other.Name);
         }
         public override bool Equals(object? obj)

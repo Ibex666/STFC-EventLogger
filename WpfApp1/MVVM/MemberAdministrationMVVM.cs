@@ -16,14 +16,14 @@ namespace STFC_EventLogger.MVVM
 
         public MemberAdministrationMVVM()
         {
-            Aliase = new();
+            Members = new();
         }
 
         #endregion
 
         #region #- Public Properties -#
 
-        public List<MemberAdministrationAlias> Aliase { get; set; }
+        public List<MemberAdministrationAlias> Members { get; set; }
         public MemberAdministrationAlias? SelectedMember
         {
             get

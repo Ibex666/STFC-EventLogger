@@ -111,14 +111,61 @@ namespace STFC_EventLogger
                 V.allianceLeaderBoard.SelectedUserConfig = V.allianceLeaderBoard.UserConfigs[0];
             }
         }
-        internal static void LoadAliase()
+        internal static void LoadMembers()
         {
-            try { V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml"))); }
+            try { V.memberAdministrationMVVM.Members = deserializer.Deserialize<List<MemberAdministrationAlias>>(File.ReadAllText(V.file_settings_members)); }
+            catch (Exception)
+            {
+                MessageBox.Show("error loading 'members.yaml'", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            GenerateNameDicts();
+        }
+        
+        internal static void SaveMembers()
+        {
+            using TextWriter textWriter = new StringWriter();
+
+            textWriter.WriteLine("# player names, aliase ans ocr garbage");
+            textWriter.WriteLine("# example data");
+            textWriter.WriteLine("#");
+            textWriter.WriteLine("# - Name: Mara        display name");
+            textWriter.WriteLine("#   AKA:              in game player names each per row (one must be the same as the diplay name)");
+            textWriter.WriteLine("#   - Text: Mara");
+            textWriter.WriteLine("#   - Text: MightyMara");
+            textWriter.WriteLine("#   - Text: DarthMara");
+            textWriter.WriteLine("#   OcrGarbage:       text that was not correctly recognised by the OCR engine");
+            textWriter.WriteLine("#   - Text: Mdrd");
+            textWriter.WriteLine("");
+
+            serializer.Serialize(textWriter, V.memberAdministrationMVVM.Members);
+
+            File.WriteAllText(V.file_settings_members, textWriter.ToString());
+        }
+
+        internal static void GenerateNameDicts()
+        {
+            if (V.memberAdministrationMVVM.Members != null)
+            {
+                V.NameDicts.Clear();
+                foreach (var member in V.memberAdministrationMVVM.Members)
+                {
+                    V.NameDicts.Add(member.Name, member.AKA.Select(_ => (string)_).ToList());
+                    V.NameDicts[member.Name].AddRange(member.OcrGarbage.Select(_ => (string)_).ToList());
+                }
+            }
+        }
+
+
+
+        [Obsolete("only for compability, will be removed later")]
+        internal static bool LoadAliase()
+        {
+            try { V.Aliase = deserializer.Deserialize<List<AliasClass>>(File.ReadAllText(V.file_settings_alias)); }
             catch (Exception)
             {
                 MessageBox.Show("error loading 'alias.yaml'", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
-                return;
+                return false;
             }
 
             if (V.Aliase is not null)
@@ -153,22 +200,29 @@ namespace STFC_EventLogger
                         var maa = new MemberAdministrationAlias();
                         maa.Name = item.Name;
                         maa.AKA.AddRange(item.AKA.Select(_ => (StringWrapper)_).ToList());
-                        V.memberAdministrationMVVM.Aliase.Add(maa);
+                        V.memberAdministrationMVVM.Members.Add(maa);
                     }
                     else
                     {
                         V.NameDicts[item.Name].AddRange(item.AKA.ToList());
 
-                        var maa = V.memberAdministrationMVVM.Aliase.First(_ => _.Name == item.Name);
+                        var maa = V.memberAdministrationMVVM.Members.First(_ => _.Name == item.Name);
                         maa.AKA.AddRange(item.AKA.Select(_ => (StringWrapper)_).ToList());
                     }
                 }
             }
+
+            return true;
         }
-        internal static void LoadOcrGarbage()
+
+        [Obsolete("only for compability, will be removed later")]
+        internal static bool LoadOcrGarbage()
         {
-            try { V.OcrGarbage = deserializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\ocr_garbage.yaml"))); }
-            catch (Exception) { }
+            try { V.OcrGarbage = deserializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(V.file_settings_ocr_garbage)); }
+            catch (Exception)
+            {
+                return false;
+            }
 
             if (V.OcrGarbage is not null)
             {
@@ -178,7 +232,7 @@ namespace STFC_EventLogger
                     {
                         V.NameDicts[item.Key].AddRange(item.Value);
 
-                        var maa = V.memberAdministrationMVVM.Aliase.First(_ => _.Name == item.Key);
+                        var maa = V.memberAdministrationMVVM.Members.First(_ => _.Name == item.Key);
                         maa.OcrGarbage.AddRange(item.Value.Select(_ => (StringWrapper)_).ToList());
                     }
                 }
@@ -187,55 +241,8 @@ namespace STFC_EventLogger
             {
                 V.OcrGarbage = new();
             }
-        }
-        internal static void GenerateAliaseAndOcrGarbage()
-        {
-            V.Aliase.Clear();
-            V.OcrGarbage.Clear();
-            V.NameDicts.Clear();
 
-            foreach (var a in V.memberAdministrationMVVM.Aliase)
-            {
-                V.NameDicts.Add(a.Name, a.AKA.Select(_ => (string)_).ToList());
-
-
-                var ac = new AliasClass();
-                ac.Name = a.Name;
-                ac.AKA.AddRange(a.AKA.Select(_ => (string)_).ToList());
-
-                V.Aliase.Add(ac);
-
-                if (a.OcrGarbage.Count > 0)
-                {
-                    V.NameDicts[a.Name].AddRange(a.OcrGarbage.Select(_ => (string)_).ToList());
-
-                    V.OcrGarbage.Add(a.Name, a.OcrGarbage.Select(_ => (string)_).ToList());
-                }
-            }
-        }
-
-        internal static void SaveAliase()
-        {
-            using TextWriter textWriter = new StringWriter();
-
-            textWriter.WriteLine("# player names and aliase");
-            textWriter.WriteLine("# example data");
-            textWriter.WriteLine("#");
-            textWriter.WriteLine("# - Name: Mara        display name");
-            textWriter.WriteLine("#   AKA:              in game player names each per row (one must be the same as the diplay name)");
-            textWriter.WriteLine("#   - Mara");
-            textWriter.WriteLine("#   - MightyMara");
-            textWriter.WriteLine("#   - DarthMara");
-            textWriter.WriteLine("");
-
-            serializer.Serialize(textWriter, V.Aliase);
-
-            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\alias.yaml"), textWriter.ToString());
-        }
-        internal static void SaveOcrGarbage()
-        {
-            var yaml = serializer.Serialize(V.OcrGarbage);
-            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Settings\ocr_garbage.yaml"), yaml);
+            return true;
         }
     }
 }

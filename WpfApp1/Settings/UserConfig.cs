@@ -13,7 +13,7 @@ namespace STFC_EventLogger
 
         public Rect EventListAnalyzerRect { get; set; }
         public Rect AllianceListAnalyzerRect { get; set; }
-        
+
         /// <summary>
         /// Alliance List Boundary Points
         /// </summary>
@@ -24,15 +24,6 @@ namespace STFC_EventLogger
         /// </summary>
         public BoundaryPoints EventListBP { get; set; }
 
-        [Obsolete]
-        public Rect RectEventNames { get; set; }
-        [Obsolete]
-        public Rect RectEventScores { get; set; }
-        [Obsolete]
-        public Rect RectAllianceNames { get; set; }
-        [Obsolete]
-        public Rect RectAlliancePower { get; set; }        
-        
         public Rect RectSsTypeAnalyzer { get; set; }
         public byte MaxParallelTasks { get; set; }
         public bool UseInvertedImages { get; set; }
@@ -51,11 +42,7 @@ namespace STFC_EventLogger
             return other is not null &&
                    DisplayName == other.DisplayName &&
                    EqualityComparer<Dictionary<string, List<string>>>.Default.Equals(Aliase, other.Aliase) &&
-                   EqualityComparer<Rect>.Default.Equals(RectEventNames, other.RectEventNames) &&
-                   EqualityComparer<Rect>.Default.Equals(RectEventScores, other.RectEventScores) &&
                    EqualityComparer<Rect>.Default.Equals(EventListAnalyzerRect, other.EventListAnalyzerRect) &&
-                   EqualityComparer<Rect>.Default.Equals(RectAllianceNames, other.RectAllianceNames) &&
-                   EqualityComparer<Rect>.Default.Equals(RectAlliancePower, other.RectAlliancePower) &&
                    EqualityComparer<Rect>.Default.Equals(AllianceListAnalyzerRect, other.AllianceListAnalyzerRect) &&
                    EqualityComparer<Rect>.Default.Equals(RectSsTypeAnalyzer, other.RectSsTypeAnalyzer) &&
                    EqualityComparer<BoundaryPoints>.Default.Equals(AllianceListBP, other.AllianceListBP) &&
@@ -69,14 +56,10 @@ namespace STFC_EventLogger
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
+            HashCode hash = new();
             hash.Add(DisplayName);
             hash.Add(Aliase);
-            hash.Add(RectEventNames);
-            hash.Add(RectEventScores);
             hash.Add(EventListAnalyzerRect);
-            hash.Add(RectAllianceNames);
-            hash.Add(RectAlliancePower);
             hash.Add(AllianceListAnalyzerRect);
             hash.Add(RectSsTypeAnalyzer);
             hash.Add(MaxParallelTasks);

@@ -46,8 +46,6 @@ namespace STFC_EventLogger.Windows
             };
             aa.ShowDialog();
 
-            F.GenerateAliaseAndOcrGarbage();
-
             List<string> source = new(V.NameDicts.Keys.ToArray());
             source.Sort();
 

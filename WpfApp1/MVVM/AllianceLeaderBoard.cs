@@ -335,8 +335,6 @@ namespace STFC_EventLogger.MVVM
                 Owner = V.frmMain
             };
             aa.ShowDialog();
-
-            F.GenerateAliaseAndOcrGarbage();
         }
         private void ToggleColumnVisibility()
         {
@@ -727,26 +725,16 @@ namespace STFC_EventLogger.MVVM
 
                 if (item.Name.Value != null && item.Name.Value != string.Empty && item.Name.Content != null && item.Name.Content != string.Empty)
                 {
-                    if (V.OcrGarbage.ContainsKey(item.Name.Value))
+                    var m = V.memberAdministrationMVVM.Members.FirstOrDefault(_ => _.Name == item.Name.Value);
+                    if (m != null)
                     {
-                        if (!V.OcrGarbage[item.Name.Value].Contains(item.Name.Content))
-                            V.OcrGarbage[item.Name.Value].Add(item.Name.Content);
+                        if (!m.OcrGarbage.Contains(item.Name.Content))
+                        {
+                            m.OcrGarbage.Add(item.Name.Content);
+                        }
                     }
-                    else
-                    {
-                        V.OcrGarbage.Add(item.Name.Value, new List<string>() { item.Name.Content });
-                    }
-
-
-                    if (V.NameDicts.ContainsKey(item.Name.Value))
-                    {
-                        if (!V.NameDicts[item.Name.Value].Contains(item.Name.Content))
-                            V.NameDicts[item.Name.Value].Add(item.Name.Content);
-                    }
-                    else
-                    {
-                        V.NameDicts.Add(item.Name.Value, new List<string>() { item.Name.Content });
-                    }
+                    
+                    F.GenerateNameDicts();
                 }
             }
         }

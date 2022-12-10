@@ -21,18 +21,23 @@ namespace STFC_EventLogger
         protected override void OnStartup(StartupEventArgs e)
         {
             F.LoadConfigs();
-            F.LoadAliase();
-            F.LoadOcrGarbage();
+
+            if (File.Exists(V.file_settings_members))
+            {
+                F.LoadMembers();
+            }
+            else
+            {
+                F.LoadAliase();
+                F.LoadOcrGarbage();
+            }
 
             V.frmMain = new MainWindow();
             V.frmMain.Show();
         }
         protected override void OnExit(ExitEventArgs e)
         {
-            F.GenerateAliaseAndOcrGarbage();
-
-            F.SaveAliase();
-            F.SaveOcrGarbage();
+            F.SaveMembers();
 
             base.OnExit(e);
         }

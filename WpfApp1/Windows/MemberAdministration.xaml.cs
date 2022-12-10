@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,12 @@ namespace STFC_EventLogger.Windows
             dg_Names.DataContext = V.memberAdministrationMVVM;
             dg_AKA.DataContext = V.memberAdministrationMVVM;
             dg_Garbage.DataContext = V.memberAdministrationMVVM;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            F.GenerateNameDicts();
+            base.OnClosing(e);
         }
     }
 }

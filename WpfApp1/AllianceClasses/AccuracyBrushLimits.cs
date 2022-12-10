@@ -45,9 +45,11 @@ namespace STFC_EventLogger.AllianceClasses
         public static implicit operator AccuracyBrushLimits(string value)
         {
             var split = value.Split(',');
-            AccuracyBrushLimits r = new();
-            r.Min = float.Parse(split[0].Trim().Replace(".", ","));
-            r.Max = float.Parse(split[1].Trim().Replace(".", ","));
+            AccuracyBrushLimits r = new()
+            {
+                Min = float.Parse(split[0].Trim().Replace(".", ",")),
+                Max = float.Parse(split[1].Trim().Replace(".", ","))
+            };
 
             var converter = new BrushConverter();
             r.Brush = (SolidColorBrush)converter.ConvertFromString(split[2].Trim());

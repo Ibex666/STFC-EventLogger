@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="dg_Names" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding Aliase}" SelectedItem="{Binding SelectedMember}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="0">
+        <DataGrid x:Name="dg_Names" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding Members}" SelectedItem="{Binding SelectedMember}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
             </DataGrid.Columns>

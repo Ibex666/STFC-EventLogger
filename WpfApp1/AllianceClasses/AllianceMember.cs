@@ -41,7 +41,6 @@ namespace STFC_EventLogger.AllianceClasses
         public AllianceMember()
         {
             Name = new OcrName();
-            Rank = new OcrRank();
             Levels = new();
             Scores = new();
             Powers = new();
@@ -70,40 +69,6 @@ namespace STFC_EventLogger.AllianceClasses
                 accuracyPowerBrush = new();
             });
         }
-        public AllianceMember(XmlElement xml, SSTypeAnalyzer file)
-        {
-            Levels = new();
-            Scores = new();
-            Powers = new();
-
-            Name = new OcrName(xml.SelectNodes("./TextLine[2]/String"), file);
-            Rank = new OcrRank(xml.SelectSingleNode("./TextLine[1]/String"), file);
-            Levels.Add(new OcrLevel(xml.SelectSingleNode("./TextLine[2]/String[1]"), file));
-
-            BestLevel = new();
-            BestScore = new();
-            BestPower = new();
-
-            accuracyLevelBrush = new();
-            accuracyScoreBrush = new();
-            accuracyPowerBrush = new();
-
-            BestLevelImage = string.Empty;
-            BestScoreImage = string.Empty;
-            BestPowerImage = string.Empty;
-
-            EventListName = new();
-
-            PageType = file.PageType;
-
-
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
-            {
-                accuracyLevelBrush = new();
-                accuracyScoreBrush = new();
-                accuracyPowerBrush = new();
-            });
-        }
         public AllianceMember(AllianceListEntry entry)
         {
             Levels = new();
@@ -113,7 +78,6 @@ namespace STFC_EventLogger.AllianceClasses
             Name = entry.Name;
             Levels.AddRange(entry.Levels);
             Powers.AddRange(entry.Powers);
-            Rank = new OcrRank();
 
             AllianceNameImage = entry.NameImage;
             AlliancePowerImage = entry.PowerImage;
@@ -151,7 +115,6 @@ namespace STFC_EventLogger.AllianceClasses
             Name = entry.Name;
             EventListName = entry.Name;
             Scores.AddRange(entry.Scores);
-            Rank = new OcrRank();
 
             EventNameImage = entry.NameImage;
             EventScoreImage = entry.ScoreImage;
@@ -185,7 +148,6 @@ namespace STFC_EventLogger.AllianceClasses
 
         public OcrName Name { get; set; }
         public OcrName EventListName { get; set; }
-        public OcrRank Rank { get; set; }
         public uint? BestLevel
         {
             get => bestLevel;
@@ -570,7 +532,7 @@ namespace STFC_EventLogger.AllianceClasses
                     BestPowerImage = ImageFunctions.CropImage(
                         Name.FileName,
                         V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X3,
-                        Rank.Y1,
+                        Name.Y1,
                         V.allianceLeaderBoard.SelectedUserConfig.AllianceListBP.X4,
                         Name.Y2,
                         System.Drawing.Imaging.ImageFormat.Png);
@@ -636,7 +598,7 @@ namespace STFC_EventLogger.AllianceClasses
         }
         public override string? ToString()
         {
-            return $"{Name.Value} / {Name.WC} / {Rank.Value} / {BestLevel} / {BestPower} / {PowerRanking} / {BestScore} / {EventRanking}";
+            return $"{Name.Value} / {Name.WC} / {BestLevel} / {BestPower} / {PowerRanking} / {BestScore} / {EventRanking}";
         }
 
         #endregion

@@ -19,7 +19,6 @@
         <System:String x:Key="csEventName">Event Name</System:String>
         <System:String x:Key="csEventNameScan">Event Name Scan</System:String>
         <System:String x:Key="csEventNameAccuracy">Event Name Accuracy</System:String>
-        <System:String x:Key="csRank">Rank</System:String>
         <System:String x:Key="csPowerRanking">Power Ranking</System:String>
         <System:String x:Key="csEventRanking">Event Ranking</System:String>
         <System:String x:Key="csConfirmLevel">Confirm Level</System:String>
@@ -128,13 +127,6 @@
                         <DataGridTextColumn.HeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="ToolTip" Value="{StaticResource csEventNameAccuracy}"/>
-                            </Style>
-                        </DataGridTextColumn.HeaderStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="{StaticResource csRank}" Binding="{Binding Rank.Value}" IsReadOnly="True" Width="100">
-                        <DataGridTextColumn.HeaderStyle>
-                            <Style TargetType="{x:Type DataGridColumnHeader}">
-                                <Setter Property="ToolTip" Value="{StaticResource csRank}"/>
                             </Style>
                         </DataGridTextColumn.HeaderStyle>
                     </DataGridTextColumn>

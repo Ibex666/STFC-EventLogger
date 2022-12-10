@@ -52,7 +52,7 @@ namespace STFC_EventLogger
 
         public int CompareTo(StringWrapper? other)
         {
-            if (other == null) return 1;
+            if (other is null) return 1;
             return Text.CompareTo(other.Text);
         }
         public override bool Equals(object? obj)
@@ -68,6 +68,10 @@ namespace STFC_EventLogger
         {
             return HashCode.Combine(Text);
         }
+        public override string ToString()
+        {
+            return Text;
+        }
 
         #endregion
 
@@ -75,9 +79,9 @@ namespace STFC_EventLogger
 
         public static bool operator ==(StringWrapper left, StringWrapper right)
         {
-            if (ReferenceEquals(left, null))
+            if (left is null)
             {
-                return ReferenceEquals(right, null);
+                return right is null;
             }
 
             return left.Equals(right);
@@ -85,22 +89,6 @@ namespace STFC_EventLogger
         public static bool operator !=(StringWrapper left, StringWrapper right)
         {
             return !(left == right);
-        }
-        public static bool operator <(StringWrapper left, StringWrapper right)
-        {
-            return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
-        }
-        public static bool operator <=(StringWrapper left, StringWrapper right)
-        {
-            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
-        }
-        public static bool operator >(StringWrapper left, StringWrapper right)
-        {
-            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
-        }
-        public static bool operator >=(StringWrapper left, StringWrapper right)
-        {
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
         }
         public static implicit operator StringWrapper(string text)
         {
