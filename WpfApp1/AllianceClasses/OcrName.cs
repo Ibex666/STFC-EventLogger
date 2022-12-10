@@ -267,7 +267,8 @@ namespace STFC_EventLogger.AllianceClasses
         {
             XmlDocument xdoc = new();
             xdoc.LoadXml(xml);
-            var nodes = xdoc.SelectNodes("//String");
+            //var nodes = xdoc.SelectNodes("//String");
+            var nodes = xdoc.SelectNodes("//ComposedBlock[1]/TextBlock[1]/TextLine[1]/String");
             if (nodes != null)
             {
                 return new OcrName(nodes, file)

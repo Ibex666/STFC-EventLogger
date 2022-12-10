@@ -93,8 +93,7 @@ namespace STFC_EventLogger.AllianceClasses
 
             var ret = new EventListEntry(dataRow, file);
 
-            if (ret.Names.All(_ => string.IsNullOrWhiteSpace(_.Content)) |
-                ret.Scores.All(_ => string.IsNullOrWhiteSpace(_.Content)))
+            if (ret.Names.All(_ => string.IsNullOrWhiteSpace(_.Content)))
             {
                 return null;
             }
