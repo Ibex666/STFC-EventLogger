@@ -682,7 +682,6 @@ namespace STFC_EventLogger.MVVM
             // taking screenshots from the name
             foreach (var item in NotRecognisedNames)
             {
-                item.Name.Value = null;
                 using var img = Image.FromFile(item.Name.FileName);
 
                 item.Name.Image = ImageFunctions.ImageFromBuffer(ImageFunctions.CropImage(
@@ -733,7 +732,7 @@ namespace STFC_EventLogger.MVVM
                             m.OcrGarbage.Add(item.Name.Content);
                         }
                     }
-                    
+
                     F.GenerateNameDicts();
                 }
             }

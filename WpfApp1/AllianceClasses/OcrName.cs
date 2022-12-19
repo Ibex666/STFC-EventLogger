@@ -92,21 +92,23 @@ namespace STFC_EventLogger.AllianceClasses
                 ClosestNames = nameDistances.Where(_ => _.Distance == distances.Min()).ToList();
                 if (ClosestNames.Count == 1)
                 {
+                    Value = ClosestNames[0].Name;
+                    WC = ClosestNames[0].Accuracy;
+
                     if (ClosestNames[0].Accuracy >= MinClosestNameAccuracy)
                     {
-                        Value = ClosestNames[0].Name;
-                        WC = ClosestNames[0].Accuracy;
                         Recognised = true;
                     }
                 }
                 else if (ClosestNames.Count > 1)
                 {
+                    Value = ClosestNames[0].Name;
+                    WC = ClosestNames[0].Accuracy;
+
                     if (ClosestNames.All(_ => _.Name == ClosestNames[0].Name))
                     {
                         if (ClosestNames.Any(_ => _.Accuracy >= MinClosestNameAccuracy))
                         {
-                            Value = ClosestNames[0].Name;
-                            WC = ClosestNames[0].Accuracy;
                             Recognised = true;
                         }
                     }
@@ -278,6 +280,15 @@ namespace STFC_EventLogger.AllianceClasses
             }
 
             return null;
+        }
+        public static OcrName FromStrings(string content, string name)
+        {
+            return new OcrName()
+            {
+                ScannerXml = string.Empty,
+                Content = content,
+                Value = name
+            };
         }
     }
 }

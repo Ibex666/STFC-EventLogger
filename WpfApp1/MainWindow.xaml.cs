@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Net.Http.Headers;
+using STFC_EventLogger.Windows;
 
 namespace STFC_EventLogger
 {
@@ -43,7 +44,16 @@ namespace STFC_EventLogger
 
         private void Btn_Test_Click(object sender, RoutedEventArgs e)
         {
-            
+            var am = new AllianceMember();
+            am.Name = OcrName.FromStrings("îbéybbb", "Ibex666");
+            V.allianceLeaderBoard.NotRecognisedNames.Add(am);
+
+            am = new AllianceMember();
+            am.Name = OcrName.FromStrings("eeede", "eVo");
+            V.allianceLeaderBoard.NotRecognisedNames.Add(am);
+
+            NotRecognizedNamesWindow window = new();
+            window.ShowDialog();
         }
     }
 }

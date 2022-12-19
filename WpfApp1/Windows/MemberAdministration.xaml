@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:STFC_EventLogger.Windows"
         mc:Ignorable="d"
-        Title="MemberAdministration" Height="450" Width="800" WindowStartupLocation="CenterOwner">
+        Title="Member Administration" Height="450" Width="800" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
