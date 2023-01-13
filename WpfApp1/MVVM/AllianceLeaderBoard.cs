@@ -750,7 +750,31 @@ namespace STFC_EventLogger.MVVM
             }
             Clipboard.SetText(sb.ToString());
         }
+        
+        // Test für konfigurierbare CopyData Funktion
+        // konfigurierbaren Header berücksichtigen
+        // s1 => config
+        // s1a => erstellt aus einem enum (index 0 ist ein Platzhalter '###' für nicht erkannte Felder)
+        private void Test()
+        {
+            var s1 = "<Eventranking>;<Name>\t\t<Level>;;<Power>";
+            var s1a = "<0>;<1>\t\t<2>;;<3>";
+            var s2 = s1a.Split(new string[] { "<", ">" }, StringSplitOptions.RemoveEmptyEntries);
+            
+            for (int i = 0; i < s2.Length; i = i + 2)
+            {
+                s2[i] = MyProperty[int.Parse(s2[i])];
+            }
 
+            var s3 = string.Join(string.Empty, s2);
+
+            Clipboard.SetText(s3);
+        }
+        
+        // Daten für Test
+        public string[] MyProperty { get { return new string[] { $"{p1}", $"{p2}", $"{p3}", $"{p4}" }; } }        
+        
+        
         #endregion
 
         #region #- Static Methods -#
