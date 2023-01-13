@@ -1,9 +1,6 @@
-﻿using STFC_EventLogger.AllianceClasses;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Windows.Xps.Packaging;
 using System.Xml;
 using Tesseract;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;

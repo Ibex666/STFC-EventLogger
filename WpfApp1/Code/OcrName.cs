@@ -1,13 +1,11 @@
-﻿using STFC_EventLogger.MVVM;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
     public class OcrName : BaseOcrClass, IEquatable<OcrName?>, IComparable<OcrName>
     {

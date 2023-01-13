@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
     public class OcrLevel : BaseOcrClass, IEquatable<OcrLevel?>
     {

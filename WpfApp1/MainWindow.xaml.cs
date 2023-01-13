@@ -1,18 +1,6 @@
-﻿using System.Text;
-using System.Threading;
+﻿using STFC_EventLogger.Windows;
 using System.Windows;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
-using STFC_EventLogger.AllianceClasses;
-using System.Linq;
-using Newtonsoft.Json;
-using System.Windows.Input;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using System;
-using System.IO;
-using System.Net.Http.Headers;
-using STFC_EventLogger.Windows;
 
 namespace STFC_EventLogger
 {

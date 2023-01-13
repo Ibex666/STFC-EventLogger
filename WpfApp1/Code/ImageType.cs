@@ -1,4 +1,4 @@
-﻿namespace STFC_EventLogger.AllianceClasses
+﻿namespace STFC_EventLogger
 {
     public enum ImageTypes
     {

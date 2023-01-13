@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
     public class AccuracyBrushLimits : IEquatable<AccuracyBrushLimits?>
     {

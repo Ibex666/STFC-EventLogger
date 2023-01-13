@@ -1,12 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Drawing.Imaging;
-using Rectangle = System.Drawing.Rectangle;
-using System;
-using System.Windows.Media.Imaging;
-using System.Runtime.InteropServices;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace STFC_EventLogger
 {

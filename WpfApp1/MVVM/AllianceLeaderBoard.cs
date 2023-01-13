@@ -1,28 +1,24 @@
 ﻿using Microsoft.Win32;
+using STFC_EventLogger.Windows;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using STFC_EventLogger.AllianceClasses;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Linq;
-using System.Collections.Generic;
-using System.Xml;
 using System.Windows.Threading;
-using System;
-using STFC_EventLogger.Windows;
-using System.Threading;
 using Tesseract;
-using System.Drawing;
-using System.Text;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Windows.Documents;
 
 
-namespace STFC_EventLogger.MVVM
+namespace STFC_EventLogger
 {
     public class AllianceLeaderBoard : INotifyPropertyChanged
     {

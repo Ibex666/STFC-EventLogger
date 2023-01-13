@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
     internal class DescendingNullableUlongComparer : IComparer<ulong?>
     {

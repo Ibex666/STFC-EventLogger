@@ -1,9 +1,7 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 using System.Xml;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
     public abstract class BaseOcrClass
     {

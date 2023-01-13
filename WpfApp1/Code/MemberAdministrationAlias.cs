@@ -1,14 +1,5 @@
-﻿using STFC_EventLogger.AllianceClasses;
-using STFC_EventLogger.MVVM;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
-using System.Xml;
 
 namespace STFC_EventLogger
 {

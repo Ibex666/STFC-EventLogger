@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace STFC_EventLogger.AllianceClasses
+namespace STFC_EventLogger
 {
-    public class OcrScore : BaseOcrClass, IEquatable<OcrScore?>, IComparable<OcrScore>
+    public class OcrPower : BaseOcrClass, IEquatable<OcrPower?>, IComparable<OcrPower>
     {
         public ulong? Value { get; set; }
 
-        public OcrScore() : base() { }
-        public OcrScore(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
+        public OcrPower() : base() { }
+        public OcrPower(XmlNode? xml, SSTypeAnalyzer file) : base(xml, file)
         {
             if (Content != null)
             {
@@ -28,10 +28,10 @@ namespace STFC_EventLogger.AllianceClasses
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as OcrScore);
+            return Equals(obj as OcrPower);
         }
 
-        public bool Equals(OcrScore? other)
+        public bool Equals(OcrPower? other)
         {
             return other is not null &&
                    Value == other.Value;
@@ -42,31 +42,31 @@ namespace STFC_EventLogger.AllianceClasses
             return HashCode.Combine(Value);
         }
 
-        public int CompareTo(OcrScore? other)
+        public int CompareTo(OcrPower? other)
         {
             if (other != null && other.Value != null && Value != null)
                 return Value.Value.CompareTo(other.Value.Value);
             return 0;
         }
 
-        public static bool operator ==(OcrScore? left, OcrScore? right)
+        public static bool operator ==(OcrPower? left, OcrPower? right)
         {
-            return EqualityComparer<OcrScore>.Default.Equals(left, right);
+            return EqualityComparer<OcrPower>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(OcrScore? left, OcrScore? right)
+        public static bool operator !=(OcrPower? left, OcrPower? right)
         {
             return !(left == right);
         }
 
-        public static OcrScore? FromEventList(string xml, SSTypeAnalyzer file)
+        public static OcrPower? FromAllianceList(string xml, SSTypeAnalyzer file)
         {
             XmlDocument xdoc = new();
             xdoc.LoadXml(xml);
             var nodes = xdoc.SelectNodes("//String");
             if (nodes != null && nodes.Count > 0)
             {
-                return new OcrScore(nodes[0], file)
+                return new OcrPower(nodes[0], file)
                 {
                     ScannerXml = xml,
                 };

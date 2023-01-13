@@ -1,14 +1,6 @@
-﻿using System;
+﻿using STFC_EventLogger.MVVM;
+using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Windows;
-using System.Collections.ObjectModel;
-using STFC_EventLogger.MVVM;
-using STFC_EventLogger.Windows;
-using System.Linq;
-using STFC_EventLogger.AllianceClasses;
 using System.IO;
 
 namespace STFC_EventLogger

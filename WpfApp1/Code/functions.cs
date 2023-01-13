@@ -2,18 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Tesseract;
-using System.Xml;
-using System.Threading;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
-using System.Drawing;
-using STFC_EventLogger.AllianceClasses;
-using System.Xml.Linq;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
 using System.Windows;
+using Tesseract;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace STFC_EventLogger
 {

@@ -1,6 +1,4 @@
-﻿using YamlDotNet.Core.Tokens;
-
-namespace STFC_EventLogger.AllianceClasses
+﻿namespace STFC_EventLogger
 {
     public class LevensteinNameDistance
     {
