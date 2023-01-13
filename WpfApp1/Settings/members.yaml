@@ -1,0 +1,313 @@
+﻿# player names, aliase ans ocr garbage
+# example data
+#
+# - Name: Mara        display name
+#   AKA:              in game player names each per row (one must be the same as the diplay name)
+#   - Text: Mara
+#   - Text: MightyMara
+#   - Text: DarthMara
+
+- Name: 36dino36
+  AKA:
+  - Text: 36dino36
+- Name: 3adrobot
+  AKA:
+  - Text: 3adrobot
+- Name: Aelf
+  AKA:
+  - Text: Aelf
+- Name: aethlon4peace
+  AKA:
+  - Text: aethlon4peace
+- Name: Aleksey78
+  AKA:
+  - Text: Aleksey78
+- Name: Alex
+  AKA:
+  - Text: Haldir
+  - Text: TheOneAndOnlyAlex
+- Name: AlphaGIBB
+  AKA:
+  - Text: AlphaGIBB
+- Name: Andybrown612
+  AKA:
+  - Text: Andybrown612
+- Name: Apollos
+  AKA:
+  - Text: Apollos
+- Name: ASarge000
+  AKA:
+  - Text: ASarge000
+- Name: Azzl
+  AKA:
+  - Text: Azzl
+- Name: BananaJoe
+  AKA:
+  - Text: BananaJoe
+- Name: Bartoz
+  AKA:
+  - Text: Bartoz
+- Name: BenShaw224
+  AKA:
+  - Text: BenShaw224
+- Name: bubi65
+  AKA:
+  - Text: bubi65
+  - Text: BudGor
+- Name: CaptainRoseV
+  AKA:
+  - Text: CaptainRoseV
+- Name: Cherydwen
+  AKA:
+  - Text: Cherydwen
+- Name: ChopperMX
+  AKA:
+  - Text: ChopperMX
+- Name: Clownfish
+  AKA:
+  - Text: Clownfish
+- Name: CoffeeSyndicate
+  AKA:
+  - Text: CoffeeSyndicate
+- Name: COreCOde
+  AKA:
+  - Text: COreCOde
+- Name: CptCOrnflake
+  AKA:
+  - Text: CptCOrnflake
+- Name: CZplayerM
+  AKA:
+  - Text: CZplayerM
+- Name: Dannybear88
+  AKA:
+  - Text: Dannybear88
+- Name: deviousriderLRS
+  AKA:
+  - Text: deviousriderLRS
+- Name: Doc
+  AKA:
+  - Text: Doc
+- Name: DoveMan
+  AKA:
+  - Text: DoveMan
+- Name: EldarB
+  AKA:
+  - Text: EldarB
+- Name: EnigmaX
+  AKA:
+  - Text: EnigmaX
+- Name: eVo
+  AKA:
+  - Text: —EVO—
+- Name: Fuchs76
+  AKA:
+  - Text: Fuchs76
+- Name: GanzBösesKonfetti
+  AKA:
+  - Text: GanzBösesKonfetti
+- Name: GrandPapaBear
+  AKA:
+  - Text: GrandPapaBear
+- Name: Gruffiboy
+  AKA:
+  - Text: Gruffiboy
+- Name: HairyHarry
+  AKA:
+  - Text: HairyHarry
+- Name: Hannibal
+  AKA:
+  - Text: Hannibal
+- Name: Haspastian
+  AKA:
+  - Text: Hasp
+  - Text: Haspastian
+- Name: HiGGz
+  AKA:
+  - Text: HiGGz
+- Name: Hitman01
+  AKA:
+  - Text: Hitman01
+- Name: Ibex666
+  AKA:
+  - Text: Ibex666
+- Name: IronEagle
+  AKA:
+  - Text: IronEagle
+  - Text: Lawman
+- Name: Jaerne
+  AKA:
+  - Text: Jaerne
+- Name: Jherek
+  AKA:
+  - Text: Jherek
+  - Text: JKdgaf
+  - Text: Jksolo
+- Name: JimmyWong
+  AKA:
+  - Text: JimmyWong
+  - Text: JimWong
+- Name: JuniorGIBB
+  AKA:
+  - Text: JuniorGIBB
+- Name: KoffeinHase
+  AKA:
+  - Text: KoffeinHase
+- Name: L3wis5
+  AKA:
+  - Text: L3wis5
+- Name: LocutusOfFive
+  AKA:
+  - Text: LocutusOfFive
+- Name: MadPieBoy
+  AKA:
+  - Text: MadPieBoy
+- Name: majorsarcastic
+  AKA:
+  - Text: majorsarcastic
+- Name: Malycum
+  AKA:
+  - Text: Malycum
+- Name: Mara
+  AKA:
+  - Text: BittersweetMara
+  - Text: DarthMara
+  - Text: Mara
+  - Text: MightyMara
+- Name: Maurop
+  AKA:
+  - Text: Maurop
+- Name: Mel
+  AKA:
+  - Text: —MEL—
+- Name: mic09
+  AKA:
+  - Text: mic09
+- Name: Motion
+  AKA:
+  - Text: Motion
+- Name: Mrakken
+  AKA:
+  - Text: Mrakken
+- Name: Mufasa
+  AKA:
+  - Text: Callumgie
+  - Text: Mufasa
+- Name: NANO
+  AKA:
+  - Text: NANO
+- Name: NavOne
+  AKA:
+  - Text: NavOne
+- Name: neo117
+  AKA:
+  - Text: neo117
+- Name: nova
+  AKA:
+  - Text: nova
+- Name: Oby66
+  AKA:
+  - Text: Oby66
+- Name: OfficerMorata
+  AKA:
+  - Text: OfficerMorata
+- Name: oJaxXo
+  AKA:
+  - Text: oJaxXo
+- Name: oldTurbo
+  AKA:
+  - Text: oldTurbo
+- Name: Olik
+  AKA:
+  - Text: Olik
+- Name: ooDMoo
+  AKA:
+  - Text: ooDMoo
+- Name: Orionpg
+  AKA:
+  - Text: Orionpg
+- Name: PsychoMom
+  AKA:
+  - Text: PsychoMom
+- Name: Rafet
+  AKA:
+  - Text: Rafet
+- Name: RandomXs
+  AKA:
+  - Text: RandomXs
+  - Text: RandomisMagic
+- Name: Rebel
+  AKA:
+  - Text: Rebel
+- Name: RestlessKnight
+  AKA:
+  - Text: RestlessKnight
+- Name: RickyK
+  AKA:
+  - Text: RickyK
+- Name: Sdbd
+  AKA:
+  - Text: Sdbd
+- Name: SheriffFatman
+  AKA:
+  - Text: SheriffFatman
+- Name: SheyMK
+  AKA:
+  - Text: HunterShey
+  - Text: SheyMK
+- Name: silianu
+  AKA:
+  - Text: silianu
+- Name: SouthernEngland
+  AKA:
+  - Text: SouthernEngland
+- Name: SoveCZ
+  AKA:
+  - Text: SoveCZ
+- Name: Suibunax
+  AKA:
+  - Text: Suibunax
+- Name: TheBolt
+  AKA:
+  - Text: TheBolt
+- Name: TheOneAndOnlyRam
+  AKA:
+  - Text: TheOneAndOnlyRam
+- Name: TheRealNuxer
+  AKA:
+  - Text: TheRealNuxer
+- Name: Vitamins
+  AKA:
+  - Text: Vitamins
+- Name: WarDadden
+  AKA:
+  - Text: WarDadden
+- Name: WeeAlpha
+  AKA:
+  - Text: WeeAlpha
+- Name: WEmily
+  AKA:
+  - Text: WEmily
+- Name: wibber
+  AKA:
+  - Text: wibber
+- Name: Windrose
+  AKA:
+  - Text: Windrose
+- Name: xPetex
+  AKA:
+  - Text: xPetex
+- Name: XxxKxxX
+  AKA:
+  - Text: XxxKxxX
+- Name: YetiXI
+  AKA:
+  - Text: YetiXI
+- Name: Yoda
+  AKA:
+  - Text: Yoda
+- Name: Yunneo
+  AKA:
+  - Text: Yunneo
+- Name: Zacra
+  AKA:
+  - Text: Zacra
