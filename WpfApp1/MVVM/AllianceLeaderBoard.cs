@@ -20,7 +20,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Windows.Documents;
-using static System.Net.WebRequestMethods;
+
 
 namespace STFC_EventLogger.MVVM
 {
@@ -741,40 +741,23 @@ namespace STFC_EventLogger.MVVM
         private void CopyData()
         {
             StringBuilder sb = new();
-            sb.AppendLine($"Member Count\tName\tOPS\tScore\tRating\tNotiz\tPower Rank\tName\tOPS\tMacht");
+            if (SelectedUserConfig.UseCopiedDataHeader)
+                sb.AppendLine(SelectedUserConfig.CopiedDataHeader);
 
             foreach (var item in Members.OrderBy(_ => _.Name.Value))
             {
-                if (item.BestLevel != null && item.BestScore != null && item.BestPower != null)
-                    sb.AppendLine($"{item.EventRanking}\t{item.Name.Value}\t{item.BestLevel.Value}\t{item.BestScore.Value}\t\t\t{item.PowerRanking}\t{item.Name.Value}\t{item.BestLevel.Value}\t{item.BestPower.Value}");
+                var s = SelectedUserConfig.CopiedDataFormat
+                    .Replace("<Name>", $"{item.Name.Value}")
+                    .Replace("<Level>", $"{item.BestLevel}")
+                    .Replace("<Power>", $"{item.BestPower}")
+                    .Replace("<Score>", $"{item.BestScore}")
+                    .Replace("<PowerRanking>", $"{item.PowerRanking}")
+                    .Replace("<EventRanking>", $"{item.EventRanking}");
+                sb.AppendLine(s);
             }
             Clipboard.SetText(sb.ToString());
         }
-        
-        // Test für konfigurierbare CopyData Funktion
-        // konfigurierbaren Header berücksichtigen
-        // s1 => config
-        // s1a => erstellt aus einem enum (index 0 ist ein Platzhalter '###' für nicht erkannte Felder)
-        private void Test()
-        {
-            var s1 = "<Eventranking>;<Name>\t\t<Level>;;<Power>";
-            var s1a = "<0>;<1>\t\t<2>;;<3>";
-            var s2 = s1a.Split(new string[] { "<", ">" }, StringSplitOptions.RemoveEmptyEntries);
-            
-            for (int i = 0; i < s2.Length; i = i + 2)
-            {
-                s2[i] = MyProperty[int.Parse(s2[i])];
-            }
 
-            var s3 = string.Join(string.Empty, s2);
-
-            Clipboard.SetText(s3);
-        }
-        
-        // Daten für Test
-        public string[] MyProperty { get { return new string[] { $"{p1}", $"{p2}", $"{p3}", $"{p4}" }; } }        
-        
-        
         #endregion
 
         #region #- Static Methods -#

@@ -32,6 +32,11 @@ namespace STFC_EventLogger
         public List<AccuracyBrushLimits> AccuracyScoreBrushLimits { get; set; }
         public List<AccuracyBrushLimits> AccuracyPowerBrushLimits { get; set; }
 
+
+        public bool UseCopiedDataHeader { get; set; }
+        public string CopiedDataHeader { get; set; }
+        public string CopiedDataFormat { get; set; }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as UserConfig);
@@ -51,7 +56,10 @@ namespace STFC_EventLogger
                    UseInvertedImages == other.UseInvertedImages &&
                    EqualityComparer<List<AccuracyBrushLimits>>.Default.Equals(AccuracyLevelBrushLimits, other.AccuracyLevelBrushLimits) &&
                    EqualityComparer<List<AccuracyBrushLimits>>.Default.Equals(AccuracyScoreBrushLimits, other.AccuracyScoreBrushLimits) &&
-                   EqualityComparer<List<AccuracyBrushLimits>>.Default.Equals(AccuracyPowerBrushLimits, other.AccuracyPowerBrushLimits);
+                   EqualityComparer<List<AccuracyBrushLimits>>.Default.Equals(AccuracyPowerBrushLimits, other.AccuracyPowerBrushLimits) &&
+                   UseCopiedDataHeader == other.UseCopiedDataHeader &&
+                   CopiedDataHeader == other.CopiedDataHeader &&
+                   CopiedDataFormat == other.CopiedDataFormat;
         }
 
         public override int GetHashCode()
@@ -69,6 +77,9 @@ namespace STFC_EventLogger
             hash.Add(AccuracyPowerBrushLimits);
             hash.Add(AllianceListBP);
             hash.Add(EventListBP);
+            hash.Add(UseCopiedDataHeader);
+            hash.Add(CopiedDataHeader);
+            hash.Add(CopiedDataFormat);
             return hash.ToHashCode();
         }
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.

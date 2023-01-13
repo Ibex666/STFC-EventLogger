@@ -48,3 +48,14 @@ AccuracyPowerBrushLimits:
 - "0, 0.333, #ffd44545"
 - "0.334, 0.5, #ffff7545"
 - "0.501, 0.8, #fffff156"
+
+# soll beim Kopieren der Daten ein Header ausgegeben werden: true | false
+UseCopiedDataHeader: true
+
+# der Header der beim Kopieren der Daten ausgegeben wird: true | false
+CopiedDataHeader: "Member Count\tName\tOPS\tScore\tRating\tNotiz\tPower Rank\tName\tOPS\tMacht"
+
+# Format für die kopierten Daten
+# mögliche Feldnamen: Name, Level, Power, Score, PowerRanking, EventRanking
+# Feldnamen müssen zwischen <> stehen, z.B. <Name>
+CopiedDataFormat: "<EventRanking>\t<Name>\t<Level>\t<Score>\t\t\t<PowerRanking>\t<Name>\t<Level>\t<Power>"

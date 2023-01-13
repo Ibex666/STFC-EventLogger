@@ -1,50 +1,61 @@
-﻿# Anzeigename im DropDown Menü
+﻿# Display name in dropdown menu
 DisplayName: "Multi Task"
 
-# maximal gleichzeitig laufende Aufgaben : 1-n
-# der Wert sollte kleiner (maximal gleich) sein als die Anzahl der logischen Prozessoren
+# maximum concurrent running tasks : 1-n
+# the value should be less than (at most equal to) the number of logical processors
 MaxParallelTasks: 8
 
-# sollen die Screenshots zusätzlich invertiert gescannt werden : true | false
+# the screenshots should also be scanned inverted : true | false
 UseInvertedImages: true
 
-# Scanbereich zum analysieren der Alliance List Screenshots
+# Scan area to analyze Alliance List screenshots
 # Rectangle "X1, Y1, X2, Y2"
 AllianceListAnalyzerRect: "3535, 200, 3735, 2015"
 
-# Alliance List Boundary Points
+# Alliance List boundary points
 # BoundaryPoints "X1, X2, X3, X4"
 AllianceListBP: "245, 625, 3535, 3800"
 
-# Scanbereich zum analysieren der Event List Screenshots
+# Scan area to analyze the Event List screenshots
 # Rectangle "X1, Y1, X2, Y2"
 EventListAnalyzerRect: "3600, 225, 3800, 2015"
 
-# Event List Boundary Points
+# Event List boundary points
 # BoundaryPoints "X1, X2, X3, X4"
 EventListBP: "420, 1000, 3450, 3830"
   
-# Scanbereich zum analysieren der Art (Allianz oder Event) des Screenshots
+# Scan area to analyze the type (alliance or event) of the screenshot
 # Rectangle "X1, Y1, X2, Y2"
 RectSsTypeAnalyzer: "160, 20, 430, 80"
   
-# Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Level'
-# "Min, Max, Color"
+# Limits and colors (ARGB hex value) for column 'Level'
+# "min, max, color"
 AccuracyLevelBrushLimits:
 - "0, 0.1, #ffd44545"
 - "0.101, 0.25, #ffff7545"
 - "0.251, 0.5, #fffff156"
 
-# Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Score'
-# "Min, Max, Color"
+# Limits and colors (ARGB hex value) for column 'Score'
+# "min, max, color"
 AccuracyScoreBrushLimits:
 - "0, 0.333, #ffd44545"
 - "0.334, 0.5, #ffff7545"
 - "0.501, 0.8, #fffff156"
   
-# Grenzwerte und Farben (ARGB Hex Wert) für die Spalte 'Power'
-# "Min, Max, Color"
+# Limits and colors (ARGB hex value) for column 'Power'
+# "min, max, color"
 AccuracyPowerBrushLimits:
 - "0, 0.333, #ffd44545"
 - "0.334, 0.5, #ffff7545"
 - "0.501, 0.8, #fffff156"
+
+# should a header be output when copying the data: true | false
+UseCopiedDataHeader: true
+
+# the header that is output when copying the data
+CopiedDataHeader: "Name\tLevel\tPower\tScore\tPowerRanking\tEventRanking"
+
+# Format for the copied data
+# possible field names: Name, Level, Power, Score, PowerRanking, EventRanking
+# Field names must be between <>, e.g. <Name>
+CopiedDataFormat: "<Name>\t<Level>\t<Power>\t<Score>\t<PowerRanking>\t<EventRanking>"
