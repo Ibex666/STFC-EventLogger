@@ -29,7 +29,6 @@ namespace STFC_EventLogger
             else
             {
                 F.LoadAliase();
-                F.LoadOcrGarbage();
             }
 
             V.frmMain = new MainWindow();

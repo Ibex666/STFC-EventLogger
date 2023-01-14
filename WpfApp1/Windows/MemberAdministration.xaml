@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:STFC_EventLogger.Windows"
         mc:Ignorable="d"
-        Title="Member Administration" Height="450" Width="800" WindowStartupLocation="CenterOwner">
+        Title="Member Administration" Height="450" Width="600" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -20,11 +19,6 @@
         <DataGrid x:Name="dg_AKA" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding SelectedMember.AKA}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="AKA" Binding="{Binding Text}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <DataGrid x:Name="dg_Garbage" d:ItemsSource="{d:SampleData ItemCount=1}" ItemsSource="{Binding SelectedMember.OcrGarbage}" Margin="0,0,0,0" AutoGenerateColumns="False" RowHeight="20" RowHeaderWidth="20" Grid.Column="2">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="OCR Garbage" Binding="{Binding Text}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

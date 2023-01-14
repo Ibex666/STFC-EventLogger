@@ -113,7 +113,7 @@ namespace STFC_EventLogger
             }
             GenerateNameDicts();
         }
-        
+
         internal static void SaveMembers()
         {
             using TextWriter textWriter = new StringWriter();
@@ -126,8 +126,6 @@ namespace STFC_EventLogger
             textWriter.WriteLine("#   - Text: Mara");
             textWriter.WriteLine("#   - Text: MightyMara");
             textWriter.WriteLine("#   - Text: DarthMara");
-            textWriter.WriteLine("#   OcrGarbage:       text that was not correctly recognised by the OCR engine");
-            textWriter.WriteLine("#   - Text: Mdrd");
             textWriter.WriteLine("");
 
             serializer.Serialize(textWriter, V.memberAdministrationMVVM.Members);
@@ -143,7 +141,6 @@ namespace STFC_EventLogger
                 foreach (var member in V.memberAdministrationMVVM.Members)
                 {
                     V.NameDicts.Add(member.Name, member.AKA.Select(_ => (string)_).ToList());
-                    V.NameDicts[member.Name].AddRange(member.OcrGarbage.Select(_ => (string)_).ToList());
                 }
             }
         }
@@ -202,36 +199,6 @@ namespace STFC_EventLogger
                         maa.AKA.AddRange(item.AKA.Select(_ => (StringWrapper)_).ToList());
                     }
                 }
-            }
-
-            return true;
-        }
-
-        [Obsolete("only for compability, will be removed later")]
-        internal static bool LoadOcrGarbage()
-        {
-            try { V.OcrGarbage = deserializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(V.file_settings_ocr_garbage)); }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            if (V.OcrGarbage is not null)
-            {
-                foreach (var item in V.OcrGarbage)
-                {
-                    if (V.NameDicts.ContainsKey(item.Key))
-                    {
-                        V.NameDicts[item.Key].AddRange(item.Value);
-
-                        var maa = V.memberAdministrationMVVM.Members.First(_ => _.Name == item.Key);
-                        maa.OcrGarbage.AddRange(item.Value.Select(_ => (StringWrapper)_).ToList());
-                    }
-                }
-            }
-            else
-            {
-                V.OcrGarbage = new();
             }
 
             return true;

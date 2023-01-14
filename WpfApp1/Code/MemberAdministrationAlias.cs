@@ -17,7 +17,6 @@ namespace STFC_EventLogger
         {
             Name = string.Empty;
             AKA = new();
-            OcrGarbage = new();
         }
 
         #endregion
@@ -26,7 +25,6 @@ namespace STFC_EventLogger
 
         public string Name { get; set; }
         public List<StringWrapper> AKA { get; set; }
-        public List<StringWrapper> OcrGarbage { get; set; }
 
         #endregion
 

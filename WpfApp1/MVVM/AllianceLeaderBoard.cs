@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using STFC_EventLogger.Windows;
+using STFC_EventLogger.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -716,20 +717,6 @@ namespace STFC_EventLogger
                 else
                 {
                     continue;
-                }
-
-                if (item.Name.Value != null && item.Name.Value != string.Empty && item.Name.Content != null && item.Name.Content != string.Empty)
-                {
-                    var m = V.memberAdministrationMVVM.Members.FirstOrDefault(_ => _.Name == item.Name.Value);
-                    if (m != null)
-                    {
-                        if (!m.OcrGarbage.Contains(item.Name.Content))
-                        {
-                            m.OcrGarbage.Add(item.Name.Content);
-                        }
-                    }
-
-                    F.GenerateNameDicts();
                 }
             }
         }

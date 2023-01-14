@@ -25,7 +25,6 @@ namespace STFC_EventLogger.Windows
             InitializeComponent();
             dg_Names.DataContext = V.memberAdministrationMVVM;
             dg_AKA.DataContext = V.memberAdministrationMVVM;
-            dg_Garbage.DataContext = V.memberAdministrationMVVM;
         }
 
         protected override void OnClosing(CancelEventArgs e)
