@@ -13,4 +13,4 @@
    -	Paste data into Spreadsheet
 
 
-[^1]: see [Wiki](https://github.com/Ibex666/STFC-EventLogger) for more info
+[^1]: see [Wiki](https://github.com/Ibex666/STFC-EventLogger/wiki) for more info
