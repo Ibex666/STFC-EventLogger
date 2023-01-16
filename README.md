@@ -10,3 +10,4 @@
    -	Scan your Screenshots
    -	Check result and correct if necessary
    -	Copy data
+   -	Paste data into Spreadsheet
