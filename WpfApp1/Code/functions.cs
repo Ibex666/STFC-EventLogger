@@ -118,12 +118,11 @@ namespace STFC_EventLogger
         {
             using TextWriter textWriter = new StringWriter();
 
-            textWriter.WriteLine("# player names, aliase ans ocr garbage");
+            textWriter.WriteLine("# player names and aliase");
             textWriter.WriteLine("# example data");
             textWriter.WriteLine("#");
             textWriter.WriteLine("# - Name: Mara        display name");
-            textWriter.WriteLine("#   AKA:              in game player names each per row (one must be the same as the diplay name)");
-            textWriter.WriteLine("#   - Text: Mara");
+            textWriter.WriteLine("#   AKA:              in game player names each per row");
             textWriter.WriteLine("#   - Text: MightyMara");
             textWriter.WriteLine("#   - Text: DarthMara");
             textWriter.WriteLine("");
@@ -140,7 +139,10 @@ namespace STFC_EventLogger
                 V.NameDicts.Clear();
                 foreach (var member in V.memberAdministrationMVVM.Members)
                 {
-                    V.NameDicts.Add(member.Name, member.AKA.Select(_ => (string)_).ToList());
+                    List<string> aka = new();
+                    aka.Add(member.Name);
+                    aka.AddRange(member.AKA.Select(_ => (string)_));
+                    V.NameDicts.Add(member.Name, aka);
                 }
             }
         }
